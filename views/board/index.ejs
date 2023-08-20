@@ -7,9 +7,10 @@
 </head>
 <body>
     <h1>INDEX PAGE~!</h1>
+    <a href="/index/new">create new content</a>
     <% for (let content of contents) { %>
     <div>
-        <p><%= content.title %></p>
+        <a href="/index/<%= content._id %>"><%= content.title %></a>
     </div>
     <% } %>
 </body>
