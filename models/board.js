@@ -4,11 +4,11 @@ const Schema = mongoose.Schema;
 
 const BoardSchema = new Schema({
     title: String,
-    register: { // 날짜 관련 moment.js?
+    createdAt: { // 날짜 관련 moment.js?
         type: Date,
         default: Date.now
     },
-    update: String,
+    update: Date,
     nickname: String,
     mainText: String,
     comment: [

@@ -6,7 +6,6 @@ const methodOverride = require('method-override');
 const Board = require('./models/board');
 
 
-
 const app = express();
 
 mongoose.connect('mongodb://127.0.0.1:27017/proj1');
@@ -46,6 +45,7 @@ app.post('/index', async (req, res) => {
 
 app.get('/index/:id', async (req, res) => {
     const board = await Board.findById(req.params.id);
+    // console.log(board);
     res.render('board/show', {items: board});
 });
 

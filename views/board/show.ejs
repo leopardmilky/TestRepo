@@ -9,7 +9,7 @@
     <h1>SHOW PAGE!</h1>
     <h2>TITLE: <%= items.title %></h2>
     <h3>TEXT: <%= items.mainText %></h3>
-    <h5>DATE: <%= items.register %></h5>
+    <h5>DATE: <%= items.createdAt %></h5>
     <a href="/index/<%= items._id %>/edit">EDIT</a>
     <a href="/index">back to index page</a>
     <form action="/index/<%= items._id %>?_method=DELETE" method="POST">
