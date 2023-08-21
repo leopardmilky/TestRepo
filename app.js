@@ -3,6 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
+// const moment = require('moment');
 const Board = require('./models/board');
 
 
@@ -45,7 +46,7 @@ app.post('/index', async (req, res) => {
 
 app.get('/index/:id', async (req, res) => {
     const board = await Board.findById(req.params.id);
-    // console.log(board);
+    console.log(board);
     res.render('board/show', {items: board});
 });
 

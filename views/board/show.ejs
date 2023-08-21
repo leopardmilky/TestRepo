@@ -10,6 +10,7 @@
     <h2>TITLE: <%= items.title %></h2>
     <h3>TEXT: <%= items.mainText %></h3>
     <h5>DATE: <%= items.createdAt %></h5>
+    <h5>DATE: <%= items.createdAt.getFullYear() %>-<%= String(items.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(items.createdAt.getDate()).padStart(2,'0') %> <%= String(items.createdAt.getHours()).padStart(2,'0') %>:<%= String(items.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(items.createdAt.getSeconds()).padStart(2,'0') %></h5>
     <a href="/index/<%= items._id %>/edit">EDIT</a>
     <a href="/index">back to index page</a>
     <form action="/index/<%= items._id %>?_method=DELETE" method="POST">
