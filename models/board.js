@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const BoardSchema = new Schema({
     title: String,
-    createdAt: { // 날짜 관련 moment.js?
+    createdAt: {
         type: Date,
         default: Date.now
     },

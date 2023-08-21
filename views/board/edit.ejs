@@ -1,11 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
+<% layout('layouts/boilerplate') %>
     <h1>EDIT PAGE!</h1>
     <form action="/index/<%= content._id %>?_method=PUT" method="POST">
         <label for="title">Title</label>
@@ -17,5 +10,3 @@
         <button>update content!</button>
     </form>
     <a href="/index/<%= content._id %>">back to content</a>
-</body>
-</html>

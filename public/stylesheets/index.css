@@ -1,0 +1,24 @@
+.head,.body {
+    text-align: center;
+}
+
+#thead {
+    background-color: steelblue;
+}
+
+.body{
+    font-size: small;
+}
+
+#table_title {
+    text-decoration-line: none;
+    color: black;
+}
+
+#tr:hover {
+    background-color: blanchedalmond;
+}
+
+#table_title:hover {
+    color: crimson;
+}
