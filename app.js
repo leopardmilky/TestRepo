@@ -15,7 +15,7 @@ const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
 db.once("open", () => {
     console.log("Database connected @ @");
-})
+});
 
 app.use(express.urlencoded({ extended: true})); // POST 파싱.
 app.use(methodOverride('_method')); // 반드시 '_method'로 쓸 필요없음.
@@ -52,16 +52,18 @@ app.get('/index/:id', async (req, res) => {
 app.get('/index/:id/edit', async (req, res) => {
     const board = await Board.findById(req.params.id);
     res.render('board/edit', {content: board});
-})
+});
 
 app.put('/index/:id', async (req, res) => {
     const {id} = req.params;
     const board = await Board.findByIdAndUpdate(id, req.body.board); // {...req.body.board} ???
-    // console.log({...req.body.board});
-    // console.log("=====================");
-    // console.log(req.body.board)
     res.redirect(`/index/${board._id}`);
-})
+});
 
+app.delete('/index/:id', async (req, res) => {
+    const {id} = req.params;
+    await Board.findByIdAndDelete(id);
+    res.redirect('/index');
+});
 
 app.listen(3000, () => console.log('PORT 3000....!!'));
