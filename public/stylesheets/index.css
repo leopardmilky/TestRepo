@@ -17,6 +17,7 @@
 
 #tr:hover {
     background-color: blanchedalmond;
+    cursor: pointer;
 }
 
 #table_title:hover {
