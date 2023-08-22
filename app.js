@@ -5,7 +5,7 @@ const ejsMate = require('ejs-mate');
 const methodOverride = require('method-override');
 // const moment = require('moment');
 const Board = require('./models/board');
-
+const Comment = require('./models/comment');
 
 const app = express();
 
@@ -23,8 +23,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-
 
 
 app.get('/', (req, res) => {
@@ -47,8 +45,8 @@ app.post('/index', async (req, res) => {
 });
 
 app.get('/index/:id', async (req, res) => {
-    const board = await Board.findById(req.params.id);
-    console.log(board);
+    const board = await Board.findById(req.params.id).populate('comments'); // populate()가 있어야 ref
+    // console.log(board);
     res.render('board/show', {items: board});
 });
 
@@ -67,6 +65,22 @@ app.delete('/index/:id', async (req, res) => {
     const {id} = req.params;
     await Board.findByIdAndDelete(id);
     res.redirect('/index');
+});
+
+app.post('/index/:id/comments', async (req, res) => {
+    const board = await Board.findById(req.params.id);
+    const comment = new Comment(req.body.comment);
+    board.comments.push(comment);
+    await comment.save();
+    await board.save();
+    res.redirect(`/index/${board._id}`);
+});
+
+app.delete('/index/:id/comments/:commentId', async(req, res) => {
+    const {id, commentId} = req.params;
+    await Board.findByIdAndUpdate(id, {$pull: {comments: commentId}});
+    await Comment.findByIdAndDelete(req.params.commentId);
+    res.redirect(`/index/${id}`);
 });
 
 app.listen(3000, () => console.log('PORT 3000....!!'));

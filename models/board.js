@@ -8,10 +8,9 @@ const BoardSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    update: Date,
     nickname: String,
     mainText: String,
-    comment: [
+    comments: [
         {
             type: Schema.Types.ObjectId,
             ref: "Comment"

@@ -1,12 +1,33 @@
 <% layout('layouts/boilerplate') %>
-    <h1>SHOW PAGE!</h1>
-    <h2>TITLE: <%= items.title %></h2>
-    <h3>TEXT: <%= items.mainText %></h3>
-    <h5>DATE: <%= items.createdAt.getFullYear() %>-<%= String(items.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(items.createdAt.getDate()).padStart(2,'0') %> <%= String(items.createdAt.getHours()).padStart(2,'0') %>:<%= String(items.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(items.createdAt.getSeconds()).padStart(2,'0') %></h5>
-    <a href="/index/<%= items._id %>/edit">EDIT</a>
-    <a href="/index">back to index page</a>
-    <form action="/index/<%= items._id %>?_method=DELETE" method="POST">
-        <button>Delete</button>
-    </form>
-    <hr>
-    <h4>COMMENT: 진행중....</h4>
+
+<div class="row">
+    <div class="col-8 offset-2">
+        <div class="card mb-3">
+            <h2>TITLE: <%= items.title %></h2>
+            <h3>TEXT: <%= items.mainText %></h3>
+            <h5>DATE: <%= items.createdAt.getFullYear() %>-<%= String(items.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(items.createdAt.getDate()).padStart(2,'0') %> <%= String(items.createdAt.getHours()).padStart(2,'0') %>:<%= String(items.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(items.createdAt.getSeconds()).padStart(2,'0') %></h5>
+            <a href="/index/<%= items._id %>/edit">EDIT</a>
+            <a href="/index">back to index page</a>
+            <form action="/index/<%= items._id %>?_method=DELETE" method="POST">
+                <button>Delete</button>
+            </form>
+            <hr>
+            <h3>Coomments</h3>
+            <form action="/index/<%= items._id %>/comments" method="POST">
+                <label for="body">Comment</label>
+                <textarea name="comment[body]" id="body" cols="30" rows="10" required></textarea>
+                <button>Submit</button>
+            </form>
+            <hr>
+            <% for (comment of items.comments) { %>
+                <h5><%= comment.nickname %>nickname</h5>
+                <h5><%= comment.body %></h5>
+                <h5><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></h5>
+                <form action="/index/<%= items._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                    <button>Delete</button>
+                </form>
+                <br>
+            <% } %>
+        </div>
+    </div>
+</div>

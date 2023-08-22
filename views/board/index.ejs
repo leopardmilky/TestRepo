@@ -1,8 +1,7 @@
 <% layout('layouts/boilerplate') %>
     <!-- 추천, 이미지아이콘+제목+댓글수, 작성자(닉네임), 작성날짜, 조회수  -->
-    <h1>INDEX PAGE~!</h1>
-    
-    <table class="table">
+
+    <table class="table table-sm table-hover">
         <thead id="thead">
             <th class="col-1 head">추천</th>
             <th class="col-5 head">제목</th>
@@ -11,13 +10,14 @@
             <th class="col-1 head">조회</th>
         </thead>
         <tbody>
-            
             <% for (let content of contents) { %>
             <tr id="tr">
                 <td class="body">333</td>
-                <td id="table_title" onclick="location.href='/index/<%= content._id %>'"><%= content.title %></td>
+                <td onclick="location.href='/index/<%= content._id %>'"><p id="table_title"><%= content.title %></p></td>
                 <td class="body">leomilky</td>
-                <td class="body"><%= content.createdAt.getFullYear() %>-<%= String(content.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(content.createdAt.getDate()).padStart(2,'0') %> <%= String(content.createdAt.getHours()).padStart(2,'0') %>:<%= String(content.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(content.createdAt.getSeconds()).padStart(2,'0') %></td>
+                <td class="body">
+                    <%= content.createdAt.getFullYear() %>-<%= String(content.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(content.createdAt.getDate()).padStart(2,'0') %> <%= String(content.createdAt.getHours()).padStart(2,'0') %>:<%= String(content.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(content.createdAt.getSeconds()).padStart(2,'0') %>
+                </td>
                 <td class="body">999999999999</td>
             </tr>
             <% } %>
@@ -26,4 +26,6 @@
 
         </tfoot>
     </table>
-    <a href="/index/new">create new content</a>
+    <div>
+        <a href="/index/new">create new content</a>
+    </div>
