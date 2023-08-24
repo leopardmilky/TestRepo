@@ -2,6 +2,16 @@
     text-align: center;
 }
 
+table{
+    table-layout: fixed;
+}
+
+.wordoverflow {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 #thead {
     background-color: steelblue;
 }
@@ -13,6 +23,7 @@
 #table_title {
     text-decoration-line: none;
     color: black;
+    font-size: small;
 }
 
 #tr:hover {
