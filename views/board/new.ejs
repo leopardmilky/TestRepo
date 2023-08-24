@@ -4,12 +4,12 @@
         <h1 class="text-center">create new content page!</h1>
     </div>
     <div class="row w-75 border border-info">
-        <form class="d-flex flex-column align-items-center" action="/index" method="POST">
-            <label class="w-100" for="title">Title</label>
-            <input class="w-100" type="text" id="title" name="board[title]" required>
+        <form class="d-flex flex-column align-items-center validated-form" action="/index" method="POST" novalidate>
+            <label class="form-label w-100" for="title">Title</label>
+            <input class="form-control w-100" type="text" id="title" name="board[title]" required>
 
-            <label class="w-100" for="mainText">Text</label>
-            <textarea class="w-100" id="mainText" cols="30" rows="10" name="board[mainText]" required></textarea>
+            <label class="form-label w-100" for="mainText">Text</label>
+            <textarea class="form-control w-100" id="mainText" cols="30" rows="10" name="board[mainText]" required></textarea>
             <button class="w-100 mt-2 btn btn-success btn-sm"">submit !</button>
         </form>
     </div>
@@ -19,4 +19,3 @@
         </div>
     </div>
 </div>
-

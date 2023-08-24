@@ -4,12 +4,12 @@
         <h1 class="text-center">EDIT PAGE!</h1>
     </div>
     <div class="row w-75 border border-info">
-        <form class="d-flex flex-column align-items-center" action="/index/<%= content._id %>?_method=PUT" method="POST">
-            <label class="w-100" for="title">Title</label>
-            <input class="w-100" type="text" id="title" name="board[title]" value="<%= content.title %>" required>
+        <form class="d-flex flex-column align-items-center validated-form" action="/index/<%= content._id %>?_method=PUT" method="POST" novalidate>
+            <label class="form-label w-100" for="title">Title</label>
+            <input class="form-control w-100" type="text" id="title" name="board[title]" value="<%= content.title %>" required>
     
-            <label class="w-100" for="mainText">Text</label>
-            <textarea class="w-100" id="mainText" cols="30" rows="10" name="board[mainText]" required><%= content.mainText %></textarea>
+            <label class="form-label w-100" for="mainText">Text</label>
+            <textarea class="form-control w-100" id="mainText" cols="30" rows="10" name="board[mainText]" required><%= content.mainText %></textarea>
     
             <button class="w-100 mt-2 btn btn-success btn-sm">update content!</button>
         </form>
@@ -20,3 +20,6 @@
         </div>
     </div>
 </div>
+
+
+Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptate eligendi iste enim repellat. Beatae recusandae optio molestiae, nihil ipsam quam voluptas nisi doloribus suscipit? Quibusdam animi laboriosam voluptatem dicta. Nihil!

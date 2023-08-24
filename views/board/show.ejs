@@ -23,9 +23,9 @@
         <% } %>
     </div>
     <div class="row w-75 mb-3 border border-info bg-light" >
-        <form class="d-flex flex-column align-items-center justify-content-center" action="/index/<%= items._id %>/comments" method="POST">
-            <label class="w-100" for="body">Comment</label>
-            <textarea class="w-100 h-50" name="comment[body]" id="body" cols="10" rows="10" required></textarea>
+        <form class="d-flex flex-column align-items-center justify-content-center validated-form" action="/index/<%= items._id %>/comments" method="POST" novalidate>
+            <label class="form label w-100" for="body">Comment</label>
+            <textarea class="form-control w-100 h-50" name="comment[body]" id="body" cols="10" rows="10" required></textarea>
             <button class="w-100 btn btn-success btn-sm">Submit</button>
         </form>
     </div>
