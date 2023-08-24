@@ -11,8 +11,8 @@
         </form>
     </div>
 
-    <div class="card mb-3 w-75">
         <% for (comment of items.comments) { %>
+        <div class="card mb-3 w-75">
             <h5><%= comment.nickname %>nickname</h5>
             <h5><%= comment.body %></h5>
             <h5><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></h5>
@@ -20,8 +20,9 @@
                 <button class="btn btn-outline-danger btn-sm">Delete</button>
             </form>
             <br>
+        </div>
         <% } %>
-    </div>
+    
     <div class="row w-75 mb-3 border border-info bg-light" >
         <form class="d-flex flex-column align-items-center justify-content-center validated-form" action="/index/<%= items._id %>/comments" method="POST" novalidate>
             <label class="form label w-100" for="body">Comment</label>
