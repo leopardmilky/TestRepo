@@ -49,7 +49,6 @@ app.post('/index', catchAsync(async (req, res) => {
 
 app.get('/index/:id', catchAsync(async (req, res) => {
     const board = await Board.findById(req.params.id).populate('comments'); // populate()가 있어야 ref
-    // console.log(board);
     res.render('board/show', {items: board});
 }));
 
