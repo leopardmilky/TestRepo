@@ -1,20 +1,22 @@
 <% layout('layouts/boilerplate') %>
-<div class="container d-flex flex-column align-items-center border border-danger">
+<div class="container d-flex flex-column align-items-center mt-5 border border-danger">
     <div class="row w-75 border border-info">
         <h1 class="text-center">create new content page!</h1>
     </div>
     <div class="row w-75 border border-info">
         <form class="d-flex flex-column align-items-center" action="/index" method="POST">
-            <label class="w-75" for="title">Title</label>
-            <input class="w-75" type="text" id="title" name="board[title]" required>
+            <label class="w-100" for="title">Title</label>
+            <input class="w-100" type="text" id="title" name="board[title]" required>
 
-            <label class="w-75" for="mainText">Text</label>
-            <textarea class="w-75" id="mainText" cols="30" rows="10" name="board[mainText]" required></textarea>
-            <button class="w-75 mt-2">submit !</button>
+            <label class="w-100" for="mainText">Text</label>
+            <textarea class="w-100" id="mainText" cols="30" rows="10" name="board[mainText]" required></textarea>
+            <button class="w-100 mt-2 btn btn-success btn-sm"">submit !</button>
         </form>
     </div>
-    <div class="row w-75 border border-info mt-4">
-        <a class="text-center" href="/index">back to index page</a>
+    <div class="row w-75 justify-content-center border border-info mt-4">
+        <div class="row d-inline w-100 border border-success p-0">
+            <a class="text-center" href="/index">back to index page</a>
+        </div>
     </div>
 </div>
 

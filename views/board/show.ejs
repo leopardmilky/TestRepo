@@ -1,34 +1,32 @@
 <% layout('layouts/boilerplate') %>
-<div class="container d-flex flex-column align-items-center border border-danger">
-    
-        <div class="card mb-3 w-75">
-            <h2>TITLE: <%= items.title %></h2>
-            <h3>TEXT: <%= items.mainText %></h3>
-            <h5>DATE: <%= items.createdAt.getFullYear() %>-<%= String(items.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(items.createdAt.getDate()).padStart(2,'0') %> <%= String(items.createdAt.getHours()).padStart(2,'0') %>:<%= String(items.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(items.createdAt.getSeconds()).padStart(2,'0') %></h5>
-            <a href="/index/<%= items._id %>/edit">EDIT</a>
-            <a href="/index">back to index page</a>
-            <form action="/index/<%= items._id %>?_method=DELETE" method="POST">
-                <button>Delete</button>
-            </form>
-        </div>
-        <div class="row w-75 mb-3 border border-info bg-light" >
-            <form class="d-flex flex-column align-items-center justify-content-center" action="/index/<%= items._id %>/comments" method="POST">
-                <label class="w-100" for="body">Comment</label>
-                <textarea class="w-100 h-50" name="comment[body]" id="body" cols="10" rows="10" required></textarea>
-                <button class="w-100">Submit</button>
-            </form>
-        </div>
-        <div class="card mb-3 w-75">
-            <% for (comment of items.comments) { %>
-                <h5><%= comment.nickname %>nickname</h5>
-                <h5><%= comment.body %></h5>
-                <h5><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></h5>
-                <form action="/index/<%= items._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
-                    <button>Delete</button>
-                </form>
-                <br>
-            <% } %>
-        </div>
+<div class="container d-flex flex-column align-items-center mt-5 border border-danger">
+    <div class="card d-inline mb-3 w-75">
+        <h2>TITLE: <%= items.title %></h2>
+        <h3>TEXT: <%= items.mainText %></h3>
+        <h5>DATE: <%= items.createdAt.getFullYear() %>-<%= String(items.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(items.createdAt.getDate()).padStart(2,'0') %> <%= String(items.createdAt.getHours()).padStart(2,'0') %>:<%= String(items.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(items.createdAt.getSeconds()).padStart(2,'0') %></h5>
+        <a class="" href="/index/<%= items._id %>/edit">EDIT</a>
+        <a href="/index">back to index page</a>
+        <form action="/index/<%= items._id %>?_method=DELETE" method="POST">
+            <button class="btn btn-outline-danger btn-sm">Delete</button>
+        </form>
+    </div>
 
+    <div class="card mb-3 w-75">
+        <% for (comment of items.comments) { %>
+            <h5><%= comment.nickname %>nickname</h5>
+            <h5><%= comment.body %></h5>
+            <h5><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></h5>
+            <form action="/index/<%= items._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                <button class="btn btn-outline-danger btn-sm">Delete</button>
+            </form>
+            <br>
+        <% } %>
+    </div>
+    <div class="row w-75 mb-3 border border-info bg-light" >
+        <form class="d-flex flex-column align-items-center justify-content-center" action="/index/<%= items._id %>/comments" method="POST">
+            <label class="w-100" for="body">Comment</label>
+            <textarea class="w-100 h-50" name="comment[body]" id="body" cols="10" rows="10" required></textarea>
+            <button class="w-100 btn btn-success btn-sm">Submit</button>
+        </form>
+    </div>
 </div>
-
