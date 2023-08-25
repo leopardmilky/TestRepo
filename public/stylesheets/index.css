@@ -42,6 +42,22 @@ table{
     margin: 0px;
 }
 
+#show_title {
+    font-size: larger;
+}
+
+#comments_color {
+    color: red;
+}
+
+#comment_body {
+    font-size: smaller;
+}
+
+.comment_info {
+    font-size: smaller;
+}
+
 /* #index_table {
     width: 70%;
 } */
