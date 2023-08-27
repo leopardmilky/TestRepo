@@ -3,15 +3,22 @@
     <div class="card d-inline mb-3 w-75 py-1 border-start-0 border-end-0 border-bottom-0">
         <p id="show_title" class="m-0 py-3 px-3"><strong><%= items.title %></strong></p>
         <div id="content_info" class="d-flex justify-content-between px-3 py-2 mt-0 border border-start-0 border-end-0 bg-light">
-            <span>nickname</span><span><%= items.createdAt.getFullYear() %>-<%= String(items.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(items.createdAt.getDate()).padStart(2,'0') %> <%= String(items.createdAt.getHours()).padStart(2,'0') %>:<%= String(items.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(items.createdAt.getSeconds()).padStart(2,'0') %></span>
+            <div>
+                <span class="align-middle">nickname</span> <span class="align-middle">| <%= items.createdAt.getFullYear() %>-<%= String(items.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(items.createdAt.getDate()).padStart(2,'0') %> <%= String(items.createdAt.getHours()).padStart(2,'0') %>:<%= String(items.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(items.createdAt.getSeconds()).padStart(2,'0') %></span>
+            </div>
+            <div class="d-flex justify-content-end">
+                <a class="p-1 me-1 btn btn-outline-warning btn-sm" href="/index/<%= items._id %>/edit">수정</a>
+                <form action="/index/<%= items._id %>?_method=DELETE" method="POST">
+                    <button class="p-1 btn btn-outline-danger btn-sm">삭제</button>
+                </form>
+            </div>
+            
         </div>
         <p class="px-3 py-3 m-0"><%= items.mainText %></p>
         <div class="d-flex px-3 justify-content-end border border-start-0 border-end-0 bg-light">
-            <a class="p-1 btn btn-outline-warning btn-sm" href="/index/<%= items._id %>/edit">수정</a>
-            <a class="p-1 btn btn-outline-secondary btn-sm" href="/index">목록</a>
-            <form action="/index/<%= items._id %>?_method=DELETE" method="POST">
-                <button class="btn btn-outline-danger btn-sm">삭제</button>
-            </form>
+            
+            <a class="p-1 me-1 btn btn-outline-secondary btn-sm" href="/index">목록</a>
+            <a class="p-1 btn btn-outline-danger btn-sm" href="#">신고</a>
         </div>
     </div>
     <div class="card d-inline w-75 mb-3 border border-2 border-start-0 border-end-0 border-top-0 bg-light">
