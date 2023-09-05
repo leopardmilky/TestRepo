@@ -9,6 +9,7 @@ const methodOverride = require('method-override');
 const Joi = require('joi'); // Joi => JavaScript 유효성 검사 도구.
 const Board = require('./models/board');
 const Comment = require('./models/comment');
+const { paging } = require('./paging');
 
 const app = express();
 
@@ -33,8 +34,39 @@ app.get('/', (req, res) => {
 });
 
 app.get('/index', catchAsync(async (req, res) => {
-    const board = await Board.find({});
-    res.render('board/index', {contents: board});
+    // console.log(req.query.page);
+    // const board = await Board.find({}).sort({createdAt: -1}).limit(10);
+    // res.render('board/index', {contents: board});
+
+    const { page } = req.query; // (1)
+  try {
+    const totalPost = await Board.countDocuments({}); // (2)
+    if (!totalPost) { // (3)
+      throw Error();
+    }
+    let {
+      startPage,
+      endPage,
+      hidePost,
+      maxPost,
+      totalPage,
+      currentPage
+    } = paging(page, totalPost); // (4)
+    const board = await Board.find({}) // (5)
+      .sort({ createdAt: -1 })
+      .skip(hidePost)
+      .limit(maxPost);
+    res.render("board/index", { // (6)
+      contents: board,
+      currentPage,
+      startPage,
+      endPage,
+      maxPost,
+      totalPage,
+    });
+  } catch (error) {
+    res.render("board/index", { contents: board }); // (7)
+  } 
 }));
 
 app.get('/index/new', (req, res) => {
