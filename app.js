@@ -30,7 +30,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 
 app.get('/', (req, res) => {
-    res.send('hello world!');
+    res.redirect('/index');
 });
 
 app.get('/index', catchAsync(async (req, res) => {
@@ -42,7 +42,7 @@ app.get('/index', catchAsync(async (req, res) => {
     }
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } 
     = paging(page, totalPost);
-    const board = await Board.find({}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost);
+    const board = await Board.find().sort({ createdAt: -1 }).skip(hidePost).limit(maxPost);
     res.render("board/index", {
       contents: board,
       currentPage,
@@ -51,9 +51,9 @@ app.get('/index', catchAsync(async (req, res) => {
       maxPost,
       totalPage,
     });
-  } catch (error) {
-    res.render("board/index", { contents: board });
-  } 
+    } catch (error) {
+        res.render("board/index", { contents: board });
+    }
 }));
 
 app.get('/index/new', (req, res) => {
