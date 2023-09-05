@@ -104,6 +104,14 @@ app.delete('/index/:id/comments/:commentId', catchAsync(async(req, res) => {
     res.redirect(`/index/${id}`);
 }));
 
+app.get('/register', (req, res) => {
+    res.render('users/register');
+});
+
+app.get('/login', (req, res) => {
+    res.render('users/login');
+})
+
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404));
 });

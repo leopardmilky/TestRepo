@@ -15,7 +15,11 @@ const BoardSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "Comment"
         }
-    ]
+    ],
+    author: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
 });
 
 BoardSchema.post('findOneAndDelete', async function(doc){
