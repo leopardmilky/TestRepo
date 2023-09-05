@@ -34,29 +34,16 @@ app.get('/', (req, res) => {
 });
 
 app.get('/index', catchAsync(async (req, res) => {
-    // console.log(req.query.page);
-    // const board = await Board.find({}).sort({createdAt: -1}).limit(10);
-    // res.render('board/index', {contents: board});
-
-    const { page } = req.query; // (1)
+    const { page } = req.query;
   try {
-    const totalPost = await Board.countDocuments({}); // (2)
-    if (!totalPost) { // (3)
+    const totalPost = await Board.countDocuments({});
+    if (!totalPost) {
       throw Error();
     }
-    let {
-      startPage,
-      endPage,
-      hidePost,
-      maxPost,
-      totalPage,
-      currentPage
-    } = paging(page, totalPost); // (4)
-    const board = await Board.find({}) // (5)
-      .sort({ createdAt: -1 })
-      .skip(hidePost)
-      .limit(maxPost);
-    res.render("board/index", { // (6)
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } 
+    = paging(page, totalPost);
+    const board = await Board.find({}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost);
+    res.render("board/index", {
       contents: board,
       currentPage,
       startPage,
@@ -65,7 +52,7 @@ app.get('/index', catchAsync(async (req, res) => {
       totalPage,
     });
   } catch (error) {
-    res.render("board/index", { contents: board }); // (7)
+    res.render("board/index", { contents: board });
   } 
 }));
 
