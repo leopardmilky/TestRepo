@@ -8,7 +8,6 @@ const BoardSchema = new Schema({
         type: Date,
         default: Date.now
     },
-    nickname: String,
     mainText: String,
     comments: [
         {

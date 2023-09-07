@@ -2,14 +2,23 @@ const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
+const session = require('express-session');
+const flash = require('connect-flash');
 const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
+const passport = require('passport');
+const LocalStrategy = require('passport-local');
 // const moment = require('moment');
 const Joi = require('joi'); // Joi => JavaScript 유효성 검사 도구.
 const Board = require('./models/board');
 const Comment = require('./models/comment');
-const { paging } = require('./paging');
+const User = require('./models/user');
+// const { paging } = require('./paging');
+
+const boardRoutes = require('./routes/boards');
+const commentRoutes = require('./routes/comments');
+const userRoutes = require('./routes/users');
 
 const app = express();
 
@@ -24,93 +33,54 @@ db.once("open", () => {
 app.use(express.urlencoded({ extended: true})); // POST 파싱.
 app.use(methodOverride('_method')); // 반드시 '_method'로 쓸 필요없음.
 app.use(express.static(path.join(__dirname, 'public')));
+
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+const sessionConfig = {
+    secret: 'thisistopsecret!',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        httpOnly: true,
+        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60 * 24 * 7
+    }
+}
+
+app.use(session(sessionConfig));
+app.use(flash());
+
+app.use(passport.initialize()); // 정확한 기능은 공식문서 참조.
+app.use(passport.session());
+passport.use(new LocalStrategy({usernameField: 'email'}, User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
+    // res.locals.currentUser = req.user;
+    res.locals.success = req.flash('success');
+    res.locals.error = req.flash('error');
+    next();
+});
+
+
+app.use('/', userRoutes);
+app.use('/index', boardRoutes);
+app.use('/index/:id/comments', commentRoutes);
+
 
 
 app.get('/', (req, res) => {
     res.redirect('/index');
 });
 
-app.get('/index', catchAsync(async (req, res) => {
-    const { page } = req.query;
-  try {
-    const totalPost = await Board.countDocuments({});
-    if (!totalPost) {
-      throw Error();
-    }
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } 
-    = paging(page, totalPost);
-    const board = await Board.find().sort({ createdAt: -1 }).skip(hidePost).limit(maxPost);
-    res.render("board/index", {
-      contents: board,
-      currentPage,
-      startPage,
-      endPage,
-      maxPost,
-      totalPage,
-    });
-    } catch (error) {
-        res.render("board/index", { contents: board });
-    }
-}));
 
-app.get('/index/new', (req, res) => {
-    res.render('board/new');
-});
 
-app.post('/index', catchAsync(async (req, res) => {
-    const board = new Board(req.body.board);
-    await board.save();
-    res.redirect(`/index/${board._id}`);
-}));
 
-app.get('/index/:id', catchAsync(async (req, res) => {
-    const board = await Board.findById(req.params.id).populate('comments'); // populate()가 있어야 ref
-    res.render('board/show', {items: board});
-}));
 
-app.get('/index/:id/edit', catchAsync(async (req, res) => {
-    const board = await Board.findById(req.params.id);
-    res.render('board/edit', {content: board});
-}));
-
-app.put('/index/:id', catchAsync(async (req, res) => {
-    const {id} = req.params;
-    const board = await Board.findByIdAndUpdate(id, req.body.board); // {...req.body.board} ???
-    res.redirect(`/index/${board._id}`);
-}));
-
-app.delete('/index/:id', catchAsync(async (req, res) => {
-    const {id} = req.params;
-    await Board.findByIdAndDelete(id);
-    res.redirect('/index');
-}));
-
-app.post('/index/:id/comments', catchAsync(async (req, res) => {
-    const board = await Board.findById(req.params.id);
-    const comment = new Comment(req.body.comment);
-    board.comments.push(comment);
-    await comment.save();
-    await board.save();
-    res.redirect(`/index/${board._id}`);
-}));
-
-app.delete('/index/:id/comments/:commentId', catchAsync(async(req, res) => {
-    const {id, commentId} = req.params;
-    await Board.findByIdAndUpdate(id, {$pull: {comments: commentId}});
-    await Comment.findByIdAndDelete(req.params.commentId);
-    res.redirect(`/index/${id}`);
-}));
-
-app.get('/register', (req, res) => {
-    res.render('users/register');
-});
-
-app.get('/login', (req, res) => {
-    res.render('users/login');
-})
 
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404));

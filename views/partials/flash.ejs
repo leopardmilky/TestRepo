@@ -1,0 +1,55 @@
+<% if(success && success.length) { %>
+    <div class="d-flex justify-content-center border border-danger">
+        <div class="w-50 alert alert-success alert-dismissible fade show autoClose" role="alert">
+            <%= success %>
+            <button type="button" class="btn-close alertBtn" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="mt-2 progress-bar"><div class="progress" id="success_progress"></div></div>
+        </div>
+    </div>
+    <% } %>
+
+<% if(error && error.length) { %>
+    <div class="pb-2 alert alert-danger alert-dismissible fade show autoClose" role="alert">
+        <%= error %>
+        <button type="button" class="btn-close alertBtn" data-bs-dismiss="alert" aria-label="Close"></button>
+        <div class="mt-2 progress-bar"><div class="progress" id="error_progress"></div></div>
+    </div>
+<% } %>
+    
+    
+<!-- <script>
+    function auto_close() {
+        const autoClose = document.querySelector('.autoClose');
+        autoClose.remove();
+    };
+
+    setTimeout(auto_close, 3100);
+
+    const bar = document.querySelector('#success_progress');
+    const bar2 = document.querySelector('#error_progress');
+        if(bar) {
+            let t = 0;
+            bar.style.width = 0;
+            const barAnimation = setInterval(() => {
+                if(t != 100) {
+                    t++
+                    bar.style.width = t + '%'
+                } else {
+                    clearInterval(barAnimation)
+                }
+            }, 30)
+        };
+        
+        if(bar2) {
+            let t = 0
+            bar2.style.width = 0;
+            const barAnimation = setInterval(() => {
+                if(t != 100) {
+                    t++
+                    bar2.style.width = t + '%'
+                } else {
+                    clearInterval(barAnimation)
+                }
+            }, 30)
+        };
+</script> -->
