@@ -4,15 +4,15 @@ const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const session = require('express-session');
 const flash = require('connect-flash');
-const catchAsync = require('./utils/catchAsync');
+// const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 // const moment = require('moment');
-const Joi = require('joi'); // Joi => JavaScript 유효성 검사 도구.
-const Board = require('./models/board');
-const Comment = require('./models/comment');
+// const Joi = require('joi'); // Joi => JavaScript 유효성 검사 도구.
+// const Board = require('./models/board');
+// const Comment = require('./models/comment');
 const User = require('./models/user');
 // const { paging } = require('./paging');
 
@@ -60,9 +60,9 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
-    // res.locals.currentUser = req.user;
-    res.locals.success = req.flash('success');
-    res.locals.error = req.flash('error');
+    res.locals.signedInUser = req.user;
+    // res.locals.success = req.flash('success');
+    // res.locals.error = req.flash('error');
     next();
 });
 
@@ -76,11 +76,6 @@ app.use('/index/:id/comments', commentRoutes);
 app.get('/', (req, res) => {
     res.redirect('/index');
 });
-
-
-
-
-
 
 app.all('*', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404));

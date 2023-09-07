@@ -7,35 +7,43 @@ const passport = require('passport')
 
 
 
-router.get('/register', (req, res) => {
-    res.render('users/register');
+router.get('/signup', (req, res) => {
+    res.render('users/signup');
 });
 
-router.post('/register', catchAsync(async(req, res, next) => {
+router.post('/signup', catchAsync(async(req, res, next) => {
     try{
         const {email, nickname, password} = req.body;
         console.log(req.body)
         const user = new User({email, nickname});
         const registeredUser = await User.register(user, password);
-        req.login(registeredUser, err => {
+        req.login(registeredUser, err => {  // req.login()  => passport doc 참고
             if(err) return next(err);
             res.redirect('/index');
         });
     } catch (e) {
-        res.redirect('/register');
+        res.redirect('/signup');
     }
 }));
 
-router.get('/login', (req, res) => {
-    res.render('users/login');
+router.get('/signin', (req, res) => {
+    res.render('users/signin');
 });
 
-router.post('/login', passport.authenticate('local', { failureFlash: true, failureRedirect: '/login', keepSessionInfo: true }), (req, res) => {
-    // const redirectUrl = req.session.returnTo || '/index';
-    // console.log(redirectUrl)
-    // delete req.session.returnTo;
+router.post('/signin', passport.authenticate('local', { failureFlash: true, failureRedirect: '/signin', keepSessionInfo: true }), (req, res) => {
+    const redirectUrl = req.session.backTo || '/index';
+    delete req.session.backTo;
     // req.flash('success', 'hello~~');
-    res.redirect('/index');
+    res.redirect(redirectUrl);
+});
+
+router.get('/signout', (req, res) => {
+    req.logout(function (err) {
+        if (err) {
+            return next(err);
+        }
+        res.redirect('/index');
+    });
 });
 
 

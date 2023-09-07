@@ -1,8 +1,8 @@
 <% layout('layouts/boilerplate') %>
 
-<form action="/login" method="POST" class="validated-form" novalidate>
+<form action="/signin" method="POST" class="validated-form" novalidate>
     <div class="d-flex flex-column align-items-center border border-danger">
-        <h1>LOGIN</h1>
+        <h1>SIGN IN</h1>
         <div class="mb-3 w-25 border border-warning">
             <label class="form-label" for="email">Email</label>
             <input class="form-control" type="email" id="email" name="email" required>
@@ -11,6 +11,6 @@
             <label class="form-label" for="password">Password</label>
             <input class="form-control" type="password" id="password" name="password" required>
         </div>
-        <button class="w-25 btn btn-success">login</button>
+        <button class="w-25 btn btn-success">Sign in</button>
     </div>
 </form>

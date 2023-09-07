@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
+
 const catchAsync = require('../utils/catchAsync');
-const { boardSchema } = require('../schemas');
 const ExpressError = require('../utils/ExpressError');
+const { boardSchema } = require('../schemas');
+const { isLoggedIn } = require('../middleware');
+
 const Board = require('../models/board');
 const { paging } = require('../paging');
-
 
 
 const validateBoard = (req, res, next) => {
@@ -42,11 +44,11 @@ router.get('/', catchAsync(async (req, res) => {
     }
 }));
 
-router.get('/new', (req, res) => {
+router.get('/new', isLoggedIn, (req, res) => {
     res.render('board/new');
 });
 
-router.post('/', validateBoard, catchAsync(async (req, res) => {
+router.post('/', isLoggedIn, validateBoard, catchAsync(async (req, res) => {
     const board = new Board(req.body.board);
     await board.save();
     // req.flash('success', '게시글 등록 완료!');
@@ -58,18 +60,18 @@ router.get('/:id', catchAsync(async (req, res) => {
     res.render('board/show', {items: board});
 }));
 
-router.get('/:id/edit', catchAsync(async (req, res) => {
+router.get('/:id/edit', isLoggedIn, catchAsync(async (req, res) => {
     const board = await Board.findById(req.params.id);
     res.render('board/edit', {content: board});
 }));
 
-router.put('/:id', validateBoard, catchAsync(async (req, res) => {
+router.put('/:id', isLoggedIn, validateBoard, catchAsync(async (req, res) => {
     const {id} = req.params;
     const board = await Board.findByIdAndUpdate(id, req.body.board); // {...req.body.board} ???
     res.redirect(`/index/${board._id}`);
 }));
 
-router.delete('/:id', catchAsync(async (req, res) => {
+router.delete('/:id', isLoggedIn, catchAsync(async (req, res) => {
     const {id} = req.params;
     await Board.findByIdAndDelete(id);
     res.redirect('/index');
