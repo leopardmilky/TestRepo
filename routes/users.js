@@ -6,7 +6,6 @@ const passport = require('passport')
 
 
 
-
 router.get('/signup', (req, res) => {
     res.render('users/signup');
 });
@@ -45,6 +44,5 @@ router.get('/signout', (req, res) => {
         res.redirect('/index');
     });
 });
-
 
 module.exports = router;

@@ -72,7 +72,6 @@ app.use('/index', boardRoutes);
 app.use('/index/:id/comments', commentRoutes);
 
 
-
 app.get('/', (req, res) => {
     res.redirect('/index');
 });

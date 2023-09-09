@@ -9,11 +9,13 @@
             <a class="nav-link" href="/index">Home</a>
             <a class="nav-link" href="/index/new">New Content</a>
         </div>
+       
         <div class="navbar-nav">
           <% if(!signedInUser) { %>
           <a class="nav-link" href="/signin">Sign in</a>
           <a class="nav-link" href="/signup">Sign up</a>
           <% } else { %>
+          <span class="p-2 text-white"><%= signedInUser.nickname %></span>
           <a class="nav-link" href="/signout">Sign out</a>
           <% } %>
         </div>
