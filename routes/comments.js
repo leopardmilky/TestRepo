@@ -3,14 +3,14 @@ const router = express.Router({mergeParams: true});
 
 const catchAsync = require('../utils/catchAsync');
 const ExpressError = require('../utils/ExpressError');
-const { validateComment } = require('../middleware');
+const { validateComment, isSignedIn, isCommentAuthor } = require('../middleware');
 
 const Board = require('../models/board');
 const Comment = require('../models/comment');
 
 
 
-router.post('/', validateComment, catchAsync(async (req, res) => {
+router.post('/', isSignedIn, validateComment, catchAsync(async (req, res) => {
     const board = await Board.findById(req.params.id);
     const comment = new Comment(req.body.comment);
     comment.author = req.user._id;
@@ -20,10 +20,10 @@ router.post('/', validateComment, catchAsync(async (req, res) => {
     res.redirect(`/index/${board._id}`);
 }));
 
-router.delete('/:commentId', catchAsync(async(req, res) => {
+router.delete('/:commentId', isSignedIn, isCommentAuthor, catchAsync(async(req, res) => {
     const {id, commentId} = req.params;
     await Board.findByIdAndUpdate(id, {$pull: {comments: commentId}});
-    await Comment.findByIdAndDelete(req.params.commentId);
+    await Comment.findByIdAndDelete(commentId);
     res.redirect(`/index/${id}`);
 }));
 

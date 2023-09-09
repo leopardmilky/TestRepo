@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 const catchAsync = require('../utils/catchAsync');
-const { isLoggedIn, validateBoard, isAuthor } = require('../middleware');
+const { isSignedIn, validateBoard, isAuthor } = require('../middleware');
 
 const Board = require('../models/board');
 const { paging } = require('../paging');
@@ -32,11 +32,11 @@ router.get('/', catchAsync(async (req, res) => {
     }
 }));
 
-router.get('/new', isLoggedIn, (req, res) => {
+router.get('/new', isSignedIn, (req, res) => {
     res.render('board/new');
 });
 
-router.post('/', isLoggedIn, validateBoard, catchAsync(async (req, res) => {
+router.post('/', isSignedIn, validateBoard, catchAsync(async (req, res) => {
     const board = new Board(req.body.board);
     board.author = req.user._id;
     await board.save();
@@ -52,7 +52,7 @@ router.get('/:id', catchAsync(async (req, res) => {
     res.render('board/show', {items: board});
 }));
 
-router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
+router.get('/:id/edit', isSignedIn, isAuthor, catchAsync(async (req, res) => {
     const {id} = req.params;
     const board = await Board.findById(id);
     if(!board){
@@ -61,13 +61,13 @@ router.get('/:id/edit', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
     res.render('board/edit', {content: board});
 }));
 
-router.put('/:id', isLoggedIn, isAuthor, validateBoard, catchAsync(async (req, res) => {
+router.put('/:id', isSignedIn, isAuthor, validateBoard, catchAsync(async (req, res) => {
     const {id} = req.params;
     const board = await Board.findByIdAndUpdate(id, req.body.board); // {...req.body.board} ???
     res.redirect(`/index/${board._id}`);
 }));
 
-router.delete('/:id', isLoggedIn, isAuthor, catchAsync(async (req, res) => {
+router.delete('/:id', isSignedIn, isAuthor, catchAsync(async (req, res) => {
     const {id} = req.params;
     await Board.findByIdAndDelete(id);
     res.redirect('/index');
