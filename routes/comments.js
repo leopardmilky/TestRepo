@@ -20,6 +20,14 @@ router.post('/', isSignedIn, validateComment, catchAsync(async (req, res) => {
     res.redirect(`/index/${board._id}`);
 }));
 
+router.get('/:commentId/edit', catchAsync(async (req, res) => {
+    console.log("===========================================");
+    console.log(req.params);
+    const {id, commentId} = req.params;
+    
+    
+}));
+
 router.delete('/:commentId', isSignedIn, isCommentAuthor, catchAsync(async(req, res) => {
     const {id, commentId} = req.params;
     await Board.findByIdAndUpdate(id, {$pull: {comments: commentId}});
