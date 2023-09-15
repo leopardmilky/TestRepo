@@ -27,7 +27,7 @@ router.put('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req, re
     console.log("router_comment._id: ", comment._id)
     console.log("req.body: ", req.body);
     console.log("req.params: ", req.params);
-    res.send("why WHY W.H.Y");
+    res.send();
 }));
 
 router.delete('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req, res) => {

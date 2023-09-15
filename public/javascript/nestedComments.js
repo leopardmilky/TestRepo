@@ -103,26 +103,28 @@ document.addEventListener('click', function(event){  // 답변,수정 버튼 관
 });
 
 
-document.addEventListener('click', async function(event){
+document.addEventListener('click', async function(event){ // 댓글 수정 관련`
     const sbm = event.target.classList.contains('sbm');
-    // console.log(event)
     if(sbm){
         const pageId = event.target.parentElement.parentElement.previousElementSibling.firstElementChild.getAttribute('data-page-id');
         const commentId = event.target.parentElement.parentElement.previousElementSibling.firstElementChild.getAttribute('data-reply-comment');
         const editText = event.target.parentElement.previousElementSibling.value;
-        // console.log(editText)
-        console.log("event: ", event);
+
         const config = {comment:{body: editText}}
-        // console.log(config)
-        // event.preventDefault();
-        const axiosData = await axios.put(`/index/${pageId}/comments/${commentId}`, config)
-        .then((res) => {
-            console.log("res: ", res)
-            closeBox();
+
+        await axios.put(`/index/${pageId}/comments/${commentId}`, config)
+        .then((res) => { 
+            closeBox(); // 등록 박스 닫기
+            document.querySelector(`.comment_body[data-comment-body="${commentId}"]`).innerHTML=editText; // 텍스트 업데이트
+
+            const editCommentBtn = document.querySelector(`[data-comment-edit="${commentId}"]`); // 수정버튼 토글 복구
+            editCommentBtn.removeAttribute('aria-pressed');
+            editCommentBtn.removeAttribute('class');
+            editCommentBtn.setAttribute('aria-pressed', false);
+            editCommentBtn.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1');
         })
         .catch((err) => {console.log("err: ", err)})
         
-        console.log("axiosData: ", axiosData)
     }
 });
 
