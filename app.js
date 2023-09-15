@@ -19,6 +19,7 @@ const User = require('./models/user');
 const boardRoutes = require('./routes/boards');
 const commentRoutes = require('./routes/comments');
 const userRoutes = require('./routes/users');
+const nestedCommentRoutes = require('./routes/nestedComments');
 
 const app = express();
 
@@ -33,6 +34,7 @@ db.once("open", () => {
 app.use(express.urlencoded({ extended: true})); // POST 파싱.
 app.use(methodOverride('_method')); // 반드시 '_method'로 쓸 필요없음.
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json())
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
@@ -70,6 +72,7 @@ app.use((req, res, next) => {
 app.use('/', userRoutes);
 app.use('/index', boardRoutes);
 app.use('/index/:id/comments', commentRoutes);
+app.use('/index/:id/comments/:commentId', nestedCommentRoutes)
 
 
 app.get('/', (req, res) => {

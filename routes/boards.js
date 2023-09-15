@@ -40,7 +40,6 @@ router.post('/', isSignedIn, validateBoard, catchAsync(async (req, res) => {
     const board = new Board(req.body.board);
     board.author = req.user._id;
     await board.save();
-    // req.flash('success', '게시글 등록 완료!');
     res.redirect(`/index/${board._id}`);
 }));
 

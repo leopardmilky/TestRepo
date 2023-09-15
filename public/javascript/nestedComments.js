@@ -3,7 +3,6 @@ function closeBox(event) {
 
     const editCommentWrap = document.querySelector('.editCommentWrap');
     const replyCommentWrap = document.querySelector('.replyCommentWrap');
-
     const findActive = document.querySelectorAll('.active');
 
     if(findActive.length > 1){ // 답변/수정 버튼 클릭시 이전에 눌렀던 버튼 비활성화.
@@ -36,14 +35,15 @@ function commentEditBox(event){
     const b = document.createElement('label');
     const c = document.createElement('textarea');
     const d = document.createElement('div');
-    const e = document.createElement('span');
+    const e = document.createElement('button');
 
     a.setAttribute('class', 'mb-3 px-3 editCommentWrap');
     b.setAttribute('class', 'form label w-100');
     c.setAttribute('class', 'form-control');
+    c.setAttribute('name', 'comment[body]');
     c.innerHTML = commentText;
     d.setAttribute('class', 'd-flex justify-content-end mt-1');
-    e.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1');
+    e.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1 sbm editSubmit');
     e.innerHTML = "등록";
 
     const atag = parentEle.appendChild(a);
@@ -62,13 +62,13 @@ function commentReplyBox(event) {
     const b = document.createElement('label');
     const c = document.createElement('textarea');
     const d = document.createElement('div');
-    const e = document.createElement('span');
+    const e = document.createElement('button');
 
     a.setAttribute('class', 'mb-3 px-3 replyCommentWrap');
     b.setAttribute('class', 'form label w-100');
     c.setAttribute('class', 'form-control');
     d.setAttribute('class', 'd-flex justify-content-end mt-1');
-    e.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1');
+    e.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1 sbm replySubmit');
     e.innerHTML = "등록";
 
     const atag = parentEle.appendChild(a);
@@ -100,5 +100,57 @@ document.addEventListener('click', function(event){  // 답변,수정 버튼 관
             closeBox();
         }
     }
-
 });
+
+
+document.addEventListener('click', async function(event){
+    const sbm = event.target.classList.contains('sbm');
+    // console.log(event)
+    if(sbm){
+        const pageId = event.target.parentElement.parentElement.previousElementSibling.firstElementChild.getAttribute('data-page-id');
+        const commentId = event.target.parentElement.parentElement.previousElementSibling.firstElementChild.getAttribute('data-reply-comment');
+        const editText = event.target.parentElement.previousElementSibling.value;
+        // console.log(editText)
+        console.log("event: ", event);
+        const config = {comment:{body: editText}}
+        // console.log(config)
+        // event.preventDefault();
+        const axiosData = await axios.put(`/index/${pageId}/comments/${commentId}`, config)
+        .then((res) => {
+            console.log("res: ", res)
+            closeBox();
+        })
+        .catch((err) => {console.log("err: ", err)})
+        
+        console.log("axiosData: ", axiosData)
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// let commentReplyBtn = document.querySelectorAll('.commentReplyBtn'); // 근데 commentReplyBtn 클래스는 나중에 사라지는데 어떻게 계속 작동하지? 처음 로딩시 변수에 다 저장되서 그런건가..
+// commentReplyBtn.forEach((target) => target.addEventListener('click', function(){
+//     funcc(target)
+// }))
+
+// let commentEditBtn = document.querySelectorAll('.commentEditBtn');
+// commentEditBtn.forEach((target) => target.addEventListener('click', function(){
+//     funcc(target)
+// }))
+
+// function funcc(target){
+//     console.log(target.parentElement.previousElementSibling.firstElementChild)
+    
+// }

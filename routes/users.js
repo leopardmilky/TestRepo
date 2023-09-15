@@ -32,7 +32,6 @@ router.get('/signin', (req, res) => {
 router.post('/signin', passport.authenticate('local', { failureFlash: true, failureRedirect: '/signin', keepSessionInfo: true }), (req, res) => {
     const redirectUrl = req.session.backTo || '/index';
     delete req.session.backTo;
-    // req.flash('success', 'hello~~');
     res.redirect(redirectUrl);
 });
 

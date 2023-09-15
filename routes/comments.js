@@ -10,7 +10,7 @@ const Comment = require('../models/comment');
 
 
 
-router.post('/', isSignedIn, validateComment, catchAsync(async (req, res) => {
+router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {
     const board = await Board.findById(req.params.id);
     const comment = new Comment(req.body.comment);
     comment.author = req.user._id;
@@ -20,15 +20,17 @@ router.post('/', isSignedIn, validateComment, catchAsync(async (req, res) => {
     res.redirect(`/index/${board._id}`);
 }));
 
-router.get('/:commentId/edit', catchAsync(async (req, res) => {
-    console.log("===========================================");
-    console.log(req.params);
+router.put('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req, res) => {
     const {id, commentId} = req.params;
-    
-    
+    const comment = await Comment.findByIdAndUpdate(commentId, req.body.comment);
+    console.log("router_id: ", id)
+    console.log("router_comment._id: ", comment._id)
+    console.log("req.body: ", req.body);
+    console.log("req.params: ", req.params);
+    res.send("why WHY W.H.Y");
 }));
 
-router.delete('/:commentId', isSignedIn, isCommentAuthor, catchAsync(async(req, res) => {
+router.delete('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req, res) => {
     const {id, commentId} = req.params;
     await Board.findByIdAndUpdate(id, {$pull: {comments: commentId}});
     await Comment.findByIdAndDelete(commentId);
