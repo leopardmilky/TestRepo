@@ -28,7 +28,6 @@ function closeBox(event) {
 function commentEditBox(event){
 
     const commentText = event.target.parentElement.previousElementSibling.firstElementChild.innerHTML;
-    // const commentText = event.target.parentElement.previousElementSibling.children[0].innerHTML;
     const parentEle = event.target.parentElement.parentElement;
 
     const a = document.createElement('div');
@@ -104,15 +103,15 @@ document.addEventListener('click', function(event){  // 답변,수정 버튼 관
 
 
 document.addEventListener('click', async function(event){ // 댓글 수정 관련`
-    const sbm = event.target.classList.contains('sbm');
-    if(sbm){
+    const editSubmit = event.target.classList.contains('editSubmit');
+    if(editSubmit){
         const pageId = event.target.parentElement.parentElement.previousElementSibling.firstElementChild.getAttribute('data-page-id');
         const commentId = event.target.parentElement.parentElement.previousElementSibling.firstElementChild.getAttribute('data-reply-comment');
         const editText = event.target.parentElement.previousElementSibling.value;
 
-        const config = {comment:{body: editText}}
+        const data = {comment:{body: editText}}
 
-        await axios.put(`/index/${pageId}/comments/${commentId}`, config)
+        await axios.put(`/index/${pageId}/comments/${commentId}`, data)
         .then((res) => { 
             closeBox(); // 등록 박스 닫기
             document.querySelector(`.comment_body[data-comment-body="${commentId}"]`).innerHTML=editText; // 텍스트 업데이트
@@ -128,31 +127,3 @@ document.addEventListener('click', async function(event){ // 댓글 수정 관�
     }
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// let commentReplyBtn = document.querySelectorAll('.commentReplyBtn'); // 근데 commentReplyBtn 클래스는 나중에 사라지는데 어떻게 계속 작동하지? 처음 로딩시 변수에 다 저장되서 그런건가..
-// commentReplyBtn.forEach((target) => target.addEventListener('click', function(){
-//     funcc(target)
-// }))
-
-// let commentEditBtn = document.querySelectorAll('.commentEditBtn');
-// commentEditBtn.forEach((target) => target.addEventListener('click', function(){
-//     funcc(target)
-// }))
-
-// function funcc(target){
-//     console.log(target.parentElement.previousElementSibling.firstElementChild)
-    
-// }
