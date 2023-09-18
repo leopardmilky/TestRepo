@@ -101,8 +101,7 @@ document.addEventListener('click', function(event){  // 답변,수정 버튼 관
     }
 });
 
-
-document.addEventListener('click', async function(event){ // 댓글 수정 관련`
+document.addEventListener('click', async function(event){ // 댓글 수정 관련
     const editSubmit = event.target.classList.contains('editSubmit');
     if(editSubmit){
         const pageId = event.target.parentElement.parentElement.previousElementSibling.firstElementChild.getAttribute('data-page-id');
@@ -128,15 +127,3 @@ document.addEventListener('click', async function(event){ // 댓글 수정 관�
 });
 
 
-// document.addEventListener('click', async function(event){
-//     const signInBtn = event.target.classList.contains('signInBtn');
-//     if(signInBtn){
-//         // event.preventDefault();
-//         // console.log(event.target.attributes.class.ownerDocument.location.pathname);
-//         const targetUrl = event.target.attributes.class.ownerDocument.location.pathname;
-//         const data = {data: targetUrl}
-//         await axios.post('/signin', data)
-//         .then((res) => {console.log(res)})
-//         .catch((err) => {console.log(err)})
-//     }
-// });

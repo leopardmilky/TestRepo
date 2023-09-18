@@ -20,6 +20,7 @@ const boardRoutes = require('./routes/boards');
 const commentRoutes = require('./routes/comments');
 const userRoutes = require('./routes/users');
 const nestedCommentRoutes = require('./routes/nestedComments');
+// const urlParse = require('url')
 
 const app = express();
 
@@ -62,6 +63,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use((req, res, next) => {
+    // res.locals.previousUrl = urlParse.parse(urlStr, true);
     res.locals.signedInUser = req.user;
     // res.locals.success = req.flash('success');
     // res.locals.error = req.flash('error');
