@@ -127,3 +127,16 @@ document.addEventListener('click', async function(event){ // 댓글 수정 관�
     }
 });
 
+
+// document.addEventListener('click', async function(event){
+//     const signInBtn = event.target.classList.contains('signInBtn');
+//     if(signInBtn){
+//         // event.preventDefault();
+//         // console.log(event.target.attributes.class.ownerDocument.location.pathname);
+//         const targetUrl = event.target.attributes.class.ownerDocument.location.pathname;
+//         const data = {data: targetUrl}
+//         await axios.post('/signin', data)
+//         .then((res) => {console.log(res)})
+//         .catch((err) => {console.log(err)})
+//     }
+// });

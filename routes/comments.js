@@ -23,10 +23,6 @@ router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {
 router.put('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req, res) => {
     const {id, commentId} = req.params;
     const comment = await Comment.findByIdAndUpdate(commentId, req.body.comment);
-    console.log("router_id: ", id)
-    console.log("router_comment._id: ", comment._id)
-    console.log("req.body: ", req.body);
-    console.log("req.params: ", req.params);
     res.send();
 }));
 

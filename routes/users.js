@@ -26,13 +26,20 @@ router.post('/signup', catchAsync(async(req, res, next) => {
 }));
 
 router.get('/signin', (req, res) => {
-    res.render('users/signin');
+    const {redirectUrl} = req.query
+    res.render('users/signin', {redirectUrl});
 });
 
 router.post('/signin', passport.authenticate('local', { failureFlash: true, failureRedirect: '/signin', keepSessionInfo: true }), (req, res) => {
-    const redirectUrl = req.session.backTo || '/index';
-    delete req.session.backTo;
-    res.redirect(redirectUrl);
+    const Url = req.query.redirectUrl;
+    if(Url){
+        const redirectUrl = req.query.redirectUrl;
+        res.redirect(redirectUrl);
+    } else {
+        const redirectUrl = req.session.backTo || '/index';
+        delete req.session.backTo;
+        res.redirect(redirectUrl);
+    }
 });
 
 router.get('/signout', (req, res) => {
