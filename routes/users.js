@@ -1,11 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { signOut } = require('../middleware');
 
 const User = require('../models/user');
 const passport = require('passport')
-
 
 
 router.get('/signup', (req, res) => {
@@ -15,7 +13,6 @@ router.get('/signup', (req, res) => {
 router.post('/signup', catchAsync(async(req, res, next) => {
     try{
         const {email, nickname, password} = req.body;
-        console.log(req.body)
         const user = new User({email, nickname});
         const registeredUser = await User.register(user, password);
         req.login(registeredUser, err => {  // req.login()  => passport doc 참고

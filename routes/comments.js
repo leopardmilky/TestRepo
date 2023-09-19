@@ -13,7 +13,13 @@ const Comment = require('../models/comment');
 router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {
     const board = await Board.findById(req.params.id);
     const comment = new Comment(req.body.comment);
+
+    // console.log("commentPOST_req.rapams: ", req.params);
+    // console.log("comment.POST_req.body: ", req.body);
+    // console.log("comment.POST_req.user: ", req.user);
+
     comment.author = req.user._id;
+    comment.board = req.params.id;
     board.comments.push(comment);
     await comment.save();
     await board.save();

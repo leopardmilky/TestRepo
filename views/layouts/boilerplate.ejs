@@ -16,18 +16,17 @@
     <script src="/javascript/validateForms.js"></script>
 
     <script>
-    document.addEventListener('click', function(event){  // navbar의 signin, signout
+    document.addEventListener('click', function(event){  // navbar의 signin, signout버튼
         const signOutBtn = event.target.classList.contains('signOutBtn');
         const signInBtn = event.target.classList.contains('signInBtn');
         
-        if(signOutBtn){ // signout
-            console.log("pathname: ", event.target.attributes.class.ownerDocument.location.pathname);
-            const targetUrl = event.target.attributes.class.ownerDocument.location.pathname;
+        if(signOutBtn){ // navbar signout버튼
+            const targetUrl = event.target.attributes.class.ownerDocument.location.pathname; // 현재 페이지URL정보 가져옴
             window.location.href = `/signout?redirectUrl=${targetUrl}`
         }
 
-        if(signInBtn){ // signin
-            const targetUrl = event.target.attributes.class.ownerDocument.location.pathname;
+        if(signInBtn){ // navbar signin버튼
+            const targetUrl = event.target.attributes.class.ownerDocument.location.pathname; 
             window.location.href = `/signin?redirectUrl=${targetUrl}`
         }
     });

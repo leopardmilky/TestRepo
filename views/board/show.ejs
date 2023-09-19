@@ -1,21 +1,21 @@
 <% layout('layouts/boilerplate') %>
 <div class="container d-flex flex-column align-items-center mt-5">
     <div class="card d-inline mb-3 w-75 py-1 border-start-0 border-end-0 border-bottom-0">
-        <p id="show_title" class="m-0 py-3 px-3"><strong><%= items.title %></strong></p>
+        <p id="show_title" class="m-0 py-3 px-3"><strong><%= boardItems.title %></strong></p>
         <div id="content_info" class="d-flex justify-content-between px-3 py-2 mt-0 border border-start-0 border-end-0 bg-light">
             <div>
-                <span class="align-middle"><%= items.author.nickname %>&nbsp;&nbsp;</span><span class="align-middle">|&nbsp;&nbsp;<%= items.createdAt.getFullYear() %>-<%= String(items.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(items.createdAt.getDate()).padStart(2,'0') %> <%= String(items.createdAt.getHours()).padStart(2,'0') %>:<%= String(items.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(items.createdAt.getSeconds()).padStart(2,'0') %></span>
+                <span class="align-middle"><%= boardItems.author.nickname %>&nbsp;&nbsp;</span><span class="align-middle">|&nbsp;&nbsp;<%= boardItems.createdAt.getFullYear() %>-<%= String(boardItems.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(boardItems.createdAt.getDate()).padStart(2,'0') %> <%= String(boardItems.createdAt.getHours()).padStart(2,'0') %>:<%= String(boardItems.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(boardItems.createdAt.getSeconds()).padStart(2,'0') %></span>
             </div>
-            <% if(signedInUser && items.author.equals(signedInUser._id)) { %>
+            <% if(signedInUser && boardItems.author.equals(signedInUser._id)) { %>
             <div class="d-flex justify-content-end">
-                <a class="p-1 me-1 btn btn-outline-warning btn-sm" href="/index/<%= items._id %>/edit">수정</a>
-                <form action="/index/<%= items._id %>?_method=DELETE" method="POST">
+                <a class="p-1 me-1 btn btn-outline-warning btn-sm" href="/index/<%= boardItems._id %>/edit">수정</a>
+                <form action="/index/<%= boardItems._id %>?_method=DELETE" method="POST">
                     <button class="p-1 btn btn-outline-danger btn-sm">삭제</button>
                 </form>
             </div>
             <% } %>
         </div>
-        <p class="px-3 py-3 m-0" style="white-space: pre-wrap;"><%= items.mainText %></p>
+        <p class="px-3 py-3 m-0" style="white-space: pre-wrap;"><%= boardItems.mainText %></p>
         <div class="d-flex px-3 justify-content-end border border-start-0 border-end-0 bg-light">
             
             <a class="p-1 me-1 btn btn-outline-secondary btn-sm" href="/index">목록</a>
@@ -23,9 +23,9 @@
         </div>
     </div>
     <div class="card d-inline w-75 mb-3 border border-2 border-start-0 border-end-0 border-top-0 bg-light">
-        <p class="m-0 mt-1 py-0 px-3"><strong id="comments_color"><%= items.comments.length %></strong> Comments</p>
+        <p class="m-0 mt-1 py-0 px-3"><strong id="comments_color"><%= boardItems.comments.length %></strong> Comments</p>
     </div>
-        <% for (comment of items.comments) { %>
+    <% for (comment of commentItems) { %>
         <div class="card mb-3 w-75 border-start-0 border-end-0 border-top-0 commentWrap">
             <div class="d-flex justify-content-between px-3 mb-3 comment_info">
                 <span><b><%= comment.author.nickname %></b></span>
@@ -36,11 +36,11 @@
             </div> 
             <div class="d-flex justify-content-end px-3 mb-3">
                 <% if(signedInUser) { %>
-                    <button class="btn btn-outline-secondary btn-sm p-1 me-1 commentReplyBtn" data-bs-toggle="button" data-page-id="<%= items._id %>" data-reply-comment="<%= comment._id %>">답변</button>
+                    <button class="btn btn-outline-secondary btn-sm p-1 me-1 commentReplyBtn" data-bs-toggle="button" data-page-id="<%= boardItems._id %>" data-reply-comment="<%= comment._id %>">답변</button>
                 <% } %>
                 <% if (signedInUser && comment.author.equals(signedInUser._id)) { %>
-                    <button class="btn btn-outline-secondary btn-sm p-1 me-1 commentEditBtn" data-bs-toggle="button" data-page-id="<%= items._id %>" data-comment-edit="<%= comment._id %>">수정</button>
-                    <form action="/index/<%= items._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
+                    <button class="btn btn-outline-secondary btn-sm p-1 me-1 commentEditBtn" data-bs-toggle="button" data-page-id="<%= boardItems._id %>" data-comment-edit="<%= comment._id %>">수정</button>
+                    <form action="/index/<%= boardItems._id %>/comments/<%= comment._id %>?_method=DELETE" method="POST">
                         <button class="btn btn-outline-danger btn-sm p-1">삭제</button>
                     </form>
                 <% } else { %>
@@ -66,14 +66,19 @@
                 </form>
             </div> -->
         </div>
-        <% } %>
+    <% } %>
+
+
+    
+
+
     <div class="row w-75 mb-3 bg-light" >
         <% if(!signedInUser) { %>
             <div class="p-5 d-flex flex-column align-items-center justify-content-center">
-                <span>댓글 작성은 <a class="signInBtn" href="/signin?redirectUrl=/index/<%= items.id %>">로그인</a>이 필요합니다.</span>
+                <span>댓글 작성은 <a class="signInBtn" href="/signin?redirectUrl=/index/<%= boardItems.id %>">로그인</a>이 필요합니다.</span>
             </div>
         <% } else { %>
-            <form class="d-flex flex-column align-items-center justify-content-center validated-form" action="/index/<%= items._id %>/comments" method="POST" novalidate>
+            <form class="d-flex flex-column align-items-center justify-content-center validated-form" action="/index/<%= boardItems._id %>/comments" method="POST" novalidate>
                 <label class="form label w-100" for="body">Comment</label>
                 <textarea class="form-control" name="comment[body]" id="body" cols="10" rows="5" required></textarea>
                 <button class="w-100 btn btn-success btn-sm">등록</button>
