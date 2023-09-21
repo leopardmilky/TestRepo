@@ -51,11 +51,11 @@ table{
     color: red;
 }
 
-#comment_body {
+#comment_body, #commentReply_body {
     font-size: smaller;
 }
 
-.comment_info {
+.comment_info, .nestedComment_info {
     font-size: smaller;
 }
 
@@ -81,4 +81,8 @@ table{
 
 #error_progress {
     background-color: darkred;
+}
+
+.nestedCommentInnerWrap {
+    width: 95%;
 }

@@ -10,10 +10,18 @@
                 <th class="col-1 head wordoverflow">조회</th>
             </thead>
             <tbody>
+
                 <% for (let content of contents) { %>
                 <tr id="tr">
                     <td class="body wordoverflow">333</td>
-                    <td class="py-2" onclick="location.href='/index/<%= content._id %>'"><p id="table_title"><%= content.title %> <b style="color: crimson;"><%= content.comments.length %></b></p></td>
+                    <td class="py-2" onclick="location.href='/index/<%= content._id %>'">
+                        <p id="table_title"><%= content.title %> <b style="color: crimson;">
+                            <% let sum = 0 %>
+                            <% for(let i = 0; i < content.comments.length; i++) { %>
+                                <% sum += content.comments[i].nestedComments.length %>
+                            <% } %>                            
+                            <%= sum + content.comments.length %>
+                        </b></p></td>
                     <td class="body wordoverflow"><%= content.author.nickname %></td>
                     <td class="body wordoverflow">
                         <%= content.createdAt.getFullYear() %>-<%= String(content.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(content.createdAt.getDate()).padStart(2,'0') %> <%= String(content.createdAt.getHours()).padStart(2,'0') %>:<%= String(content.createdAt.getMinutes()).padStart(2,'0') %>
@@ -34,9 +42,9 @@
             <nav class="" aria-label="Page navigation example">
                 <ul class="pagination pagination-sm">
                     <% if(startPage > maxPost) { %>
-                        <li class="page-item"><a class="page-link" href="/index?page=<%= startPage-1 %>">Previous</a></li>
+                        <li class="page-item"><a class="page-link" href="/index?page=<%= startPage-1 %>">Prev</a></li>
                     <% } else { %>
-                        <li class="page-item disabled"><a class="page-link" href="javascript:void(0);">Previous</a></li>
+                        <li class="page-item disabled"><a class="page-link" href="javascript:void(0);">Prev</a></li>
                     <% } %>
                     <% for(let i = startPage; i <= endPage; i++) { %>
                         <% if(i === currentPage) { %>

@@ -11,10 +11,12 @@ const CommentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    nestedComments:{
-        type: Schema.Types.ObjectId,
-        ref: 'NestedComment'
-    },
+    nestedComments: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'NestedComment'
+        }
+    ],
     board:{
         type: Schema.Types.ObjectId,
         ref: 'Board'
