@@ -137,7 +137,7 @@ function commentReply(event, replyText) { // 대댓글 생성
 }
 
 async function reloadCommentReply(){
-    
+    await axios.get()
 }
 
 document.addEventListener('click', function(event){  // 답변,수정 버튼 클릭
