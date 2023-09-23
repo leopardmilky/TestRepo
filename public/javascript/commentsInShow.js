@@ -136,8 +136,15 @@ function commentReply(event, replyText) { // 대댓글 생성
 
 }
 
-async function reloadCommentReply(){
-    await axios.get()
+async function reloadCommentReply(pageId, commentId){
+    // console.log(pageId);
+    const result = await axios.get(`/index/${pageId}/comments/${commentId}`);
+    // console.log("GET_RESULT@@@@@@@@@@@@@@@@: ", result);
+    // console.log("GET_RESULT_DATA@@@@@@@@@@@@@@@@: ", result.data);
+    // const result2 = result.data.document.querySelector('.allNestedCommentWrap');
+    // console.log("RESULT22222222222222: ", result2);
+    console.log("reloadCommentReply@@@@@@@@@@@: ",result.data);
+    // res.json();
 }
 
 document.addEventListener('click', function(event){  // 답변,수정 버튼 클릭
@@ -202,16 +209,22 @@ document.addEventListener('click', async function(event){   // 댓글 답변등�
 
         await axios.post(url, data)
         .then((res) => {
-            commentReply(event, replyText)
+            commentReply(event, replyText);
             const commentReplyBtn = document.querySelector(`[data-reply-comment="${commentId}"]`); // 답변버튼 토글 복구
             commentReplyBtn.removeAttribute('aria-pressed');
             commentReplyBtn.removeAttribute('class');
             commentReplyBtn.setAttribute('aria-pressed', false);
             commentReplyBtn.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1');
+            // reloadCommentReply(pageId)
             closeBox();
-            // reloadCommentReply()
+            reloadCommentReply(pageId, commentId)        
         })
         .catch((err) => { console.log("err: ", err) })
+        // console.log("RESULT@@@@@@@@@@@@@@@@@@: ", result);
+        // console.log("RESULT_DATA@@@@@@@@@@@@@@@@@@: ", result.data);
+        
+
+
     }
 });
 
