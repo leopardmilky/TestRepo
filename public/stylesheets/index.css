@@ -51,11 +51,11 @@ table{
     color: red;
 }
 
-#comment_body, #commentReply_body {
+#commentBody, #nestedCommentBody {
     font-size: smaller;
 }
 
-.comment_info, .nestedComment_info {
+.commentInfoWrap, .nestedCommentInfoWrap {
     font-size: smaller;
 }
 

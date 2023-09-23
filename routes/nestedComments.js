@@ -16,13 +16,16 @@ router.get('/', catchAsync (async(req, res) => {
     console.log('GET_QUERY??????: ', req.query)
     console.log('GET_BODY??????: ', req.body)
     console.log('GET_USER??????: ', req.user)
-
+    console.log('GET_USER??????: ', req.user)
+    req.session.userInfo = req.user;
+    console.log("req.session????????????: ", req.session);
     // const comment = await Comment.find({board:req.params.id});
     // console.log("GET_COMMENT_RESULT:", comment);
-    const comment = await Comment.findById(req.params.commentId).populate({path: 'nestedComments', populate: {path: 'author'}});
+    // const comment = await Comment.findById(req.params.commentId).populate({path: 'nestedComments', populate: {path: 'author'}});
+    const comment = await Board.findById(req.params.id).populate({path:'comments', populate:{path: 'nestedComments', populate: {path: 'author'}}}).populate({path:'comments', populate:{path: 'author'}});
     console.log("GET_COMMENT.ID_RESULT:", comment);
     console.log("nestedComment_AUTHOR: ", comment.nestedComments);
-    res.json();
+    res.json(comment);
 }));
 
 router.post('/', catchAsync( async(req, res) => {
