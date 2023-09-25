@@ -102,25 +102,12 @@ function commentReply(event, replyText) { // 대댓글 생성
     g.setAttribute('class', 'd-flex justify-content-between px-3');
     h.setAttribute('id', 'commentReply_body');
     h.setAttribute('style', 'white-space: pre-wrap;');
-    // h.setAttribute('data-commentReply-body', '')
     h.innerHTML = replyText;
     i.setAttribute('class', 'd-flex justify-content-end px-3 mb-1');
     j.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1 nestedCommentDelete');
     j.innerHTML = "삭제";
     k.setAttribute('class', 'btn btn-outline-danger btn-sm p-1 nestedCommentReport');
     k.innerHTML = "신고";
-
-    // const atag = parentEle.insertAdjacentElement('beforeEnd', a);
-    // const btag = atag.insertAdjacentElement('afterbegin', b);
-    // const ctag = btag.insertAdjacentElement('afterbegin' ,c);
-    // const dtag = ctag.insertAdjacentElement('afterbegin' ,d);
-    // const etag = dtag.insertAdjacentElement('afterbegin' ,e);
-    // const ftag = dtag.insertAdjacentElement('afterend' ,f);
-    // const gtag = ctag.insertAdjacentElement('afterend' ,g);
-    // const htag = gtag.insertAdjacentElement('afterbegin' ,h);
-    // const itag = gtag.insertAdjacentElement('afterend' ,i);
-    // const jtag = itag.insertAdjacentElement('afterbegin' ,j);
-    // const ktag = itag.insertAdjacentElement('beforeEnd' ,k);
 
     const atag = parentEle.appendChild(a);
     const btag = atag.appendChild(b);
@@ -136,118 +123,74 @@ function commentReply(event, replyText) { // 대댓글 생성
 
 }
 
-function signedInUserInfo(){
-    console.log("signedInUserInfo???????????????: ", req.session.userInfo) 
-}
-
 async function reloadCommentReply(pageId, commentId){  // 댓글 페이지 리로드
+
     const result = await axios.get(`/index/${pageId}/comments/${commentId}`);
-    // console.log("reloadCommentReply@@@@@@@@@@@: ",result.data);
+    const userInfo = await axios.get('/currentUser');
+    const currentUser = userInfo.data;
+
+    document.querySelector('.allCommentsWrap').remove();
     
+    // 불러온 모든댓글 페이지에 다시 로드...
+    const allCommentsWrap = document.createElement('div');
+    allCommentsWrap.setAttribute('class', 'd-flex flex-column w-100 align-items-center allCommentsWrap');
 
-    document.querySelector('.commentWrap').remove();
-    document.querySelector('.allNestedCommentsWrap').remove();
-    // // 불러온 모든댓글 페이지에 다시 로드...
-
-    // // 댓글
-    // const allCommentsWrap = document.createElement('div');
-    const commentWrap = document.createElement('div');
-    const commentInfoWrap = document.createElement('div');
-    const commentNickname = document.createElement('span');
-    const nicknameBold = document.createElement('b');
-    const commentDate = document.createElement('span');
-    const commentBodyWrap = document.createElement('div');
-    const commentBody = document.createElement('p');
-    const commentBtnWrap = document.createElement('div');
-    const commentReplyBtn = document.createElement('button');
-    const commentEditBtn = document.createElement('button');
-    const commentDeleteForm = document.createElement('form');
-    const commentDelete = document.createElement('button');
-    const commentReport = document.createElement('a');
-    
-    // allCommentsWrap.setAttribute('class', 'd-flex flex-column w-100 align-items-center allCommentsWrap');
-    commentWrap.setAttribute('class', 'card mt-2 w-75 border-start-0 border-end-0 border-bottom-0 commentWrap');
-    commentInfoWrap.setAttribute('class', 'd-flex justify-content-between px-3 mb-3 mt-2 commentInfoWrap');
-    commentNickname.setAttribute('class', 'commentNickname');
-    nicknameBold.setAttribute('class', 'nicknameBold');
-    commentDate.setAttribute('class', 'commentDate');
-    commentBodyWrap.setAttribute('class', 'd-flex justify-content-between px-3 mb-1 commentBodyWrap');
-    commentBody.setAttribute('class', 'commentBody');
-    commentBody.setAttribute('id', 'commentBody');
-    commentBody.setAttribute('style', 'white-space: pre-wrap;');
-    
-    commentBtnWrap.setAttribute('class', 'd-flex justify-content-end px-3 mb-3 commentBtnWrap');
-    // commentReplyBtn.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1 commentReplyBtn');
-    // commentReplyBtn.setAttribute('data-bs-toggle', 'button');
-    // commentReplyBtn.setAttribute('data-page-id', `${채워넣기}`);
-    // commentReplyBtn.setAttribute('data-reply-comment', `${채워넣기}`);
-    // commentReplyBtn.innerHTML = '답변';
-    // commentEditBtn.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1 commentEditBtn');
-    // commentEditBtn.setAttribute('data-bs-toggle', 'button');
-    // commentEditBtn.setAttribute('data-page-id', `${채워넣기}`);
-    // commentEditBtn.setAttribute('data-comment-edit', `${채워넣기}`);
-    // commentEditBtn.innerHTML = '수정';
-    // commentDeleteForm.setAttribute('class', 'commentDeleteForm');
-    // commentDeleteForm.setAttribute('action', `${채워넣기}`);
-    // commentDeleteForm.setAttribute('method', 'POST');
-    // commentDelete.setAttribute('class', 'btn btn-outline-danger btn-sm p-1 commentDelete');
-    // commentDelete.innerHTML = '삭제';
-    // commentReport.setAttribute('class', 'btn btn-outline-danger btn-sm p-1 commentReport');
-    // commentReport.setAttribute('href', '#');
-    // commentReport.innerHTML = '신고';
+    const countComment = document.querySelector('.countComment');
+    countComment.insertAdjacentElement('afterend', allCommentsWrap)
 
 
-    // // 대댓글
-    // const allNestedCommentsWrap = document.createElement('div');
-    // const nestedCommentWrap = document.createElement('div');
-    // const nestedCommentInnerWrap = document.createElement('div');
-    // const nestedCommentInfoWrap = document.createElement('div');
-    // const nestedCommentNickname = document.createElement('span');
-    // const nestedNicknameBold = document.createElement('b');
-    // const nestedCommentDate = document.createElement('span');
-    // const nestedCommentBodyWrap = document.createElement('div');
-    // const nestedCommentBody = document.createElement('p');
-    // const nestedCommentBtnWrap = document.createElement('div');
-    // const nestedCommentDelete = document.createElement('button');
-    // const nestedCommentReport = document.createElement('button');
-
-    // allNestedCommentsWrap.setAttribute('class', 'd-flex flex-column w-100 align-items-center allNestedCommentsWrap');
-    // nestedCommentWrap.setAttribute('class', 'w-75 border-0 d-flex flex-column align-items-end nestedCommentWrap');
-    // nestedCommentInnerWrap.setAttribute('class', 'card mb-1 d-flex flex-column bg-light nestedCommentInnerWrap');
-    // nestedCommentInfoWrap.setAttribute('class', 'd-flex justify-content-between px-3 mb-3 nestedCommentInfoWrap');
-    // nestedCommentNickname.setAttribute('class', 'nestedCommentNickname');
-    // nestedNicknameBold.setAttribute('class', 'nestedNicknameBold');
-    // nestedCommentDate.setAttribute('class', 'nestedCommentDate');
-    // nestedCommentBodyWrap.setAttribute('class', 'd-flex justify-content-between px-3 nestedCommentBodyWrap');
-    // nestedCommentBody.setAttribute('id', 'nestedCommentBody');
-    // nestedCommentBody.setAttribute('class', 'nestedCommentBody');
-    // nestedCommentBody.setAttribute('style', 'white-space: pre-wrap;');
-    // nestedCommentBody.setAttribute('data-commentReply-body', `${채워넣기}`);
-    // nestedCommentBtnWrap.setAttribute('class', 'd-flex justify-content-end px-3 mb-1 nestedCommentBtnWrap');
-    // nestedCommentDelete.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1 nestedCommentDelete');
-    // nestedCommentDelete.innerHTML = '삭제';
-    // nestedCommentReport.setAttribute('class', 'btn btn-outline-danger btn-sm p-1 nestedCommentReport');
-    // nestedCommentReport.innerHTML = '신고';
-
-
-    // console.log('author:', result.data.author);
-    // console.log('comments:', result.data.comments);
-    // console.log('nestedComments:', result.data.comments[0].nestedComments);
-    // console.log('nestedComments_author:', result.data.comments[0].nestedComments[0].author);
-
-    
+    // 댓글
     result.data.comments.forEach((element) => {
-        // console.log("element111111111111111: ", element);
 
-        const allCommentsWrap = document.querySelector('.allCommentsWrap');
+        const commentWrap = document.createElement('div');
+        const commentInfoWrap = document.createElement('div');
+        const commentNickname = document.createElement('span');
+        const nicknameBold = document.createElement('b');
+        const commentDate = document.createElement('span');
+        const commentBodyWrap = document.createElement('div');
+        const commentBody = document.createElement('p');
+        const commentBtnWrap = document.createElement('div');
+        const commentReplyBtn = document.createElement('button');
+        const commentEditBtn = document.createElement('button');
+        const commentDeleteForm = document.createElement('form');
+        const commentDelete = document.createElement('button');
+        const commentReport = document.createElement('a');
+        
+
+        commentWrap.setAttribute('class', 'card mt-2 w-75 border-start-0 border-end-0 border-bottom-0 commentWrap');
+        commentInfoWrap.setAttribute('class', 'd-flex justify-content-between px-3 mb-3 mt-2 commentInfoWrap');
+        commentNickname.setAttribute('class', 'commentNickname');
+        nicknameBold.setAttribute('class', 'nicknameBold');
+        commentDate.setAttribute('class', 'commentDate');
+        commentBodyWrap.setAttribute('class', 'd-flex justify-content-between px-3 mb-1 commentBodyWrap');
+        commentBody.setAttribute('class', 'commentBody');
+        commentBody.setAttribute('id', 'commentBody');
+        commentBody.setAttribute('style', 'white-space: pre-wrap;');
+        
+        commentBtnWrap.setAttribute('class', 'd-flex justify-content-end px-3 mb-3 commentBtnWrap');
+        commentReplyBtn.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1 commentReplyBtn');
+        commentReplyBtn.setAttribute('data-bs-toggle', 'button');
+        commentReplyBtn.innerHTML = '답변';
+        commentEditBtn.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1 commentEditBtn');
+        commentEditBtn.setAttribute('data-bs-toggle', 'button');
+        commentEditBtn.innerHTML = '수정';
+        commentDeleteForm.setAttribute('class', 'commentDeleteForm');
+        commentDeleteForm.setAttribute('method', 'POST');
+        commentDelete.setAttribute('class', 'btn btn-outline-danger btn-sm p-1 commentDelete');
+        commentDelete.innerHTML = '삭제';
+        commentReport.setAttribute('class', 'btn btn-outline-danger btn-sm p-1 commentReport');
+        commentReport.setAttribute('href', '#');
+        commentReport.innerHTML = '신고';
+
+        
         allCommentsWrap.appendChild(commentWrap);
         commentWrap.appendChild(commentInfoWrap);
         commentInfoWrap.appendChild(commentNickname);
         commentNickname.appendChild(nicknameBold);
-        nicknameBold.innerHTML = `${element.author.nickname}`
+        nicknameBold.innerHTML = `${element.author.nickname}`;
 
-        commentInfoWrap.appendChild(commentDate)
-        const cmDate = new Date(element.createdAt)
+        commentInfoWrap.appendChild(commentDate);
+        const cmDate = new Date(element.createdAt);
         commentDate.innerHTML = `${cmDate.getFullYear()}-${String(cmDate.getMonth()+1).padStart(2,'0')}-${String(cmDate.getDate()).padStart(2,'0')} ${String(cmDate.getHours()).padStart(2,'0')}:${String(cmDate.getMinutes()).padStart(2,'0')}:${String(cmDate.getSeconds()).padStart(2,'0')}`;
         
         commentWrap.appendChild(commentBodyWrap);
@@ -256,31 +199,88 @@ async function reloadCommentReply(pageId, commentId){  // 댓글 페이지 리�
         commentBodyWrap.appendChild(commentBody);
 
         commentWrap.appendChild(commentBtnWrap);
-        signedInUserInfo()
-        // console.log("req.session.userInfo: ", );
-        // if(signedInUser){
-        //     console.log('이걸 어떻게 구분하지......')
-        // }
+        if(currentUser){
+            commentReplyBtn.setAttribute('data-page-id', pageId);
+            commentReplyBtn.setAttribute('data-reply-comment', `${element._id}`);
+            commentBtnWrap.appendChild(commentReplyBtn);
+        }
+        if(currentUser == element.author.nickname){
+            commentEditBtn.setAttribute('data-page-id', pageId);
+            commentEditBtn.setAttribute('data-comment-edit', `${element._id}`);
+            commentBtnWrap.appendChild(commentEditBtn);
+            if(element.nestedComments.length == 0) {
+                commentDeleteForm.setAttribute('action', `/index/${pageId}/comments/${element._id}?_method=DELETE`);
+                commentBtnWrap.appendChild(commentDeleteForm);
+                commentDeleteForm.appendChild(commentDelete);
+            }
+        } else {
+            commentBtnWrap.appendChild(commentReport);
+        }
 
-
-
-        // console.log(typeof new Date(element.createdAt))
-        // console.log(new Date(element.createdAt))
-
-
-
-
-
-
-
-
-
+        // 대댓글
         element.nestedComments.forEach((element) => {
-            // console.log("element2222222222222222: ", element)
+            console.log("element222222222222222: ", element);
+
+            const allNestedCommentsWrap = document.createElement('div');
+            const nestedCommentWrap = document.createElement('div');
+            const nestedCommentInnerWrap = document.createElement('div');
+            const nestedCommentInfoWrap = document.createElement('div');
+            const nestedCommentNickname = document.createElement('span');
+            const nestedNicknameBold = document.createElement('b');
+            const nestedCommentDate = document.createElement('span');
+            const nestedCommentBodyWrap = document.createElement('div');
+            const nestedCommentBody = document.createElement('p');
+            const nestedCommentBtnWrap = document.createElement('div');
+            const nestedCommentDeleteForm = document.createElement('form');
+            const nestedCommentDelete = document.createElement('button');
+            const nestedCommentReport = document.createElement('button');
+
+            allNestedCommentsWrap.setAttribute('class', 'd-flex flex-column w-100 align-items-center allNestedCommentsWrap');
+            nestedCommentWrap.setAttribute('class', 'w-75 border-0 d-flex flex-column align-items-end nestedCommentWrap');
+            nestedCommentInnerWrap.setAttribute('class', 'card mb-1 d-flex flex-column bg-light nestedCommentInnerWrap');
+            nestedCommentInfoWrap.setAttribute('class', 'd-flex justify-content-between px-3 mb-3 nestedCommentInfoWrap');
+            nestedCommentNickname.setAttribute('class', 'nestedCommentNickname');
+            nestedNicknameBold.setAttribute('class', 'nestedNicknameBold');
+            nestedCommentDate.setAttribute('class', 'nestedCommentDate');
+
+            nestedCommentBodyWrap.setAttribute('class', 'd-flex justify-content-between px-3 nestedCommentBodyWrap');
+            nestedCommentBody.setAttribute('id', 'nestedCommentBody');
+            nestedCommentBody.setAttribute('class', 'nestedCommentBody');
+            nestedCommentBody.setAttribute('style', 'white-space: pre-wrap;');
+
+            nestedCommentBtnWrap.setAttribute('class', 'd-flex justify-content-end px-3 mb-1 nestedCommentBtnWrap');
+            nestedCommentDeleteForm.setAttribute('class', 'nestedCommentDeleteForm');
+            nestedCommentDeleteForm.setAttribute('action', `/index/${pageId}/comments/${element.comment}/${element._id}?_method=DELETE`)
+            nestedCommentDeleteForm.setAttribute('method', 'POST');
+            nestedCommentDelete.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 nestedCommentDelete');
+            nestedCommentDelete.innerHTML = '삭제';
+            nestedCommentReport.setAttribute('class', 'btn btn-outline-danger btn-sm p-1 nestedCommentReport');
+            nestedCommentReport.innerHTML = '신고';
+
+            allCommentsWrap.appendChild(allNestedCommentsWrap);
+            allNestedCommentsWrap.appendChild(nestedCommentWrap);
+            nestedCommentWrap.appendChild(nestedCommentInnerWrap);
+            nestedCommentInnerWrap.appendChild(nestedCommentInfoWrap);
+            nestedCommentInfoWrap.appendChild(nestedCommentNickname);
+            nestedNicknameBold.innerHTML = `${element.author.nickname}`;
+            nestedCommentNickname.appendChild(nestedNicknameBold);
+            const cmDate = new Date(element.createdAt);
+            nestedCommentDate.innerHTML = `${cmDate.getFullYear()}-${String(cmDate.getMonth()+1).padStart(2,'0')}-${String(cmDate.getDate()).padStart(2,'0')} ${String(cmDate.getHours()).padStart(2,'0')}:${String(cmDate.getMinutes()).padStart(2,'0')}:${String(cmDate.getSeconds()).padStart(2,'0')}`;
+            nestedCommentInfoWrap.appendChild(nestedCommentDate);
+            nestedCommentInnerWrap.appendChild(nestedCommentBodyWrap);
+            nestedCommentBody.setAttribute('data-commentReply-body', `${element._id}`);
+            nestedCommentBody.innerHTML = `${element.body}`
+            nestedCommentBodyWrap.appendChild(nestedCommentBody);
+
+            nestedCommentInnerWrap.appendChild(nestedCommentBtnWrap);
+            if(currentUser == element.author.nickname){
+                nestedCommentBtnWrap.appendChild(nestedCommentDeleteForm);
+                nestedCommentDeleteForm.appendChild(nestedCommentDelete);
+            } else {
+                nestedCommentBtnWrap.appendChild(nestedCommentReport);
+            }
         })
     })
-
-
 
 }
 
@@ -319,7 +319,7 @@ document.addEventListener('click', async function(event){ // 댓글 수정등록
         await axios.put(`/index/${pageId}/comments/${commentId}`, data)
         .then((res) => { 
             closeBox(); // 등록 박스 닫기
-            document.querySelector(`.comment_body[data-comment-body="${commentId}"]`).innerHTML=editText; // 텍스트 업데이트
+            document.querySelector(`.commentBody[data-comment-body="${commentId}"]`).innerHTML=editText; // 텍스트 업데이트
 
             const editCommentBtn = document.querySelector(`[data-comment-edit="${commentId}"]`); // 수정버튼 토글 복구
             editCommentBtn.removeAttribute('aria-pressed');
@@ -334,32 +334,25 @@ document.addEventListener('click', async function(event){ // 댓글 수정등록
 document.addEventListener('click', async function(event){   // 댓글 답변등록 버튼 클릭
     const replySubmit = event.target.classList.contains('replySubmit');
     if(replySubmit){
+
         const pageId = event.target.parentElement.parentElement.previousElementSibling.firstElementChild.getAttribute('data-page-id');
         const commentId = event.target.parentElement.parentElement.previousElementSibling.firstElementChild.getAttribute('data-reply-comment');
         const replyText = event.target.parentElement.previousElementSibling.value;
-        
+
         const data = {nestedComment: {body: replyText}}
         const url = `/index/${pageId}/comments/${commentId}`
-        
-        // commentReply(event, replyText)
-        // closeBox();
 
         await axios.post(url, data)
         .then((res) => {
-            commentReply(event, replyText);
             const commentReplyBtn = document.querySelector(`[data-reply-comment="${commentId}"]`); // 답변버튼 토글 복구
             commentReplyBtn.removeAttribute('aria-pressed');
             commentReplyBtn.removeAttribute('class');
             commentReplyBtn.setAttribute('aria-pressed', false);
             commentReplyBtn.setAttribute('class', 'btn btn-outline-secondary btn-sm p-1 me-1');
-            // reloadCommentReply(pageId)
-            closeBox();
-            console.log("RES@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@",res.data)
-            reloadCommentReply(pageId, commentId)        
+            reloadCommentReply(pageId, commentId)  
+            closeBox();        
         })
         .catch((err) => { console.log("err: ", err) })
-        // console.log("RESULT@@@@@@@@@@@@@@@@@@: ", result);
-        // console.log("RESULT_DATA@@@@@@@@@@@@@@@@@@: ", result.data);
     }
 });
 

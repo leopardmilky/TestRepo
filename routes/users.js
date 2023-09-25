@@ -51,4 +51,8 @@ router.get('/signout', (req, res) => {
     });
 });
 
+router.get('/currentUser', (req, res) => {
+    res.json(req.user.nickname);
+});
+
 module.exports = router;

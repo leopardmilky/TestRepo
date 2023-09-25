@@ -1,7 +1,8 @@
-const { boardSchema, commentSchema } =require('./schemas');
+const { boardSchema, commentSchema, nestedCommentSchema } =require('./schemas');
 const ExpressError = require('./utils/ExpressError');
 const Board = require('./models/board');
 const Comment = require('./models/comment');
+const NestedComment = require('./models/nestedComment');
 
 
 module.exports.isSignedIn = (req, res, next) => {
@@ -37,6 +38,18 @@ module.exports.isCommentAuthor = async(req, res, next) => {
     next();
 };
 
+module.exports.isNestedCommentAuthor = async(req, res, next) => {
+    const {id, nestedCommentId} = req.params;
+    const check = await NestedComment.findById(nestedCommentId);
+    if(!check){
+        return res.redirect('/index')
+    }
+    if(!check.author.equals(req.user._id)){
+        return res.redirect(`/index/${id}`)
+    }
+    next();
+}
+
 module.exports.validateBoard = (req, res, next) => {
     const {error} = boardSchema.validate(req.body);
     if (error) {
@@ -49,6 +62,16 @@ module.exports.validateBoard = (req, res, next) => {
 
 module.exports.validateComment = (req, res, next) => {
     const {error} = commentSchema.validate(req.body);
+    if (error) {
+        const msg = error.details.map(el => el.message).join(',');
+        throw new ExpressError(msg, 400)
+    } else {
+        next();
+    }
+};
+
+module.exports.validateNestedComment = (req, res, next) => {
+    const {error} = nestedCommentSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(el => el.message).join(',');
         throw new ExpressError(msg, 400)

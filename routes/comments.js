@@ -39,7 +39,7 @@ router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {
     res.redirect(`/index/${board._id}`);
 }));
 
-router.put('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req, res) => {
+router.put('/:commentId', isSignedIn, isCommentAuthor, validateComment, catchAsync( async(req, res) => {
     const {id, commentId} = req.params;
     const comment = await Comment.findByIdAndUpdate(commentId, req.body.comment);
     res.send();

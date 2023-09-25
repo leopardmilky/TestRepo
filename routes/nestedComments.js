@@ -3,38 +3,26 @@ const router = express.Router({mergeParams: true});
 
 const catchAsync = require('../utils/catchAsync');
 const ExpressError = require('../utils/ExpressError');
-const { validateComment, isSignedIn, isCommentAuthor } = require('../middleware');
+const { isSignedIn, isNestedCommentAuthor, validateNestedComment } = require('../middleware');
 
 const Board = require('../models/board');
 const Comment = require('../models/comment');
-const nestedComment = require('../models/nestedComments');
-const nestedComments = require('../models/nestedComments');
+const NestedComment = require('../models/nestedComment');
 
 
 router.get('/', catchAsync (async(req, res) => {
-    console.log('GET_PARAMS??????: ', req.params)
-    console.log('GET_QUERY??????: ', req.query)
-    console.log('GET_BODY??????: ', req.body)
-    console.log('GET_USER??????: ', req.user)
-    console.log('GET_USER??????: ', req.user)
-    req.session.userInfo = req.user;
-    console.log("req.session????????????: ", req.session);
-    // const comment = await Comment.find({board:req.params.id});
-    // console.log("GET_COMMENT_RESULT:", comment);
-    // const comment = await Comment.findById(req.params.commentId).populate({path: 'nestedComments', populate: {path: 'author'}});
     const comment = await Board.findById(req.params.id).populate({path:'comments', populate:{path: 'nestedComments', populate: {path: 'author'}}}).populate({path:'comments', populate:{path: 'author'}});
-    console.log("GET_COMMENT.ID_RESULT:", comment);
-    console.log("nestedComment_AUTHOR: ", comment.nestedComments);
     res.json(comment);
 }));
 
-router.post('/', catchAsync( async(req, res) => {
+router.post('/', isSignedIn, validateNestedComment, catchAsync( async(req, res) => {
     const board = await Board.findById(req.params.id);
     const comment = await Comment.findById(req.params.commentId);
-    const commentReply = new nestedComment(req.body.nestedComment);
-
+    const commentReply = new NestedComment(req.body.nestedComment);
+    
     commentReply.author = req.user._id;
     commentReply.board = req.params.id;
+    commentReply.comment = req.params.commentId;
 
     comment.nestedComments.push(commentReply);
     await commentReply.save();
@@ -43,8 +31,11 @@ router.post('/', catchAsync( async(req, res) => {
     res.json(comment);
 }));
 
-router.delete('/:nestedCommentId', catchAsync( async(req, res) => {
-
+router.delete('/:nestedCommentId', isSignedIn, isNestedCommentAuthor, catchAsync( async(req, res) => {
+    const {id, commentId, nestedCommentId} = req.params;
+    await Comment.findByIdAndUpdate(commentId, {$pull: {nestedComments: nestedCommentId}});
+    await NestedComment.findByIdAndDelete(nestedCommentId);
+    res.redirect(`/index/${id}`);
 }));
 
 module.exports = router;

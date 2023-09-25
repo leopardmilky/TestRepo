@@ -15,6 +15,10 @@ const NestedCommentSchema = new Schema({
     board:{
         type: Schema.Types.ObjectId,
         ref: 'Board'
+    },
+    comment:{
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
     }
 })
 

@@ -7,7 +7,7 @@ const { isSignedIn, validateBoard, isAuthor } = require('../middleware');
 
 const Board = require('../models/board');
 const Comment = require('../models/comment');
-const NestedComment = require('../models/nestedComments');
+const NestedComment = require('../models/nestedComment');
 const { boardPaging } = require('../paging');
 
 

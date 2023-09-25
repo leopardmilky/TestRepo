@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 
-const CommentSchema = new Schema({
+const NestedCommentSchema = new Schema({
     body: String,
     createdAt: {
         type: Date,
@@ -16,12 +16,10 @@ const CommentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Board'
     },
-    nestedComments: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'NestedComment'
-        }
-    ]
-});
+    comment:{
+        type: Schema.Types.ObjectId,
+        ref: 'Comment'
+    }
+})
 
-module.exports = mongoose.model('Comment', CommentSchema);
+module.exports = mongoose.model('NestedComment', NestedCommentSchema);
