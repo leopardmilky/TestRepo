@@ -10,13 +10,13 @@ const Comment = require('../models/comment');
 const NestedComment = require('../models/nestedComment');
 
 
-router.get('/', catchAsync (async(req, res) => {
+
+router.get('/', catchAsync( async(req, res) => { // 대댓글 작성 후 다시 불러오는 라우트
     const comment = await Board.findById(req.params.id).populate({path:'comments', populate:{path: 'nestedComments', populate: {path: 'author'}}}).populate({path:'comments', populate:{path: 'author'}});
     res.json(comment);
 }));
 
 router.post('/', isSignedIn, validateNestedComment, catchAsync( async(req, res) => {
-    const board = await Board.findById(req.params.id);
     const comment = await Comment.findById(req.params.commentId);
     const commentReply = new NestedComment(req.body.nestedComment);
     
@@ -27,7 +27,7 @@ router.post('/', isSignedIn, validateNestedComment, catchAsync( async(req, res) 
     comment.nestedComments.push(commentReply);
     await commentReply.save();
     await comment.save();
-    // res.send();
+    
     res.json(comment);
 }));
 

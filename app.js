@@ -70,11 +70,10 @@ app.use((req, res, next) => {
     next();
 });
 
-
 app.use('/', userRoutes);
 app.use('/index', boardRoutes);
 app.use('/index/:id/comments', commentRoutes);
-app.use('/index/:id/comments/:commentId', nestedCommentRoutes)
+app.use('/index/:id/comments/:commentId', nestedCommentRoutes);
 
 
 app.get('/', (req, res) => {

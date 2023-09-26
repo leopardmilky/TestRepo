@@ -156,7 +156,6 @@ async function reloadCommentReply(pageId, commentId){  // 댓글 페이지 리�
         const commentDelete = document.createElement('button');
         const commentReport = document.createElement('a');
         
-
         commentWrap.setAttribute('class', 'card mt-2 w-75 border-start-0 border-end-0 border-bottom-0 commentWrap');
         commentInfoWrap.setAttribute('class', 'd-flex justify-content-between px-3 mb-3 mt-2 commentInfoWrap');
         commentNickname.setAttribute('class', 'commentNickname');
@@ -181,8 +180,7 @@ async function reloadCommentReply(pageId, commentId){  // 댓글 페이지 리�
         commentReport.setAttribute('class', 'btn btn-outline-danger btn-sm p-1 commentReport');
         commentReport.setAttribute('href', '#');
         commentReport.innerHTML = '신고';
-
-        
+    
         allCommentsWrap.appendChild(commentWrap);
         commentWrap.appendChild(commentInfoWrap);
         commentInfoWrap.appendChild(commentNickname);
@@ -219,7 +217,6 @@ async function reloadCommentReply(pageId, commentId){  // 댓글 페이지 리�
 
         // 대댓글
         element.nestedComments.forEach((element) => {
-            console.log("element222222222222222: ", element);
 
             const allNestedCommentsWrap = document.createElement('div');
             const nestedCommentWrap = document.createElement('div');
@@ -356,12 +353,12 @@ document.addEventListener('click', async function(event){   // 댓글 답변등�
     }
 });
 
+document.addEventListener('click', async function(event){   // 댓글 페이징
+    const pageNum = event.target.classList.contains('commentPage');
+    if(pageNum){
+        const result = await axios.get(`/index/6511adba651c17574ded39e8/comments?page=1`)
 
-
-
-// document.addEventListener('click', async function(event){   // 댓글 페이징
-//     const pageNum = event.target.classList.contains('pageNum');
-//     if(pageNum){
-        
-//     }
-// })
+        console.log("result: ", result);
+        console.log("result.data: ", result.data);
+    }
+})
