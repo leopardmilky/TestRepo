@@ -19,6 +19,7 @@ email.onblur = async function (e) {
         emailCheckMessage.innerHTML = '사용할 수 없는 이메일입니다.';
         email.removeAttribute('class')
         email.setAttribute('class', 'form-control signupInvalid')
+        checkAllInput()
     }
 
     // 여기에 이메일 형식에 맞췄는지 확인하는 정규식 필요.
@@ -45,6 +46,7 @@ nickname.onblur = async function (e) {
         nicknameCheckMessage.innerHTML = '사용할 수 없는 닉네임입니다.';
         nickname.removeAttribute('class')
         nickname.setAttribute('class', 'form-control signupInvalid')
+        checkAllInput()
     }
 }
 
@@ -73,7 +75,10 @@ confirmPwd.onkeyup = function (e) {
         password.setAttribute('class', 'form-control signupInvalid')
         confirmPwd.removeAttribute('class')
         confirmPwd.setAttribute('class', 'form-control signupInvalid')
+        checkAllInput()
     }
+
+    // 최소 자릿수, 생성 규칙(ex 공백X, 특수문자포함 등....)
 }
 
 
@@ -87,5 +92,8 @@ function checkAllInput(){
     if(check1 & check2 & check3 & check4) {
         signupBtn.removeAttribute('class');
         signupBtn.setAttribute('class', 'w-25 btn btn-success signupBtn');
+    } else {
+        signupBtn.removeAttribute('class');
+        signupBtn.setAttribute('class', 'w-25 btn btn-success signupBtn disabled');
     }
 }
