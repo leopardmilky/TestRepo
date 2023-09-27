@@ -62,7 +62,6 @@ router.get('/:id', catchAsync( async(req, res) => {
     }
 
     res.render('board/show', { boardItems: board, commentItems:comment, commentSum });
-
 }));
 
 router.get('/:id/edit', isSignedIn, isAuthor, catchAsync( async(req, res) => {

@@ -79,3 +79,12 @@ module.exports.validateNestedComment = (req, res, next) => {
         next();
     }
 };
+
+// module.exports.validatePassword = (req, res, next) => {
+//     console.log("validatePassword: ", req.body);
+//     const {password, confirmPwd} = req.body;
+//     if(password != confirmPwd) {
+//          return res.redirect('/signup')
+//     }
+//     next();
+// }
