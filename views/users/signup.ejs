@@ -5,7 +5,7 @@
         <h1>SIGN UP</h1>
         <div class="mb-3 w-25 border border-warning">
             <label class="form-label" for="email">Email</label>
-            <input class="form-control" type="email" id="email" name="email" required>
+            <input class="form-control" type="email" id="email" name="email" autocomplete="email" required>
             <!-- <div class="btn btn-sm btn-info">Authentication</div> -->
             <span class="emailCheckMessage"></span>
         </div>
@@ -16,12 +16,13 @@
         </div>
         <div class="mb-3 w-25 border border-warning">
             <label class="form-label" for="password">Password</label>
-            <input class="form-control" type="password" id="password" name="password" required>
+            <input class="form-control" type="password" id="password" name="password" autocomplete="new-password" placeholder="최소 6자리 이상" required>
+            <span class="passwordCheckMessage"></span>
         </div>
         <div class="mb-3 w-25 border border-warning">
             <label class="form-label" for="confirmPwd">Confirm Password</label>
-            <input class="form-control" type="password" id="confirmPwd" name="confirmPwd" required>
-            <span class="passwordCheckMessage"></span>
+            <input class="form-control" type="password" id="confirmPwd" name="confirmPwd" autocomplete="new-password" placeholder="비밀번호 재입력" required>
+            <span class="confirmPwdCheckMessage"></span>
         </div>
         <button class="w-25 btn btn-success signupBtn disabled">Sign Up</button>
     </div>
