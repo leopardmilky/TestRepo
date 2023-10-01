@@ -9,6 +9,8 @@ const Board = require('../models/board');
 const Comment = require('../models/comment');
 const NestedComment = require('../models/nestedComment');
 const { boardPaging } = require('../paging');
+const multer = require('multer');
+const upload = multer({dest: 'uploads/'});
 
 
 router.get('/', catchAsync( async(req, res) => {
@@ -45,6 +47,16 @@ router.post('/', isSignedIn, validateBoard, catchAsync( async(req, res) => {
     res.redirect(`/index/${board._id}`);
 }));
 
+// router.post('/', upload.array('image'), (req, res) => {
+//     console.log("req.body: ", req.body);
+//     console.log("req.files: ", req.files);
+//     res.send("It worked?????");
+// });
+
+
+
+
+
 router.get('/:id', catchAsync( async(req, res) => {
     const { id } = req.params;
     const board = await Board.findById(id).populate({path: 'comments', populate: {path:'author'}}).populate('author'); // populate()가 있어야 ref
@@ -55,7 +67,7 @@ router.get('/:id', catchAsync( async(req, res) => {
     // const commentPaging = await Comment.find({ board:id }).populate('nestedComments');
    
     const commentPaging = await Comment.aggregate([{$unwind:"$nestedComments"}])
-    console.log("commentPaging: ", commentPaging);
+    // console.log("commentPaging: ", commentPaging);
 
     if(!board){
         return res.redirect('/index');
