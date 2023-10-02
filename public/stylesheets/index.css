@@ -103,3 +103,13 @@ table{
 .signupInvalid {
     border-color: red;
 }
+
+.imgView{
+    border: 1px dashed gray;
+    min-height: 150px;
+}
+
+.inputHint{
+    font-size: small;
+    color: gray;
+}

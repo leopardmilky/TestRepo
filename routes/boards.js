@@ -39,6 +39,10 @@ router.get('/new', isSignedIn, (req, res) => {
     res.render('board/new');
 });
 
+router.get('/new2', isSignedIn, (req, res) => {
+    res.render('board/new2');
+});
+
 router.post('/', isSignedIn, validateBoard, catchAsync( async(req, res) => {
     const board = new Board(req.body.board);
     board.author = req.user._id;
@@ -52,6 +56,9 @@ router.post('/', isSignedIn, validateBoard, catchAsync( async(req, res) => {
 //     console.log("req.files: ", req.files);
 //     res.send("It worked?????");
 // });
+
+
+
 
 
 
