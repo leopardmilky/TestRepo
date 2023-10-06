@@ -1,10 +1,8 @@
 
-
 .new2Container{
     display: flex;
     flex-direction: row;
     justify-content: center;
-    /* width: 75%; */
     border: 1px solid red;
 }
 
@@ -12,12 +10,94 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 50%;
+    width: 60%;
     border: 1px solid green;
-    
+    margin-top: 100px;
 }
 
 .inputNew2{
-    border: 1px solid blue;
+    /* border: 1px solid blue; */
     width: 80%;
+    margin-bottom: 10px;
 }
+
+#new2Title{
+    width: 100%;
+    padding: 1%;
+    border: 1px solid #999;
+    outline: none;
+}
+
+#new2Toolbar{
+    width: 100%;
+    border: 1px solid #999;
+    border-bottom: none;
+    background-color: #f8f9fa;
+    padding: 3px 10px;
+}
+
+.editorSelectBtn{
+    border: none;
+    font-size: small;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.editorBtn{
+    border: none;
+    font-size: small;
+    background-color: #f8f9fa;
+}
+
+.editorBtn:hover{
+    color: red;
+    cursor: pointer;
+}
+
+#imgBtn{
+    display: none;
+}
+
+#submitBtn{
+    border: none;
+    padding: 5px 8px;
+    margin-right: 5px;
+    background-color: rgba(3, 199, 90, 0.12);
+    color: #009f47;
+}
+
+#cancelBtn{
+    border: none;
+    padding: 5px 8px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+}
+
+#new2MainText{
+    min-height: 300px;
+    padding: 3%;
+    border: 1px solid #999;
+    color: black;
+    outline: none;
+    
+}
+
+#new2Placeholder{
+    color: #999;
+}
+
+#new2MainText:empty:before {
+    content: attr(placeholder);
+    color: #aaa;
+}
+
+.imgSize {
+    max-width: 100%;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+
+

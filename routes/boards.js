@@ -1,16 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
-
 const catchAsync = require('../utils/catchAsync');
 const { isSignedIn, validateBoard, isAuthor } = require('../middleware');
-
 const Board = require('../models/board');
 const Comment = require('../models/comment');
 const NestedComment = require('../models/nestedComment');
 const { boardPaging } = require('../paging');
 const multer = require('multer');
 const upload = multer({dest: 'uploads/'});
+
 
 
 router.get('/', catchAsync( async(req, res) => {
@@ -43,6 +41,15 @@ router.get('/new2', isSignedIn, (req, res) => {
     res.render('board/new2');
 });
 
+router.get('/new3', isSignedIn, (req, res) => {
+    res.render('board/new3');
+});
+
+
+
+
+
+
 router.post('/', isSignedIn, validateBoard, catchAsync( async(req, res) => {
     const board = new Board(req.body.board);
     board.author = req.user._id;
@@ -56,13 +63,6 @@ router.post('/', isSignedIn, validateBoard, catchAsync( async(req, res) => {
 //     console.log("req.files: ", req.files);
 //     res.send("It worked?????");
 // });
-
-
-
-
-
-
-
 
 router.get('/:id', catchAsync( async(req, res) => {
     const { id } = req.params;

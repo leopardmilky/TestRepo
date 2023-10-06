@@ -2,19 +2,55 @@
 
 <div class="new2Container">
     <div class="new2Wrap">
-        <div class="inputNew2" id="new2Title">
-            title
+        <div id="new2TopWrap">
+            <h3 id="new2Top">글쓰기</h3>
+            <div id="new2TopLine"></div>
         </div>
-        <div class="inputNew2" id="new2MainText">
-            mainText
+        <div class="inputNew2" id="new2TitleWrap">
+            <input type="text" id="new2Title" name="board[title]" placeholder="제목을 입력해 주세요." required>  <!-- 만약 자동완성 히스토리 끄고 싶다면: autocomplete='off' -->
         </div>
-        <div class="inputNew2" id="new2AddImg">
-            add img
+        <div class="inputNew2" id="new2MainTextWrap">
+            <div id="new2Toolbar">
+                <select name="fontName" class="editorSelectBtn" id="selectFontName">
+                    <option value="">폰트1</option>
+                    <option value="">폰트2</option>
+                    <option value="">폰트3</option>
+                    <option value="">폰트4</option>
+                    <option value="">폰트5</option>
+                </select>
+                <select name="fontSize" class="editorSelectBtn" id="selectFontSize">
+                    <option value="7">7pt</option>
+                    <option value="8">8pt</option>
+                    <option value="9">9pt</option>
+                    <option value="10">10pt</option>
+                    <option value="11">11pt</option>
+                    <option value="12">12pt</option>
+                    <option value="13">13pt</option>
+                    <option value="14">14pt</option>
+                    <option value="18">18pt</option>
+                    <option value="36">36pt</option>
+                </select>
+                <button class="editorBtn" id="boldBtn" onclick="boldStyle(this)"><b>B</b></button>
+                <button class="editorBtn" id="italicBtn"><i>i</i></button>
+                <button class="editorBtn" id="underlineBtn"><u>U</u></button>
+                <button class="editorBtn" id="strikeBtn"><s>S</s></button>
+                <button class="editorBtn" id="supBtn">s<sup>up</sup></button>
+                <button class="editorBtn" id="subBtn">s<sub>ub</sub></button>
+                <button class="editorBtn" id="orderedListBtn">글번호</button>
+                <button class="editorBtn" id="unorderedListBtn">글머리</button>
+                <label class="editorBtn" for="imgBtn">사진</label>
+                <input type="file" name="imgBtn" id="imgBtn" onchange="imgUpload(this)" multiple>
+            </div>
+            <div id="new2MainText" contenteditable="true" placeholder="내용을 입력해주세요."><!-- 여기에 뭔가 채워지면 placeholder가 안보임... --></div>
+        </div>
+        <div>
+            <button class="bottomBtn" id="submitBtn">등록</button>
+            <button class="bottomBtn" id="cancelBtn">취소</button>
         </div>
     </div>
 </div>
 
 
-
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/javascript/createNew.js"></script>
+
