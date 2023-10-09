@@ -1,4 +1,8 @@
 <% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/index.css">
+</head>
+<body class="d-flex flex-column vh-100 border border-danger">
+<%- include('../partials/navbar') %>
 <div class="container d-flex flex-column align-items-center mt-5">
     <div class="card d-inline mb-3 w-75 py-1 border-start-0 border-end-0 border-bottom-0">
         <p id="show_title" class="m-0 py-3 px-3"><strong><%= boardItems.title %></strong></p>
@@ -126,7 +130,7 @@
         <% } %>
     </div>
 </div>
-
+<%- include('../partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/javascript/commentsInShow.js"></script>
 <!-- <script src="/source/jquery-3.7.1.min.js"></script> -->

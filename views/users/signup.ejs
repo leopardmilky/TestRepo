@@ -1,5 +1,8 @@
 <% layout('layouts/boilerplate') %>
-
+    <link rel="stylesheet" href="/stylesheets/index.css">
+</head>
+<body class="d-flex flex-column vh-100 border border-danger">
+<%- include('../partials/navbar') %>
 <form action="/signup" method="POST" class="validated-form" novalidate>
     <div class="d-flex flex-column align-items-center border border-danger">
         <h1>SIGN UP</h1>
@@ -27,6 +30,6 @@
         <button class="w-25 btn btn-success signupBtn disabled">Sign Up</button>
     </div>
 </form>
-
+<%- include('../partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/javascript/signup.js"></script>

@@ -1,4 +1,8 @@
 <% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/index.css">
+</head>
+<body class="d-flex flex-column vh-100 border border-danger">
+<%- include('../partials/navbar') %>
 <div class="container mt-5 mb-5 d-flex justify-content-center border border-danger">
     <div class="row w-75 border border-info" id="table_wrap">
         <table class="table table-sm table-hover" id="index_table">
@@ -64,3 +68,5 @@
         </div>
     </div>
 </div>
+<%- include('../partials/footer') %>
+

@@ -1,4 +1,8 @@
 <% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/index.css">
+</head>
+<body class="d-flex flex-column vh-100 border border-danger">
+<%- include('../partials/navbar') %>
 <div class="container d-flex flex-column align-items-center mt-5 border border-danger">
     <div class="row w-75 border border-info">
         <h1 class="text-center">create new content page!</h1>
@@ -30,3 +34,4 @@
     </div>
 </div>
 
+<%- include('../partials/footer') %>

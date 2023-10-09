@@ -1,5 +1,8 @@
 <% layout('layouts/boilerplate') %>
-
+    <link rel="stylesheet" href="/stylesheets/index.css">
+</head>
+<body class="d-flex flex-column vh-100 border border-danger">
+<%- include('../partials/navbar') %>
 <form action="/signin?redirectUrl=<%= redirectUrl %>" method="POST" class="validated-form" novalidate>
     <div class="d-flex flex-column align-items-center border border-danger">
         <h1>SIGN IN</h1>
@@ -14,3 +17,4 @@
         <button class="w-25 btn btn-success">Sign in</button>
     </div>
 </form>
+<%- include('../partials/footer') %>

@@ -1,12 +1,12 @@
 
-.new2Container{
+.n2Container {
     display: flex;
     flex-direction: row;
     justify-content: center;
     border: 1px solid red;
 }
 
-.new2Wrap{
+.new2Wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -15,20 +15,20 @@
     margin-top: 100px;
 }
 
-.inputNew2{
+.inputNew2 {
     /* border: 1px solid blue; */
     width: 80%;
     margin-bottom: 10px;
 }
 
-#new2Title{
+#new2Title {
     width: 100%;
     padding: 1%;
     border: 1px solid #999;
     outline: none;
 }
 
-#new2Toolbar{
+#toolbar {
     width: 100%;
     border: 1px solid #999;
     border-bottom: none;
@@ -36,29 +36,29 @@
     padding: 3px 10px;
 }
 
-.editorSelectBtn{
+.editorSelectBtn {
     border: none;
     font-size: small;
     background-color: #f8f9fa;
     cursor: pointer;
 }
 
-.editorBtn{
+.editorBtn {
     border: none;
-    font-size: small;
+    font-size: medium;
     background-color: #f8f9fa;
 }
 
-.editorBtn:hover{
+.editorBtn:hover {
     color: red;
     cursor: pointer;
 }
 
-#imgBtn{
+#imgBtn {
     display: none;
 }
 
-#submitBtn{
+#submitBtn {
     border: none;
     padding: 5px 8px;
     margin-right: 5px;
@@ -66,27 +66,28 @@
     color: #009f47;
 }
 
-#cancelBtn{
+#cancelBtn {
     border: none;
     padding: 5px 8px;
     background-color: rgba(0, 0, 0, 0.5);
     color: #ffffff;
 }
 
-#new2MainText{
-    min-height: 300px;
+#text-input {
+    height: 400px;
     padding: 3%;
     border: 1px solid #999;
     color: black;
     outline: none;
+    overflow-y: auto;
     
 }
 
-#new2Placeholder{
+#new2Placeholder {
     color: #999;
 }
 
-#new2MainText:empty:before {
+#text-input:empty:before {
     content: attr(placeholder);
     color: #aaa;
 }
@@ -95,9 +96,6 @@
     max-width: 100%;
 }
 
-.bold {
-    font-weight: bold;
+.active {
+    color: red;
 }
-
-
-
