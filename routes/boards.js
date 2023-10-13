@@ -41,28 +41,35 @@ router.get('/new2', isSignedIn, (req, res) => {
     res.render('board/new2');
 });
 
-router.get('/new3', isSignedIn, (req, res) => {
-    res.render('board/new3');
-});
 
-
-
-
-
-
-router.post('/', isSignedIn, validateBoard, catchAsync( async(req, res) => {
-    const board = new Board(req.body.board);
-    board.author = req.user._id;
-    await board.save();
-
-    res.redirect(`/index/${board._id}`);
+router.post('/', isSignedIn, catchAsync( async(req, res) => {
+        const board = new Board(req.body.board);
+        board.author = req.user._id;
+        await board.save();
+        // res.redirect(`/index/${board._id}`);
+        
+        console.log("req.body: ", req.body);
+        // console.log("req.body.text: ", req.body.text); 
+        // console.log("req.body.image: ", req.body.image);
+        // console.log("req: ", req);
+    
+        // res.redirect(`/index`);
+        res.json(board.id);
+        // res.send("????");
 }));
 
-// router.post('/', upload.array('image'), (req, res) => {
+
+router.post('/uploadImg', async(req, res) => {
+    console.log("uploadImg_req.body: ", req.body);
+    console.log("uploadImg_req.files: ", req.files);
+    res.json();
+});
+// router.post('/uploadImg', upload.array('image'), async(req, res) => {
 //     console.log("req.body: ", req.body);
 //     console.log("req.files: ", req.files);
 //     res.send("It worked?????");
 // });
+
 
 router.get('/:id', catchAsync( async(req, res) => {
     const { id } = req.params;

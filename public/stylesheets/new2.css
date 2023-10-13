@@ -23,9 +23,12 @@
 
 #new2Title {
     width: 100%;
+    height: 45px;
     padding: 1%;
     border: 1px solid #999;
     outline: none;
+    resize: none;
+    overflow: hidden;
 }
 
 #toolbar {

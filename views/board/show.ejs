@@ -19,7 +19,7 @@
             </div>
             <% } %>
         </div>
-        <p class="px-3 py-3 m-0" style="white-space: pre-wrap;"><%= boardItems.mainText %></p>
+        <p class="px-3 py-3 m-0" style="white-space: pre-wrap;"><%= boardItems.mainText.replace(/&nbsp;/g, ' ') %></p>
         <div class="d-flex px-3 justify-content-end border border-start-0 border-end-0 bg-light">
             <a class="p-1 me-1 btn btn-outline-secondary btn-sm" href="/index">목록</a>
             <a class="p-1 btn btn-outline-danger btn-sm" href="#">신고</a>
@@ -130,7 +130,7 @@
         <% } %>
     </div>
 </div>
+
 <%- include('../partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/javascript/commentsInShow.js"></script>
-<!-- <script src="/source/jquery-3.7.1.min.js"></script> -->
