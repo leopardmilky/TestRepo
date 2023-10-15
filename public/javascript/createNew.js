@@ -118,9 +118,6 @@ function imgUpload(obj) {
     if(obj.files.length + fileNum < 6) {    // 이미지 최대 첨부 개수 (업로드 하려는 이미지 갯수 + 업로드된 이미지 개수 < 6)
         if(range) {  // caret의 range값이 있을때.
             for(file of obj.files) {
-                // console.log("obj:", obj);
-                // console.log("file: ", file);
-                console.log("obj.files: ", obj.files);
                 const img = new Image();
                 const imgFile = URL.createObjectURL(file);
                 img.src = imgFile;
@@ -133,9 +130,6 @@ function imgUpload(obj) {
     
         if(!range) { // caret의 range값이 없을때. (바로 사진 버튼 눌렀을때.)
             for(file of obj.files) {
-                // console.log("obj:", obj);
-                // console.log("file: ", file);
-                console.log("obj.files: ", obj.files);
                 const img = new Image();
                 const imgFile = URL.createObjectURL(file);
                 img.src = imgFile;
@@ -162,7 +156,6 @@ caret.addEventListener('click', function() {
 });
 
 
-
 async function uploadContent() {
 
     const textData = document.getElementById('text-input');
@@ -170,59 +163,31 @@ async function uploadContent() {
     const imgData = textData.querySelectorAll('img');
     const formData = new FormData();
     const uploadImg = [];
-    // 여기서 URL일치하는 이미지만 뽑아서 새로 객체만들자?
     
-
     let num = 0;
     imgData.forEach((img) => {
         if(Object.keys(imgArr).includes(img.src)) {
             img.setAttribute("data-img-num", num);
-            // uploadImg[num] = imgArr[img.src];
             uploadImg.push(imgArr[img.src]);
             URL.revokeObjectURL(img.src);
             img.removeAttribute('src');
             num++;
         }
     });
-    console.log("uploadImg@@@: ", uploadImg);
-    console.log("imgArr@@@@: ", imgArr);
-    console.log("imgData type", imgData);
 
-
-    let fileNum = 0;
     uploadImg.forEach((img) => {
-
-        const blob = new Blob([img], {type: img.type})
         console.log("uploadImg.img: ", img)
         console.log("uploadImg.img.type: ", img.type)
-        console.log("uploadImg.blob: ", blob)
-
-        formData.append(`file${fileNum}`, blob);
-        fileNum++;
+        formData.append(`images`, img);
     });
-
-
-
+    console.log("textData.innerHTML: ", textData.innerHTML)
     const text = {board: {title: titleData, mainText: textData.innerHTML}};
-    const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-    };
-    // formData.append('files', uploadImg)
-
-    console.log("uploadImg[0]: ", uploadImg[0])
     await axios.post('/index', text)
     .then( async(res) => {
-        await axios.post('/index/uploadImg', uploadImg[0], config)
+        await axios.post('/index/uploadImg', formData)
         .then(console.log("갔다왔다."))
-
-
         console.log("res?", res);
         // window.location.href =` http://localhost:3000/index/${res.data}`
     })
-
-
-
-
 }
+

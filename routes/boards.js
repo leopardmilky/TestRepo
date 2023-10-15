@@ -10,7 +10,6 @@ const multer = require('multer');
 const upload = multer({dest: 'uploads/'});
 
 
-
 router.get('/', catchAsync( async(req, res) => {
     const { page } = req.query;
     try {
@@ -59,7 +58,7 @@ router.post('/', isSignedIn, catchAsync( async(req, res) => {
 }));
 
 
-router.post('/uploadImg', async(req, res) => {
+router.post('/uploadImg', upload.array('images'), async(req, res) => {
     console.log("uploadImg_req.body: ", req.body);
     console.log("uploadImg_req.files: ", req.files);
     res.json();
@@ -89,6 +88,8 @@ router.get('/:id', catchAsync( async(req, res) => {
 
     res.render('board/show', { boardItems: board, commentItems:comment, commentSum });
 }));
+
+
 
 router.get('/:id/edit', isSignedIn, isAuthor, catchAsync( async(req, res) => {
     const {id} = req.params;
