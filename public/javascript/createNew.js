@@ -163,7 +163,8 @@ async function uploadContent() {
     const imgData = textData.querySelectorAll('img');
     const formData = new FormData();
     const uploadImg = [];
-    
+    const imgIndex = {};
+
     let num = 0;
     imgData.forEach((img) => {
         if(Object.keys(imgArr).includes(img.src)) {
@@ -171,23 +172,22 @@ async function uploadContent() {
             uploadImg.push(imgArr[img.src]);
             URL.revokeObjectURL(img.src);
             img.removeAttribute('src');
+            imgIndex[num] = img.alt
             num++;
         }
     });
+    formData.append('imgIndex', JSON.stringify(imgIndex));
 
     uploadImg.forEach((img) => {
-        console.log("uploadImg.img: ", img)
-        console.log("uploadImg.img.type: ", img.type)
-        formData.append(`images`, img);
+        formData.append('images', img);
     });
-    console.log("textData.innerHTML: ", textData.innerHTML)
-    const text = {board: {title: titleData, mainText: textData.innerHTML}};
-    await axios.post('/index', text)
-    .then( async(res) => {
-        await axios.post('/index/uploadImg', formData)
-        .then(console.log("갔다왔다."))
-        console.log("res?", res);
-        // window.location.href =` http://localhost:3000/index/${res.data}`
+
+    formData.append('title' ,titleData);
+    formData.append('mainText' ,textData.innerHTML);
+
+    await axios.post('/index', formData)
+    .then((res) => {
+        window.location.href =` http://localhost:3000/index/${res.data}`
     })
-}
+};
 
