@@ -13,18 +13,15 @@ for(node of nodesCopy){
 
 
 // img태그에 맞는 이미지 s3에서 주소 가져와 src에 삽입.
-window.onload = function() {
-    const mainText = document.getElementById('mainText');
-    const imgData = mainText.querySelectorAll('img');
-    const boardImg = document.getElementById('boardImg').value;
-    const boardImgObject = JSON.parse(boardImg);
+const imgData = document.getElementById('mainText').querySelectorAll('img');
+const boardImg = document.getElementById('boardImg');
+const boardImgUrl = JSON.parse(boardImg.value);
 
-    imgData.forEach((img) => {
-        const imgNum = img.getAttribute('data-img-num');
-        const url = boardImgObject[imgNum];
-        img.src = url;
-        img.setAttribute('style', 'max-width: 100%;');
-    });
-}
+imgData.forEach((img) => {
+    const imgNum = img.getAttribute('data-img-num');
+    const url = boardImgUrl[imgNum];
+    img.src = url;
+    img.setAttribute('style', 'max-width: 100%;');
+});
 
- 
+boardImg.remove();

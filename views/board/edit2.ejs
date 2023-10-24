@@ -11,7 +11,7 @@
         </div>
         <div class="inputNew2" id="new2TitleWrap">
             <!-- <input type="text" id="new2Title" name="board[title]" placeholder="제목을 입력해 주세요." required>  만약 자동완성 히스토리 끄고 싶다면: autocomplete='off' -->
-            <textarea type="text" id="new2Title" name="board[title]" placeholder="제목을 입력해 주세요." required></textarea>
+            <textarea type="text" id="new2Title" name="board[title]" placeholder="제목을 입력해 주세요." required><%= content.title %></textarea>
         </div>
         <div class="inputNew2" id="new2MainTextWrap">
             <div id="toolbar">
@@ -70,9 +70,11 @@
                 <input type="file" name="imgBtn" id="imgBtn" onchange="imgUpload(this)" multiple>
             </div>
             <div id="text-input" contenteditable="true" placeholder="내용을 입력해주세요."></div>
+            <textarea id="mainText" cols="30" rows="10" style="display: none;" data-page-id="<%= content.id %>"><%= content.mainText %></textarea>
+            <textarea id="imgUrl" cols="30" rows="10" style="display: none;"><%= boardImg %></textarea>
         </div>
         <div>
-            <button class="bottomBtn" id="submitBtn" onclick="uploadContent()">등록</button> <!--  onclick="submitContent()"-->
+            <button class="bottomBtn" id="submitBtn" onclick="updateContent()">등록</button> <!--  onclick="submitContent()"-->
             <button type="button" class="bottomBtn" id="cancelBtn">취소</button>
         </div>
     </div>
@@ -81,6 +83,5 @@
 <%- include('../partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/javascript/textEditor.js"></script>
-<script src="/javascript/createNew.js"></script>
-
+<script src="/javascript/edit.js"></script>
 

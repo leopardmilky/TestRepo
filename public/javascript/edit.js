@@ -1,3 +1,24 @@
+(function () {
+    // 텍스트 에디터에 데이터 가져오기
+    const mainText = document.getElementById("mainText").value;
+    const doc = new DOMParser().parseFromString(mainText, "text/html");
+    const nodes = doc.body.childNodes;
+    const nodesCopy = Array.from(nodes);
+    const targetElement = document.getElementById('text-input');
+    for(node of nodesCopy){
+        targetElement.appendChild(node);
+    }
+    const boardImgUrl = JSON.parse(document.getElementById("imgUrl").value);
+    const imgElement = document.getElementById('text-input').querySelectorAll('img');
+    
+    imgElement.forEach((img) => {
+        const imgNum = img.getAttribute('data-img-num');
+        const url = boardImgUrl[imgNum];
+        img.src = url;
+    });
+})();
+
+
 let sel
 let range
 const imgObj = {};
@@ -6,7 +27,7 @@ function imgUpload(obj) {
 
     // 1. 이미지를 불러온다.
     // 2. 이미지 src 속성에 URL추가
-    // 3. imgArr객체에 file 객체를 담는다.
+    // 3. imgObj객체에 file 객체를 담는다.
     // 4. submit할때 일치하는 객체만 찾아서 보낸다.
 
     const fileNum = document.querySelectorAll('.imgSize').length;
@@ -51,28 +72,28 @@ caret.addEventListener('click', function() {
     range = sel.getRangeAt(0);
 });
 
-
-async function uploadContent() { // 게시물 생성
+const pageId = document.getElementById("mainText").getAttribute('data-page-id');
+async function updateContent() { // 게시물 수정
 
     const textData = document.getElementById('text-input');
     const titleData = document.getElementById('new2Title').value;
     const imgData = textData.querySelectorAll('img');
     const formData = new FormData();
-    const uploadImgArr = [];
-    const imgIndex = {};
+    const uploadImgArr = [];    // 이미지 파일객체
+    const imgIndex = {};        // '이미지 인덱스': '파일이름'(alt)
 
     let num = 0;
     imgData.forEach((img) => {
+        img.setAttribute("data-img-num", num);
         if(Object.keys(imgObj).includes(img.src)) {
-            img.setAttribute("data-img-num", num);
             uploadImgArr.push(imgObj[img.src]);
-            img.removeAttribute('src');
-            imgIndex[num] = img.alt
-            num++;
         }
-    });
+        img.removeAttribute('src');
+        imgIndex[num] = img.alt
+        num++;
+    })
 
-    console.log("UPLOAD_imgObj@@@@@@@@@@@@@@: ", imgObj);
+    console.log("UPDATE_imgObj@@@@@@@@@@@@@@: ", imgObj);
 
     Object.keys(imgObj).forEach((blobUrl) => {  // blob URL 명시적 해제
         URL.revokeObjectURL(blobUrl);
@@ -87,8 +108,8 @@ async function uploadContent() { // 게시물 생성
     formData.append('title' ,titleData);
     formData.append('mainText' ,textData.innerHTML);
 
-    await axios.post('/index', formData)
+    await axios.put(`/index/${pageId}`, formData)
     .then((res) => {
         window.location.href =` http://localhost:3000/index/${res.data}`
     })
-};
+}

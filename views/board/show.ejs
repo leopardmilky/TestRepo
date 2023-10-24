@@ -13,6 +13,7 @@
             <% if(signedInUser && boardItems.author.equals(signedInUser._id)) { %>
             <div class="d-flex justify-content-end">
                 <a class="p-1 me-1 btn btn-outline-warning btn-sm" href="/index/<%= boardItems._id %>/edit">수정</a>
+                <a class="p-1 me-1 btn btn-outline-warning btn-sm" href="/index/<%= boardItems._id %>/edit2">수정2</a>
                 <form action="/index/<%= boardItems._id %>?_method=DELETE" method="POST">
                     <button class="p-1 btn btn-outline-danger btn-sm">삭제</button>
                 </form>
@@ -134,5 +135,6 @@
 
 <%- include('../partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="/javascript/showComments.js"></script>
 <script src="/javascript/show.js"></script>
+<script src="/javascript/showComments.js"></script>
+
