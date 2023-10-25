@@ -7,14 +7,10 @@ const Comment = require('../models/comment');
 const NestedComment = require('../models/nestedComment');
 const { boardPaging } = require('../paging');
 const multer = require('multer');
-// const upload = multer({dest: 'uploads/'});
-// const upload = require('../module/multer');
 const  { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand }  =  require( '@aws-sdk/client-s3' );
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
-
-const multerS3 = require('multer-s3');
-// const aws = require('aws-sdk');
 const crypto = require('crypto');
+const sharp = require('sharp');
 require('dotenv').config();
 
 
@@ -28,6 +24,7 @@ const s3 = new S3Client({
 const storage = multer.memoryStorage()
 const upload = multer({storage: storage})
 const randomImageName = (bytes = 16) => crypto.randomBytes(bytes).toString('hex');
+
 
 
 router.get('/', catchAsync( async(req, res) => {
@@ -69,6 +66,15 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
 
     const imgIndex = JSON.parse(req.body.imgIndex);
     for(let i = 0; i < req.files.length; i++) {
+
+        const maxwidth = 1920;
+        const originalImage = await sharp(req.files[i].buffer);
+        const { width } = await originalImage.metadata();
+        let buffer = req.files[i].buffer;
+        if( width > maxwidth ) {
+            buffer = await sharp(req.files[i].buffer).resize({ width: 1920, height: 1080, fit: 'inside' }).toBuffer();
+        } 
+        
         const imageKey = `${req.user._id}/${board.id}/${randomImageName()}${Buffer.from(req.files[i].originalname, 'latin1').toString('utf8')}`
         const fileName = `${Buffer.from(req.files[i].originalname, 'latin1').toString('utf8')}`
 
@@ -80,7 +86,7 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
         const params = {
             Bucket: process.env.AWS_S3_BUCKET,
             Key: imageKey,
-            Body: req.files[i].buffer,
+            Body: buffer,
             ContentType: req.files[i].mimetype
         }
         const command = new PutObjectCommand(params);
@@ -175,11 +181,19 @@ router.put('/:id', isSignedIn, isAuthor, upload.array('images', 5), catchAsync( 
                 uploadImages[index] = `${req.user._id}/${board.id}/${randomImageName()}${fileName}`;
                 const imageKey = uploadImages[index];
                 delete imgIndex[index];
-                // s3업로드
+                
+                // 리사이징, s3업로드
+                const maxwidth = 1920;
+                const originalImage = await sharp(req.files[i].buffer);
+                const { width } = await originalImage.metadata();
+                let buffer = req.files[i].buffer;
+                if( width > maxwidth ) {
+                    buffer = await sharp(req.files[i].buffer).resize({ width: 1920, height: 1080, fit: 'inside' }).toBuffer();
+                } 
                 const params = {
                     Bucket: process.env.AWS_S3_BUCKET,
                     Key: imageKey,
-                    Body: req.files[i].buffer,
+                    Body: buffer,
                     ContentType: req.files[i].mimetype
                 }
                 const command = new PutObjectCommand(params);
@@ -220,14 +234,21 @@ router.put('/:id', isSignedIn, isAuthor, upload.array('images', 5), catchAsync( 
     res.json(board.id);
 }));
 
-// router.put('/:id', isSignedIn, isAuthor, validateBoard, catchAsync( async(req, res) => {
-//     const {id} = req.params;
-//     const board = await Board.findByIdAndUpdate(id, req.body.board); // {...req.body.board} ???
-//     res.redirect(`/index/${board._id}`);
-// }));
-
 router.delete('/:id', isSignedIn, isAuthor, catchAsync( async(req, res) => {
     const {id} = req.params;
+    const board = await Board.findById(id);
+    const boardImg = board.images[0];
+
+    // s3삭제
+    for(let img in boardImg) {
+        const params = {
+            Bucket: process.env.AWS_S3_BUCKET,
+            Key: boardImg[img],
+        }
+        const command = new DeleteObjectCommand(params);
+        await s3.send(command);
+    }
+
     await Board.findByIdAndDelete(id);
     res.redirect('/index');
 }));

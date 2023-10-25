@@ -38,7 +38,9 @@ function imgUpload(obj) {
     } else {
         alert("최대 첨부 갯수 5개를 초과 했습니다.");
     }
-
+    // input 초기화. (동일 이미지 파일 첨부 때문에)
+    const imgBtn = document.getElementById('imgBtn');
+    imgBtn.value = '';
 };
 
 const caret = document.querySelector('#text-input');
@@ -71,8 +73,6 @@ async function uploadContent() { // 게시물 생성
             num++;
         }
     });
-
-    console.log("UPLOAD_imgObj@@@@@@@@@@@@@@: ", imgObj);
 
     Object.keys(imgObj).forEach((blobUrl) => {  // blob URL 명시적 해제
         URL.revokeObjectURL(blobUrl);

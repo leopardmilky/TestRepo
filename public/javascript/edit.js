@@ -28,7 +28,7 @@ function imgUpload(obj) {
     // 1. 이미지를 불러온다.
     // 2. 이미지 src 속성에 URL추가
     // 3. imgObj객체에 file 객체를 담는다.
-    // 4. submit할때 일치하는 객체만 찾아서 보낸다.
+    // 4. submit할때 일치하는 객체만 찾아서 보낸다. 
 
     const fileNum = document.querySelectorAll('.imgSize').length;
 
@@ -59,7 +59,9 @@ function imgUpload(obj) {
     } else {
         alert("최대 첨부 갯수 5개를 초과 했습니다.");
     }
-
+    // input 초기화. (동일 이미지 파일 첨부 때문에)
+    const imgBtn = document.getElementById('imgBtn');
+    imgBtn.value = '';
 };
 
 const caret = document.querySelector('#text-input');
@@ -92,8 +94,6 @@ async function updateContent() { // 게시물 수정
         imgIndex[num] = img.alt
         num++;
     })
-
-    console.log("UPDATE_imgObj@@@@@@@@@@@@@@: ", imgObj);
 
     Object.keys(imgObj).forEach((blobUrl) => {  // blob URL 명시적 해제
         URL.revokeObjectURL(blobUrl);
