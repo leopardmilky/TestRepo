@@ -1,0 +1,86 @@
+<% layout('layouts/boilerplate') %>
+    <!-- <link rel="stylesheet" href="/stylesheets/index.css"> -->
+    <link rel="stylesheet" href="/stylesheets/signup2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+
+<div id="emailWrap">
+    <div id="emailInnerWrap">
+        <h5><b>이메일 인증</b></h5>
+        <p>회원가입을 위해 이메일 인증을 진행해 주세요.</p>
+        <div id="inputEmailWrap">
+            <input type="email" id="email" name="email" placeholder="이메일 입력" autocomplete='off'>
+        </div>
+        <div id="emailMsgWrap">
+            <p id="emailMsg"></p>
+        </div>
+        <div id="emailBtnWrap">
+            <button id="emailBtn" class="btn btn-success">인증하기</button>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- <div id="verifyEmailWrap">
+    <div id="verifyInnerWrap">
+        <h5><b>인증번호 입력</b></h5>
+        <p>leopardmilkyunlimited@email.com으로 인증번호를 보냈습니다.</p>
+        <div id="inputEmailCodeWrap">
+            <input type="text" id="inputEmailCode" name="inputEmailCode" placeholder="인증번호 입력" maxlength='6' autocomplete='off'>
+            <p id="timer_min">3</p>:
+            <p id="timer_sec">00</p>
+        </div>
+        <div id="emailCodeMsgWrap">
+            <p id="emailCodeMsg">잘못된 인증번호입니다.</p>
+        </div>
+        <div id="problemWrap">
+            <p id="problem">인증번호를 받지 못하셨나요?</p>
+        </div>
+        <div id="emailCodeBtnWrap">
+            <button id="emailCode" class="btn btn-success">인증완료</button>
+        </div>
+    </div>
+</div> -->
+
+
+
+<!-- <div id="userInfoWrap">
+    <div id="userInfoInnerWrap">
+        <h5><b>닉네임 및 비밀번호 설정</b></h5>
+        <p>사용할 닉네임과 비밀번호를 입력해 주세요.</p>
+        <div id="inputNicknameWrap">
+            <input type="text" id="nickname" name="nickname" autocomplete="nickname" placeholder="닉네임 입력">
+        </div>
+        <div id="nicknameMsgWrap">
+            <p id="nicknameMsg"></p>
+        </div>
+        <div id="pwdWrap">
+            <input type="password" id="password" name="password" autocomplete="new-password" placeholder="비밀번호 입력 (최소 6자리)">
+            <p id="visible1"><i id="eye1" class="fa-solid fa-eye active"></i></p>
+        </div>
+        <div id="pwdMsgWrap">
+            <p id="pwdMsg"></p>
+        </div>
+        <div id="confirmPwdWrap">
+            <input type="password" id="confirmPassword" name="confirmPassword" autocomplete="new-password" placeholder="비밀번호 확인">
+            <p id="visible2"><i id="eye2" class="fa-solid fa-eye active"></i></p>
+        </div>
+        <div id="confirmPwdMsgWrap">
+            <p id="confirmPwdMsg"></p>
+        </div>
+        <div id="registerBtnWrap">
+            <button id="registerBtn" class="btn btn-success">등록완료</button>
+        </div>
+    </div>
+</div> -->
+
+
+
+
+<%- include('../partials/footer') %>
+<script src="/javascript/signup2.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

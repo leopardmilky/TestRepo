@@ -92,3 +92,12 @@ async function uploadContent() { // 게시물 생성
         window.location.href =` http://localhost:3000/index/${res.data}`
     })
 };
+
+// 새로고침 시 알림팝업
+window.addEventListener('beforeunload', (event) => {
+    // 명세에 따라 preventDefault는 호출해야하며, 기본 동작을 방지합니다.
+    event.preventDefault();
+
+    // 대표적으로 Chrome에서는 returnValue 설정이 필요합니다.
+    event.returnValue = '';
+});

@@ -2,17 +2,33 @@ const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
 const { validatePassword } = require('../middleware');
-
+const nodemailer = require('nodemailer');
 const User = require('../models/user');
 const passport = require('passport')
+const redis = require('redis');
+require('dotenv').config();
 
 
-
-
+const redisClient = redis.createClient({
+    url: `redis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}/0`,
+    legacyMode: true, // 반드시 설정 !!
+ });
+ redisClient.on('connect', () => {
+    console.info('Redis connected!@@');
+ });
+ redisClient.on('error', (err) => {
+    console.error('Redis Client Error', err);
+ });
+ redisClient.connect().then(); // redis v4 연결 (비동기)
+ const redisCli = redisClient.v4; // 기본 redisClient 객체는 콜백기반인데 v4버젼은 프로미스 기반이라 사용
 
 
 router.get('/signup', (req, res) => {
     res.render('users/signup');
+});
+
+router.get('/signup2', (req, res) => {
+    res.render('users/signup2');
 });
 
 router.get('/signup/check', catchAsync( async(req, res) => { 
@@ -29,7 +45,64 @@ router.get('/signup/check', catchAsync( async(req, res) => {
             return res.send("ok");
         }
     }
-    res.send("duplicated")
+    res.send("notok")
+}));
+
+router.get('/signup/verifyemail', catchAsync( async(req, res) => {
+    const { email } = req.query;
+    const payload = Math.floor(100000 + Math.random() * 900000);
+
+    await redisCli.set(email, payload); // OK
+    await redisCli.expire(email, 30);
+    
+    const smtpTransport = nodemailer.createTransport({
+        service: 'gmail', // 사용할 메일 서비스
+        auth: {
+          user: process.env.NODE_MAILER_ID,
+          pass: process.env.NODE_MAILER_PASSWORD,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      });
+    
+      const mailOptions = {
+        from: process.env.NODE_MAILER_ID,
+        to: email,
+        subject: "Message title",
+        text: "nodemailer 테스트 메일입니다.",
+        html: `<p>인증번호는 ${payload} 입니다.</p>`
+      };
+
+      await smtpTransport.sendMail(mailOptions, (error, responses) => {
+        if (error) {
+          res.status(400).json({ ok: false });
+        } else {
+          res.status(200).json({ ok: true });
+        }
+        smtpTransport.close();
+      });
+
+      res.status(200).json({ ok: true });
+}));
+
+router.post('/signup/verifycode', catchAsync( async(req, res) => {
+    const {userCode, email} = req.body;
+    console.log("CODE: ", userCode);
+    console.log("email: ", email);
+
+    let redisData = await redisCli.get(email); // 123
+    console.log("REDIS_DATA: ", redisData);
+
+    if( userCode === redisData) {
+        return res.status(200).json('ok');
+    }
+    if(!redisData) {
+        return res.status(400).json('not exist');
+    }
+    if(userCode != redisData){
+        return res.status(400).json('incorrect');
+    }
 }));
 
 router.post('/signup', catchAsync( async(req, res, next) => {

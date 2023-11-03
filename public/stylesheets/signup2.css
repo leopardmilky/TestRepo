@@ -1,0 +1,212 @@
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* 이메일 인증 */
+#emailWrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    height: 100%;
+}
+
+#emailInnerWrap {
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 500px;
+    padding: 50px;
+}
+
+#inputEmailWrap {
+    width: 100%;
+    margin-top: 30px;
+}
+
+.validEmailMsg {
+    font-size: small;
+    color: green;
+}
+
+.invalidEmailMsg {
+    font-size: small;
+    color: red;
+}
+
+#email{
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#emailBtnWrap, #emailBtn {
+    width: 100%;
+}
+
+#emailBtn{
+    height: 40px;
+}
+
+/* 인증번호 */
+#verifyEmailWrap{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    height: 100%;
+}
+
+#verifyInnerWrap{
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 500px;
+    padding: 50px;
+}
+
+#inputEmailCodeWrap{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 30px;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+#inputEmailCode{
+    border-radius: 10px;
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    margin-right: 5px;
+}
+
+#timer_min, #timer_sec {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: crimson;
+}
+
+#emailCodeBtnWrap, #emailCode {
+    width: 100%;
+}
+
+#emailCodeMsg {
+    color: red;
+    font-size: small;
+}
+
+#problem {
+    font-size: small;
+    text-decoration: underline;
+}
+
+
+/* 닉네임, 비밀번호 */
+#userInfoWrap{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    height: 100%;
+}
+
+#userInfoInnerWrap{
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 500px;
+    padding: 50px;
+}
+
+#inputNicknameWrap {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 30px;
+}
+
+#nickname {
+    border-radius: 10px;
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+}
+
+#nicknameMsg {
+    color: red;
+    font-size: small;
+}
+
+#pwdWrap {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 30px;
+}
+
+#password{
+    border-radius: 10px;
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+}
+
+#visible1 {
+    margin-bottom: 0;
+    margin-left: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#eye1 {
+    cursor: pointer;
+}
+
+#pwdMsg {
+    color: red;
+    font-size: small;
+}
+
+#visible2{
+    margin-bottom: 0;
+    margin-left: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#eye2 {
+    cursor: pointer;
+}
+
+#confirmPwdWrap {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+}
+
+#confirmPassword {
+    border-radius: 10px;
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+}
+
+#confirmPwdMsg {
+    color: red;
+    font-size: small;
+}
+#registerBtn {
+    width: 100%;
+}

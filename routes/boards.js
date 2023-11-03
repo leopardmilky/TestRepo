@@ -14,6 +14,8 @@ const sharp = require('sharp');
 require('dotenv').config();
 
 
+
+
 const s3 = new S3Client({
     credentials: {
         accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,

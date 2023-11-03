@@ -61,10 +61,10 @@ advancedOptionButton.forEach((button) => {
 linkButton.addEventListener("click", () => {
     let userLink = prompt("Enter a URL");
 
-    if(/http/i.test(userLink)) {
+    if(/https/i.test(userLink)) {
         modifyText(linkButton.id, false, userLink);
     } else {
-        userLink = "http://" + userLink;
+        userLink = "https://" + userLink;
         modifyText(linkButton.id, false, userLink);
     }
 });
