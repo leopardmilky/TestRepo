@@ -29,7 +29,7 @@ const BoardSchema = new Schema({
 
 BoardSchema.post('findOneAndDelete', async function(doc){
     if(doc){
-        await Comment.deleteMany({_id: {$in: doc.comments}})
+        await Comment.deleteMany({_id: { $in: doc.comments }})
         await NestedComment.deleteMany({board: doc._id})
     }
 });

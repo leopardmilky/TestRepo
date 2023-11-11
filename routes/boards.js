@@ -13,6 +13,8 @@ const crypto = require('crypto');
 const sharp = require('sharp');
 require('dotenv').config();
 
+const mongoose = require('mongoose');
+
 
 
 
@@ -104,13 +106,204 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
 router.get('/:id', catchAsync( async(req, res) => {
     const { id } = req.params;
     const board = await Board.findById(id).populate({path: 'comments', populate: {path:'author'}}).populate('author'); // populate()가 있어야 ref
-    const comment = await Comment.find({ board:id }).populate({path: 'nestedComments', populate: {path: 'author'}}).populate('author');
+    const comment = await Comment.find({ board:id }).sort({ createdAt: 1 }).populate({path: 'nestedComments', populate: {path: 'author'}}).populate('author'); // sort({ createdAt: -1 }) 이거 필요없나...?
     const nestedComment = await NestedComment.find({board:id});
     const commentSum = board.comments.length + nestedComment.length;
 
-    // const commentPaging = await Comment.find({ board:id }).populate('nestedComments');
 
-    const commentPaging = await Comment.aggregate([{$unwind:"$nestedComments"}]);
+
+
+
+    
+
+
+
+
+    // const pagePerPost = 5;
+    // const lastPageContents = commentSum%pagePerPost;    // 마지막 페이지에 있어야할 댓글 개수
+    // const allPage = Math.ceil(commentSum/pagePerPost);   
+    // console.log("comment:", comment);
+    // console.log("comment.length:", comment.length);
+    // console.log("allPage:", allPage);
+    // console.log("lastPageContents:", lastPageContents);
+    // console.log("comment[comment.length-1]:", comment[comment.length-1]);
+    // console.log("comment[comment.length-1].nestedComments.length:", comment[comment.length-1].nestedComments.length);
+    // console.log("comment[0].nestedComments:", comment[0].nestedComments.slice(-2));
+
+    // 첫 로딩시
+    // 만약 1 + comment[comment.length-1].nestedComments.length < lastPageContents 라면
+    // let needComment += 1 + comment[comment.length-1].nestedComments.length; // 1+0
+
+    // 그러다가 1 + comment[comment.length-2].nestedComments.length = lastPageContents - needComment가 되거나
+    // 1 + comment[comment.length-2].nestedComments.length > lastPageContents - needComment가 되면...  1+6 > 3
+        // =일때: limit(2)
+        // >일때: comment[comment.length-2].nestedComments.length - lastPageContents - needComment = 2
+            //  comment[comment.length-2].nestedComments.slice(-2);
+
+
+
+    // const comment2 = await Comment.find({ board:id }).sort({ createdAt: 1 }).populate({path: 'nestedComments', populate: {path: 'author'}}).populate('author'); // sort({ createdAt: -1 }) 이거 필요없나...?
+    // console.log("comment2: ", comment2);
+    // console.log("comment2: ", comment2[0].nestedComments);
+    // const pagePerPost = 5;                                  // 페이지당 보여줄 댓글 개수
+    // const lastPageContents = commentSum%pagePerPost;        // 마지막 페이지에 있어야할 댓글 개수
+    // const allPage = Math.ceil(commentSum/pagePerPost);      // 총 페이지
+    // let countedComment = 0;
+    // let commentNum = 0;
+    // let comment2_result;
+    
+    // console.log("부모댓글길이: ", comment2.length);
+    // console.log("총 페이지: ", allPage);
+    // console.log("마지막 페이지 댓글수:", lastPageContents);
+    
+    // // 첫 로딩시
+    // for(let i = 0; i <= comment2.length; i++){
+    //     if( 1 + comment2[i].nestedComments.length < lastPageContents - countedComment ){
+    //         countedComment += 1 + comment2[i].nestedComments.length;
+    //         commentNum = i+1;
+    //     } else {
+    //         break;
+    //     }
+    // }
+
+    // // =일때
+    // if(1 + comment2[commentNum].nestedComments.length == lastPageContents - countedComment) {
+    //     comment2_result = comment2[commentNum];
+    // }
+
+    // // >일때
+    // if(1 + comment2[commentNum].nestedComments.length > lastPageContents - countedComment) {
+    //     comment2_result = comment2[commentNum].nestedComments.slice(-(lastPageContents - countedComment));
+    // }
+
+    // console.log("comment2_result1111: ", )
+    // console.log("comment2_result2222: ", comment2_result);
+
+
+    // const commentPaging = await Comment.find({ board:id }).populate('nestedComments');
+    // const commentPaging = await Comment.find({ board:id });
+    // console.log("commentPaging: ", commentPaging);
+
+    // const boardId = new mongoose.Types.ObjectId(req.params.id);
+    // const content = await Comment.aggregate([
+    //     {
+    //       $match: {
+    //         board: boardId// 필요한 게시물의 ID로 바꾸세요.
+    //       }
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "nestedcomments", // 대댓글이 저장된 컬렉션 이름
+    //         localField: "nestedComments",
+    //         foreignField: "_id",
+    //         as: "nestedComments"
+    //       }
+    //     },
+    //     {
+    //       $addFields: {
+    //         allComments: { $concatArrays: ["$nestedComments", ["$$ROOT"]] }
+    //       }
+    //     },
+    //     {
+    //       $unwind: "$allComments"
+    //     },
+    //     {
+    //       $replaceWith: "$allComments"
+    //     },
+    //     {
+    //       $sort: { createdAt: 1 }
+    //     },
+    //     {
+    //       $skip: 0
+    //     },
+    //     {
+    //       $limit: 10
+    //     }
+    //   ]);
+    // console.log("content: ", content);
+
+
+    // 1. $match 게시물에 해당하는 댓글 찾기.
+    // 2. $lookup nestedComment, nestedComment-author, author 값 가져오기.
+    // 3. 그다음은 
+    // const boardId = new mongoose.Types.ObjectId(req.params.id);
+    // const comments = await Comment.aggregate([
+    //     {
+    //         $match:{
+    //             board:boardId
+    //         }
+    //     },
+    //     { 
+    //         $lookup:{
+    //             from:"nestedcomments", 
+    //             localField:"_id", 
+    //             foreignField:"comment", 
+    //             as: "all_comments"
+    //         }
+    //     },
+    //     {
+    //         $unwind: "$all_comments" // 배열을 풀어서 각 댓글과 대댓글을 개별 도큐먼트로 만듦
+    //     },
+    //     {
+    //         $skip: 0 // 건너뛸 댓글 수 (페이징)
+    //     },
+    //     {
+    //         $limit: 10 // 가져올 댓글 수 (페이징)
+    //     },
+            // {
+            //     $project: {
+            //         allComments: 1
+            //     }
+            // },
+    // ]);
+    // console.log("BOARD_ID@@@@@@@@@@@: ", boardId);
+    // console.log("comments@@@@@@@@@@@: ", comments);
+
+    // for(let comment of comments){
+    //     console.log("comment._id: ", comment._id);
+    // }
+    // console.log("COUNT_id: ", )
+
+    // const boardId = new mongoose.Types.ObjectId(req.params.id);
+    // const bods = await Board.aggregate([
+    //     {
+    //       $match: { _id: boardId } // 특정 게시판에 대한 검색
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "comments",
+    //         localField: "_id",
+    //         foreignField: "board",
+    //         as: "comments" // comments 컬렉션과 연결하여 댓글을 가져옴
+    //       }
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: "nestedcomments",
+    //         localField: "_id",
+    //         foreignField: "board",
+    //         as: "nestedComments" // nestedComments 컬렉션과 연결하여 대댓글을 가져옴
+    //       }
+    //     },
+    //     {
+    //       $project: {
+    //         allComments: {
+    //           $concatArrays: ["$comments", "$nestedComments"]
+    //         } // 댓글과 대댓글을 하나의 배열에 합침
+    //       }
+    //     },
+    //     {
+    //       $unwind: "$allComments" // 배열을 풀어서 각 댓글과 대댓글을 개별 도큐먼트로 만듦
+    //     },
+    //     {
+    //       $skip: 0 // 건너뛸 댓글 수 (페이징)
+    //     },
+    //     {
+    //       $limit: 10 // 가져올 댓글 수 (페이징)
+    //     }
+    //   ]);
+    //   console.log("bods: ", bods);
+
 
     const boardImgObject = {};
     for(let i = 0; i < Object.keys(board.images[0]).length; i++) {

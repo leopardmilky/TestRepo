@@ -1,0 +1,28 @@
+<% layout('layouts/boilerplate') %>
+    <!-- <link rel="stylesheet" href="/stylesheets/index.css"> -->
+    <link rel="stylesheet" href="/stylesheets/forgotPwd.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div id="emailWrap">
+    <div id="emailInnerWrap">
+        <h5><b>회원정보 찾기</b></h5>
+        <p class="info">가입하신 이메일 주소를 입력해 주세요.</p>
+        <p class="info">해당 이메일로 임시 비밀번호를 보내드립니다.</p>
+        <div id="inputEmailWrap">
+            <input type="email" id="email" name="email" placeholder="이메일 입력" autocomplete='off'>
+        </div>
+        <div id="emailMsgWrap">
+            <p id="emailMsg"></p>
+        </div>
+        <div id="emailBtnWrap">
+            <button id="emailBtn" class="btn btn-success">확인</button>
+        </div>
+    </div>
+</div>
+
+
+<%- include('../partials/footer') %>
+<script src="/javascript/forgotPwd.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

@@ -93,11 +93,14 @@ async function uploadContent() { // 게시물 생성
     })
 };
 
-// 새로고침 시 알림팝업
-window.addEventListener('beforeunload', (event) => {
-    // 명세에 따라 preventDefault는 호출해야하며, 기본 동작을 방지합니다.
-    event.preventDefault();
 
-    // 대표적으로 Chrome에서는 returnValue 설정이 필요합니다.
-    event.returnValue = '';
+
+// 새로고침 시 알림팝업
+let shouldShowWarning = true;
+window.onbeforeunload = function(event) {
+    if (shouldShowWarning) { return ""; }
+};
+// 특정 동작이 발생했을 때 허용
+document.getElementById("submitBtn").addEventListener("click", function() {
+    shouldShowWarning = false;
 });

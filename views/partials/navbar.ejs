@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark border border-warning">
+<!-- <nav class="navbar navbar-expand-lg navbar-dark bg-dark border border-warning">
     <div class="container-fluid w-50 px-4 border border-danger">
       <a class="navbar-brand" href="/index">FreeBoard</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -8,19 +8,51 @@
         <div class="navbar-nav">
             <a class="nav-link" href="/index">Home</a>
             <a class="nav-link" href="/index/new">New Content</a>
-            <a class="nav-link" href="/index/new2">New2 Content</a>
+            <a class="nav-link" href="/index/new2">New Content</a>
         </div>
        
         <div class="navbar-nav">
-          <% if(!signedInUser) { %>
+          <%# if(!signedInUser) { %>
           <span class="nav-link signInBtn" style="cursor:pointer">Sign in</span>
           <a class="nav-link" href="/signup">Sign up</a>
-          <a class="nav-link" href="/signup2">Sign up2</a>
-          <% } else { %>
-          <span class="p-2 text-white"><%= signedInUser.nickname %></span>
+          <a class="nav-link" href="/signup2">Sign up</a>
+          <%# } else { %>
+          <span class="p-2 text-white"></span>
+          <div class="dropdown">
+            <span class="user_nickname text-white"><%#= signedInUser.nickname %></span>
+            <div class="dropdown-options">
+              <a class="dropdown-option" href="#">회원정보수정</a>
+              <a class="dropdown-option signOutBtn" href="#">로그아웃</a>
+            </div>
+          </div>
           <span class="nav-link signOutBtn" style="cursor:pointer">Sign out</span>
-          <% } %>
+          <%# } %>
         </div>
       </div>
     </div>
+</nav> -->
+
+<nav id="navbar">
+  <div id="navbarWrap">
+    <div id="logoWrap">
+      <a id="logo" href="/index">FreeBoard</a>
+    </div>
+    <div id="userSignWrap">
+      <% if(!signedInUser) { %>
+        <a class="sign-option signInBtn" style="cursor:pointer">로그인</a>
+        <!-- <a class="nav-link" href="/signup">Sign up</a> -->
+        <a class="sign-option" href="/signup2">회원가입</a>
+        <% } else { %>
+        <span class="p-2 text-white"></span>
+        <div class="dropdown">
+          <span class="user_nickname text-white"><%= signedInUser.nickname %> ▼</span>
+          <div class="dropdown-options">
+            <a class="dropdown-option" href="/edituserinfo">회원정보수정</a>
+            <a class="dropdown-option signOutBtn" href="#">로그아웃</a>
+          </div>
+        </div>
+        <!-- <span class="nav-link signOutBtn" style="cursor:pointer">Sign out</span> -->
+        <% } %>
+    </div>
+  </div>
 </nav>

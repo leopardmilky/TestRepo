@@ -353,13 +353,13 @@ document.addEventListener('click', async function(event){   // 댓글 답변등�
     }
 });
 
-document.addEventListener('click', async function(event){   // 댓글 페이징
-    const pageNum = event.target.classList.contains('commentPage');
-    if(pageNum){
-        const result = await axios.get(`/index/6511adba651c17574ded39e8/comments?page=1`)
+// document.addEventListener('click', async function(event){   // 댓글 페이징
+//     const pageNum = event.target.classList.contains('commentPage');
+//     if(pageNum){
+//         const result = await axios.get(`/index/6511adba651c17574ded39e8/comments?page=1`)
 
-        console.log("result: ", result);
-        console.log("result.data: ", result.data);
-    }
-});
+//         console.log("result: ", result);
+//         console.log("result.data: ", result.data);
+//     }
+// });
 

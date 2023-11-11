@@ -12,15 +12,15 @@ require('dotenv').config();
 const redisClient = redis.createClient({
     url: `redis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}/0`,
     legacyMode: true, // 반드시 설정 !!
- });
- redisClient.on('connect', () => {
+});
+redisClient.on('connect', () => {
     console.info('Redis connected!@@');
- });
- redisClient.on('error', (err) => {
+});
+redisClient.on('error', (err) => {
     console.error('Redis Client Error', err);
- });
- redisClient.connect().then(); // redis v4 연결 (비동기)
- const redisCli = redisClient.v4; // 기본 redisClient 객체는 콜백기반인데 v4버젼은 프로미스 기반이라 사용
+});
+redisClient.connect().then(); // redis v4 연결 (비동기)
+const redisCli = redisClient.v4; // 기본 redisClient 객체는 콜백기반인데 v4버젼은 프로미스 기반이라 사용
 
 
 router.get('/signup', (req, res) => {
@@ -30,6 +30,68 @@ router.get('/signup', (req, res) => {
 router.get('/signup2', (req, res) => {
     res.render('users/signup2');
 });
+
+router.get('/forgotpwd', (req, res) => {
+    res.render('users/forgotPwd');
+});
+
+router.get('/edituserinfo', (req, res) => {
+    res.render('users/edituserinfo');
+})
+
+router.post('/forgotpwd/temppwd', catchAsync( async(req, res) => {
+    const { email } = req.body;
+    const user = await User.find({email:email});
+    const randomString = Math.random().toString(36).slice(2);
+
+    await user[0].setPassword(randomString);
+    await user[0].save();
+
+    const smtpTransport = nodemailer.createTransport({
+        service: 'gmail', // 사용할 메일 서비스
+        auth: {
+          user: process.env.NODE_MAILER_ID,
+          pass: process.env.NODE_MAILER_PASSWORD,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      });
+
+      const mailOptions = {
+        from: process.env.NODE_MAILER_ID,
+        to: email,
+        subject: "temporary password",
+        text: "nodemailer 테스트 메일입니다.",
+        html: `<p>임시 비밀번호는 ${randomString} 입니다. 로그인 후 반드시 비밀번호를 변경해 주세요.</p>`
+      };
+
+      await smtpTransport.sendMail(mailOptions, (error, responses) => {
+        if (error) {
+          res.status(400).json({ ok: false });
+        } else {
+          res.status(200).json({ ok: true });
+        }
+        smtpTransport.close();
+      });
+
+      res.status(200).json({ ok: true });
+}));
+
+router.post('/forgotpwd/check', catchAsync( async(req, res) => {
+    const {email} = req.body;
+    console.log("email체크: ", email);
+    if(email) {
+        const user = await User.find({email:email});
+        if(user.length > 0){
+            return res.send('ok');
+        }
+        if(user.length == 0) {
+            return res.send('notok');
+        }
+    }
+    res.send('notok');
+}));
 
 router.get('/signup/check', catchAsync( async(req, res) => { 
     const {email, nickname} = req.query;
@@ -53,7 +115,7 @@ router.get('/signup/verifyemail', catchAsync( async(req, res) => {
     const payload = Math.floor(100000 + Math.random() * 900000);
 
     await redisCli.set(email, payload); // OK
-    await redisCli.expire(email, 30);
+    await redisCli.expire(email, 180);
     
     const smtpTransport = nodemailer.createTransport({
         service: 'gmail', // 사용할 메일 서비스

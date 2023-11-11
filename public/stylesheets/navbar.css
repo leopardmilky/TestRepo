@@ -1,0 +1,70 @@
+
+#navbar {
+    background-color: #212529;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    
+}
+
+#navbarWrap {
+    border: 1px solid red;
+    width: 1000px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 15px;
+}
+
+#logo {
+    color: white;
+    font-weight: bold;
+    font-size: large;
+    text-decoration: none;
+}
+
+#logoWrap {
+    display: flex;
+    align-items: center;
+}
+
+#userSignWrap {
+    display: flex;
+    flex-direction: row;
+}
+
+.sign-option {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+}
+
+.dropdown {
+    display: inline-block;
+    position: relative;
+  }
+
+.dropdown-options {
+    display: none;
+    position: absolute;
+    overflow: auto;
+    background-color: white;
+    font-size: small;
+}
+
+.dropdown:hover .dropdown-options {
+    display: block;
+}
+
+.dropdown-option {
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+}
+
+.dropdown-options{
+    margin-bottom: 10px;
+    background-color: #212529;
+    padding: 5px;
+    border-radius: 5px;
+}

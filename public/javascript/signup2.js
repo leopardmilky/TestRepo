@@ -108,7 +108,7 @@ function inputVerifyCode(email) {
     // 인증번호 타이머
     const timer_min = document.getElementById('timer_min');
     const timer_sec = document.getElementById('timer_sec');
-    let time = 30;
+    let time = 180;
     setInterval(() => {
         if(time > 0) {
             time = time - 1;
@@ -328,11 +328,8 @@ function inputNickPwd(email) {
         })
 }
 
-// 새로고침 시 알림팝업
-window.addEventListener('beforeunload', (event) => {
-    // 명세에 따라 preventDefault는 호출해야하며, 기본 동작을 방지합니다.
-    event.preventDefault();
 
-    // 대표적으로 Chrome에서는 returnValue 설정이 필요합니다.
-    event.returnValue = '';
-});
+// 새로고침 시 알림팝업
+window.onbeforeunload = function(event) {
+    return "";
+};
