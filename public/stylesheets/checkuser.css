@@ -1,0 +1,69 @@
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* #userInfoWrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    border: 5px solid red;
+}
+
+#userInfoInnerWrap {
+    border: 5px solid blue;
+} */
+
+#pwdWrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid black;
+    height: 100%;
+}
+
+#pwdInnerWrap {
+    border: 1px solid black;
+    border-radius: 10px;
+    width: 500px;
+    padding: 50px;
+}
+
+#inputPwdWrap {
+    width: 100%;
+    margin-top: 30px;
+}
+
+.info {
+    margin: 0;
+    font-size: smaller;
+}
+
+.validEmailMsg {
+    font-size: small;
+    color: green;
+}
+
+.invalidEmailMsg {
+    font-size: small;
+    color: red;
+}
+
+#password{
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    border-radius: 10px;
+}
+
+#pwdBtnWrap, #pwdBtn {
+    width: 100%;
+}
+
+#pwdBtn{
+    height: 40px;
+}

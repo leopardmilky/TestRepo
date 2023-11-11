@@ -1,0 +1,27 @@
+<% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/checkuser.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+
+<form action="/editUserInfo" method="POST" id="pwdWrap">
+    <div id="pwdInnerWrap">
+        <h5><b>비밀번호 확인</b></h5>
+        <p class="info">회원님의 정보를 보호하기 위해 비밀번호를 한번 더 확인합니다.</p>
+        <div id="inputPwdWrap">
+            <input type="password" id="password" name="password" placeholder="비밀번호 입력" autocomplete='off'>
+        </div>
+        <div id="emailMsgWrap">
+            <p id="emailMsg"></p>
+        </div>
+        <div id="pwdBtnWrap">
+            <button id="pwdBtn" class="btn btn-success">확인</button>
+        </div>
+    </div>
+</form>
+
+
+<%- include('../partials/footer') %>
+<script src="/javascript/checkuser.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

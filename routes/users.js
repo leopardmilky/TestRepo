@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { validatePassword } = require('../middleware');
+const { validatePassword, isSignedIn, verifyUser } = require('../middleware');
 const nodemailer = require('nodemailer');
 const User = require('../models/user');
 const passport = require('passport')
@@ -35,9 +35,24 @@ router.get('/forgotpwd', (req, res) => {
     res.render('users/forgotPwd');
 });
 
-router.get('/edituserinfo', (req, res) => {
-    res.render('users/edituserinfo');
-})
+router.get('/userinfo', isSignedIn, (req, res) => {
+    res.render('users/checkuser');
+});
+
+router.get('')
+
+router.post('/editUserInfo', isSignedIn, verifyUser, catchAsync( async(req, res) => {
+    res.render('users/editUserInfo');
+}));
+
+// router.post('/checkPwd', isSignedIn, catchAsync( async(req, res) => {
+//     const { password } = req.body;
+//     const user = await User.findById(req.user._id);
+//     const auth = await user.authenticate(password);
+//     console.log("user???: ", user);
+//     console.log("auth???: ", auth.user.email);
+//     res.redirect('/editUserInfo');
+// }));
 
 router.post('/forgotpwd/temppwd', catchAsync( async(req, res) => {
     const { email } = req.body;

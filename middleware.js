@@ -2,6 +2,7 @@ const { boardSchema, commentSchema, nestedCommentSchema } =require('./schemas');
 const ExpressError = require('./utils/ExpressError');
 const Board = require('./models/board');
 const Comment = require('./models/comment');
+const User = require('./models/user');
 const NestedComment = require('./models/nestedComment');
 
 
@@ -81,11 +82,25 @@ module.exports.validateNestedComment = (req, res, next) => {
     }
 };
 
-// module.exports.validatePassword = (req, res, next) => {
-//     console.log("validatePassword: ", req.body);
-//     const {password, confirmPwd} = req.body;
-//     if(password != confirmPwd) {
-//          return res.redirect('/signup')
-//     }
-//     next();
-// }
+module.exports.verifyUser = async(req, res, next) => {
+    const { password, error } = req.body;
+    const user = await User.findById(req.user._id);
+    const auth = await user.authenticate(password);
+    if(auth.user.email == req.user.email){
+        next();
+    } else {
+        return res.redirect(`/index`)
+    }
+    // if(error){
+    //     const msg = error.details.map(el => el.message).join(',');
+    //     throw new ExpressError(msg, 400)
+    //     return res.redirect(`/index`)
+    // }
+    // console.log("user???: ", user);
+    // console.log("req.user._id???: ", req.user._id);
+    // console.log("password???: ", password);
+    // console.log("auth???: ", auth);
+    // console.log("auth.user.email???: ", auth.user.email);
+    // console.log("req.user.email???: ", req.user.email);
+    // 
+};
