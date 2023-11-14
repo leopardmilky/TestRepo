@@ -57,6 +57,7 @@
 }
 
 .dropdown-option {
+    display: block;
     border-radius: 10px;
     text-decoration: none;
     color: white;

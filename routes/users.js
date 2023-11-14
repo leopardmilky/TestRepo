@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { validatePassword, isSignedIn, verifyUser, validateNickname } = require('../middleware');
+const { isSignedIn, verifyUser, validateNickname, validatePassword } = require('../middleware');
 const nodemailer = require('nodemailer');
 const User = require('../models/user');
 const passport = require('passport')
@@ -47,11 +47,36 @@ router.post('/modifyUserInfo', isSignedIn, verifyUser, catchAsync( async(req, re
     res.render('users/modifyUserInfo', {nickname, email});
 }));
 
-router.put('/saveUserInfo', isSignedIn, validateNickname, catchAsync( async(req, res) => {
+router.put('/saveUserInfo', isSignedIn, validateNickname, validatePassword, catchAsync( async(req, res) => {
+    const password = req.body.password;
+    const confirmPwd = req.body.confirmPwd;
+    const afterNick = req.body.nickname;
+    const beforeNick = req.user.nickname;
 
-    const userNick = {nickname: req.body.nickname};
-    await User.findByIdAndUpdate(req.user.id, userNick);
-    res.status(200).json({ok: true});
+    if(afterNick != beforeNick){
+        const userNick = {nickname: afterNick};
+        await User.findByIdAndUpdate(req.user.id, userNick);
+
+        if(password === confirmPwd && password.length >= 6 && confirmPwd.length >= 6){
+            const user = await User.find({nickname:afterNick});
+            await user[0].setPassword(confirmPwd);
+            await user[0].save();
+            return res.status(200).json({ok: true});
+        }
+    }
+
+    if(afterNick === beforeNick) {
+        if(password === confirmPwd && password.length >= 6 && confirmPwd.length >= 6){
+            const user = await User.find({nickname:beforeNick});
+            await user[0].setPassword(confirmPwd);
+            await user[0].save();
+            return res.status(200).json({ok: true});
+        }
+    }
+
+    if(password.length == 0 && confirmPwd.length == 0){
+        return res.status(200).json({ok: true});
+    }
 }));
 
 router.post('/forgotpwd/temppwd', catchAsync( async(req, res) => {
@@ -60,7 +85,7 @@ router.post('/forgotpwd/temppwd', catchAsync( async(req, res) => {
     const randomString = Math.random().toString(36).slice(2);
 
     await user[0].setPassword(randomString);
-    await user[0].save();
+    await user[0].save();   // 이건 내가 뭘 참고해서 쓴거지..? 필요한거 맞나? https://www.npmjs.com/package/passport-local-mongoose 이거인듯....
 
     const smtpTransport = nodemailer.createTransport({
         service: 'gmail', // 사용할 메일 서비스
@@ -95,7 +120,7 @@ router.post('/forgotpwd/temppwd', catchAsync( async(req, res) => {
 
 router.post('/forgotpwd/check', catchAsync( async(req, res) => {
     const {email} = req.body;
-    console.log("email체크: ", email);
+
     if(email) {
         const user = await User.find({email:email});
         if(user.length > 0){
@@ -164,7 +189,7 @@ router.get('/signup/verifyemail', catchAsync( async(req, res) => {
 }));
 
 router.post('/signup/verifycode', catchAsync( async(req, res) => {
-    const {userCode, email} = req.body;햣
+    const {userCode, email} = req.body;
     let redisData = await redisCli.get(email); // 123
 
     if( userCode === redisData) {
