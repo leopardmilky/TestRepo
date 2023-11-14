@@ -49,29 +49,10 @@ router.post('/modifyUserInfo', isSignedIn, verifyUser, catchAsync( async(req, re
 
 router.put('/saveUserInfo', isSignedIn, validateNickname, catchAsync( async(req, res) => {
 
-
-    // console.log("req.body: ", req.body);
-    // console.log("req.user: ", req.user);
-    // if(req.body.nickname) {
-    //     if(req.body.nickname.trim() != req.user.nickname) {
-    //         const userNick = {nickname: req.body.nickname.trim()}
-    //         console.log("userNick: ", userNick);
-    //     }
-    //     console.log("req.body.nickname: ", req.body.nickname);
-    // }
-
-    // await User.findByIdAndUpdate(req.user.id, req.body.nickname);
+    const userNick = {nickname: req.body.nickname};
+    await User.findByIdAndUpdate(req.user.id, userNick);
+    res.status(200).json({ok: true});
 }));
-
-
-// router.post('/checkPwd', isSignedIn, catchAsync( async(req, res) => {
-//     const { password } = req.body;
-//     const user = await User.findById(req.user._id);
-//     const auth = await user.authenticate(password);
-//     console.log("user???: ", user);
-//     console.log("auth???: ", auth.user.email);
-//     res.redirect('/editUserInfo');
-// }));
 
 router.post('/forgotpwd/temppwd', catchAsync( async(req, res) => {
     const { email } = req.body;
@@ -183,12 +164,8 @@ router.get('/signup/verifyemail', catchAsync( async(req, res) => {
 }));
 
 router.post('/signup/verifycode', catchAsync( async(req, res) => {
-    const {userCode, email} = req.body;
-    console.log("CODE: ", userCode);
-    console.log("email: ", email);
-
+    const {userCode, email} = req.body;햣
     let redisData = await redisCli.get(email); // 123
-    console.log("REDIS_DATA: ", redisData);
 
     if( userCode === redisData) {
         return res.status(200).json('ok');

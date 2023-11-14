@@ -84,8 +84,6 @@ module.exports.validateNestedComment = (req, res, next) => {
 
 module.exports.verifyUser = async(req, res, next) => {
     const { password, error } = req.body;
-    // console.log("req", req);
-    console.log("password???: ", password);
     const user = await User.findById(req.user._id);
     const auth = await user.authenticate(password);
     if(auth.user.email == req.user.email){
@@ -96,10 +94,10 @@ module.exports.verifyUser = async(req, res, next) => {
 };
 
 module.exports.validateNickname = (req, res, next) => {
-    const userNick = {nickname: req.body.nickname};
-    // const result = userNickname.validate('valid');
-    if(result.error){
-        console.log("result.error$#$#@: ",result.error);
+    const pattern = /^[a-zA-Z0-9가-힣_\-]*$/gim;        // 알파벳, 한글, 숫자, 언더바(_), 하이픈(-)만 허용.
+    const result = pattern.test(req.body.nickname);    // 허용 패턴과 일치하면 true반환.
+    if(!result){
+        return res.status(400).json({ pattern: false });
     }
-    console.log("result$#$#@: ", result);
+    next();
 }
