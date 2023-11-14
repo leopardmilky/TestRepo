@@ -285,7 +285,7 @@ function inputNickPwd(email) {
                         const data = {email: email, nickname: nickname, password: password}
                         await axios.post('/signup', data)
                         .then(() => {
-                            window.location.href =` http://localhost:3000/index`
+                            window.location.href ='http://localhost:3000/index'
                         })
                     }
                 }
@@ -329,7 +329,14 @@ function inputNickPwd(email) {
 }
 
 
+window.onpageshow = function(event){
+    if(event.persisted){
+        window.location.reload();
+    }
+}
+
 // 새로고침 시 알림팝업
-window.onbeforeunload = function(event) {
-    return "";
-};
+// window.onbeforeunload = function(event) {
+//     return "";
+// };
+

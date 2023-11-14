@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { validatePassword, isSignedIn, verifyUser } = require('../middleware');
+const { validatePassword, isSignedIn, verifyUser, validateNickname } = require('../middleware');
 const nodemailer = require('nodemailer');
 const User = require('../models/user');
 const passport = require('passport')
@@ -38,12 +38,31 @@ router.get('/forgotpwd', (req, res) => {
 router.get('/userinfo', isSignedIn, (req, res) => {
     res.render('users/checkuser');
 });
-
-router.get('')
-
-router.post('/editUserInfo', isSignedIn, verifyUser, catchAsync( async(req, res) => {
-    res.render('users/editUserInfo');
+router.get('/modifyUserInfo', (req, res) => {
+    //페이지를 잘못 찾았을 때 표시할 페이지도 만들어야 할듯함.
+    res.redirect('/index');
+});
+router.post('/modifyUserInfo', isSignedIn, verifyUser, catchAsync( async(req, res) => {
+    const{ nickname, email } = req.user;
+    res.render('users/modifyUserInfo', {nickname, email});
 }));
+
+router.put('/saveUserInfo', isSignedIn, validateNickname, catchAsync( async(req, res) => {
+
+
+    // console.log("req.body: ", req.body);
+    // console.log("req.user: ", req.user);
+    // if(req.body.nickname) {
+    //     if(req.body.nickname.trim() != req.user.nickname) {
+    //         const userNick = {nickname: req.body.nickname.trim()}
+    //         console.log("userNick: ", userNick);
+    //     }
+    //     console.log("req.body.nickname: ", req.body.nickname);
+    // }
+
+    // await User.findByIdAndUpdate(req.user.id, req.body.nickname);
+}));
+
 
 // router.post('/checkPwd', isSignedIn, catchAsync( async(req, res) => {
 //     const { password } = req.body;

@@ -1,0 +1,98 @@
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+#userInfoWrap{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid red;
+    height: 100vh;
+}
+
+#userInfoInnerWrap {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /* align-items: center; */
+    border: 1px solid blue;
+    width: 500px;
+    height: 500px;
+}
+
+#titleWrap{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h5{
+    margin: 0 0 40px 0;
+
+}
+
+.inputLabel{
+    width: 150px;
+    text-align : end;
+    padding-right: 15px;
+}
+
+.control-input{
+    width: 300px;
+    padding-left: 10px;
+    font-size: small;
+}
+
+#userId{
+    cursor: not-allowed;
+}
+
+#titleWrap{
+    border: 1px solid green;
+}
+
+#userIdWrap{
+    display: flex;
+    flex-direction: row;
+    vertical-align: baseline;
+    border: 1px solid green;
+}
+
+#nicknameWrap{
+    display: flex;
+    flex-direction: row;
+    border: 1px solid green;
+}
+
+#passwordWrap{
+    display: flex;
+    flex-direction: row;
+    border: 1px solid green;
+}
+
+#confirmPwdWrap{
+    display: flex;
+    flex-direction: row;
+    border: 1px solid green;
+}
+
+#buttonWrap{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    border: 1px solid green;
+}
+button{
+    margin-right: 20px;
+}
+.inputWrap{
+    margin: 0 0 15px 0;
+}
+
+#withdrawWrap{
+    border: 1px solid magenta;
+    font-size: small;
+}

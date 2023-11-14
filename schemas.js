@@ -18,3 +18,9 @@ module.exports.nestedCommentSchema = Joi.object({
         body: Joi.string().max(3000).required()
     }).required()
 });
+
+// module.exports.userNickname = Joi.object({
+//     nickname: Joi.string().max(20).invalid(' ')
+// });
+
+// module.exports.userNickname = Joi.string().invalid('valid');

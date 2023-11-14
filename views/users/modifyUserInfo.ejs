@@ -1,0 +1,43 @@
+<% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/modifyUserInfo.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div id="userInfoWrap">
+    <form action="/saveUserInfo?_method=PUT" method="POST">
+        <div id="userInfoInnerWrap">
+            <div id="titleWrap">
+                <h5>회원정보수정</h5>
+            </div>
+            <div id="userIdWrap" class="inputWrap">
+                <label class="inputLabel" for="userId">아이디</label>
+                <input type="text" class="control-input" id="userId" name="userId" autocomplete="off" value="<%= email %>" readonly disabled>
+            </div>
+            <div id="nicknameWrap" class="inputWrap">
+                <label class="inputLabel" for="nickname">닉네임</label>
+                <input type="text" class="control-input" id="nickname" name="nickname" autocomplete="off" value="<%= nickname %>">
+            </div>
+            <div id="passwordWrap" class="inputWrap">
+                <label class="inputLabel" for="password">비밀번호</label>
+                <input type="password" class="control-input" id="password" name="password" autocomplete="off" placeholder="변경 시 입력">
+            </div>
+            <div id="confirmPwdWrap" class="inputWrap">
+                <label class="inputLabel" for="confirmPwd">비밀번호 확인</label>
+                <input type="password" class="control-input" id="confirmPwd" name="confirmPwd" autocomplete="off" placeholder="변경 시 입력">
+            </div>
+            <div id="buttonWrap">
+                <button type="submit">정보수정</button>
+                <button type="button">취소</button>
+            </div>
+        </div>
+    </form>
+    <div id="withdrawWrap">
+        <a href="/withdraw" id="withdraw">탈퇴하기</a>
+        <!-- 1) 모달창으로 탈퇴하시겠습니까? 확인하고 2) 이메일 인증번호 입력받고 (확인을 누르면 최종 탈퇴처리됩니다.) 3) 탈퇴완료(ㅜㅜ) -->
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/javascript/modifyUserInfo.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

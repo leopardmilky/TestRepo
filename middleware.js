@@ -1,4 +1,4 @@
-const { boardSchema, commentSchema, nestedCommentSchema } =require('./schemas');
+const { boardSchema, commentSchema, nestedCommentSchema} =require('./schemas');
 const ExpressError = require('./utils/ExpressError');
 const Board = require('./models/board');
 const Comment = require('./models/comment');
@@ -84,6 +84,8 @@ module.exports.validateNestedComment = (req, res, next) => {
 
 module.exports.verifyUser = async(req, res, next) => {
     const { password, error } = req.body;
+    // console.log("req", req);
+    console.log("password???: ", password);
     const user = await User.findById(req.user._id);
     const auth = await user.authenticate(password);
     if(auth.user.email == req.user.email){
@@ -91,16 +93,13 @@ module.exports.verifyUser = async(req, res, next) => {
     } else {
         return res.redirect(`/index`)
     }
-    // if(error){
-    //     const msg = error.details.map(el => el.message).join(',');
-    //     throw new ExpressError(msg, 400)
-    //     return res.redirect(`/index`)
-    // }
-    // console.log("user???: ", user);
-    // console.log("req.user._id???: ", req.user._id);
-    // console.log("password???: ", password);
-    // console.log("auth???: ", auth);
-    // console.log("auth.user.email???: ", auth.user.email);
-    // console.log("req.user.email???: ", req.user.email);
-    // 
 };
+
+module.exports.validateNickname = (req, res, next) => {
+    const userNick = {nickname: req.body.nickname};
+    // const result = userNickname.validate('valid');
+    if(result.error){
+        console.log("result.error$#$#@: ",result.error);
+    }
+    console.log("result$#$#@: ", result);
+}

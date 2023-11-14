@@ -93,8 +93,6 @@ async function uploadContent() { // 게시물 생성
     })
 };
 
-
-
 // 새로고침 시 알림팝업
 let shouldShowWarning = true;
 window.onbeforeunload = function(event) {
@@ -104,3 +102,9 @@ window.onbeforeunload = function(event) {
 document.getElementById("submitBtn").addEventListener("click", function() {
     shouldShowWarning = false;
 });
+// 뒤로가기 버튼 동작 시 초기화
+window.onpageshow = function(event){
+    if(event.persisted){
+        window.location.reload();
+    }
+}
