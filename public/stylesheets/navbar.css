@@ -48,12 +48,17 @@
     display: none;
     position: absolute;
     overflow: auto;
-    background-color: white;
     font-size: small;
+    margin-bottom: 10px;
+    background-color: #212529;
+    padding: 5px;
+    border-radius: 5px;
+    width: 100px;
 }
 
 .dropdown:hover .dropdown-options {
     display: block;
+    
 }
 
 .dropdown-option {
@@ -62,10 +67,6 @@
     text-decoration: none;
     color: white;
 }
-
-.dropdown-options{
-    margin-bottom: 10px;
-    background-color: #212529;
-    padding: 5px;
-    border-radius: 5px;
+.dropdown-option:hover{
+    color: #0d6efd;
 }

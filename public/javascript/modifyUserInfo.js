@@ -7,14 +7,15 @@ window.onpageshow = function(event){
     }
 }
 
+const cancel = document.getElementById('cancel');
+cancel.addEventListener('click', ()=>{
+    window.location.href = 'http://localhost:3000/index/';
+})
+
 async function modifyUserInfo(){
     const nickname = document.getElementById('nickname').value;
     const password = document.getElementById('password').value;
     const confirmPwd = document.getElementById('confirmPwd').value;
-    if(nickname.length === 0){
-        window.alert('닉네임을 입력해주세요. 최대 20글자.');
-        return location.reload();
-    }
 
     const data = {nickname: nickname, password: password, confirmPwd: confirmPwd};
     await axios.put('/saveUserInfo', data)
@@ -29,7 +30,7 @@ async function modifyUserInfo(){
             location.reload();
         }
         if(err.response.data == 'pattern'){
-            window.alert('닉네임은 알파벳, 한글, 숫자, 언더바(_), 하이픈(-)만 가능합니다.');
+            window.alert('닉네임은 최대 20글자 알파벳, 한글, 숫자, 언더바(_), 하이픈(-)만 가능합니다.');
             location.reload();
         }
         if(err.response.data == 'length'){

@@ -53,30 +53,33 @@ router.put('/saveUserInfo', isSignedIn, validateNickname, validatePassword, catc
     const afterNick = req.body.nickname;
     const beforeNick = req.user.nickname;
 
-    if(afterNick != beforeNick){
+    if(afterNick != beforeNick){    // 닉네임 변경 감지 및 중복 없음
         const userNick = {nickname: afterNick};
         await User.findByIdAndUpdate(req.user.id, userNick);
 
-        if(password === confirmPwd && password.length >= 6 && confirmPwd.length >= 6){
+        if(password === confirmPwd && password.length >= 6 && confirmPwd.length >= 6){  // 패스워드 조건 만족
             const user = await User.find({nickname:afterNick});
             await user[0].setPassword(confirmPwd);
             await user[0].save();
             return res.status(200).json({ok: true});
         }
+        if(password.length === 0 && confirmPwd.length === 0){   // 패스워드 변경 없음
+            return res.status(200).json({ok: true});
+        }
     }
 
-    if(afterNick === beforeNick) {
-        if(password === confirmPwd && password.length >= 6 && confirmPwd.length >= 6){
+    if(afterNick === beforeNick) {  // 닉네임 변경 없음
+        if(password === confirmPwd && password.length >= 6 && confirmPwd.length >= 6){  // 패스워드 조건 만족
             const user = await User.find({nickname:beforeNick});
             await user[0].setPassword(confirmPwd);
             await user[0].save();
             return res.status(200).json({ok: true});
         }
+        if(password.length === 0 && confirmPwd.length === 0){   // 패스워드 변경 없음
+            return res.status(200).json({ok: true});
+        }
     }
 
-    if(password.length == 0 && confirmPwd.length == 0){
-        return res.status(200).json({ok: true});
-    }
 }));
 
 router.post('/forgotpwd/temppwd', catchAsync( async(req, res) => {

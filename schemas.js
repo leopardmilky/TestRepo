@@ -20,7 +20,7 @@ module.exports.nestedCommentSchema = Joi.object({
 });
 
 module.exports.userNickname = Joi.object({
-    nickname: Joi.string().max(20)
+    nickname: Joi.string().max(20).min(1)
 });
 
 // module.exports.userNickname = Joi.string().invalid('valid');

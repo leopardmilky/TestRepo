@@ -20,15 +20,15 @@
             </div>
             <div id="passwordWrap" class="inputWrap">
                 <label class="inputLabel" for="password">비밀번호</label>
-                <input type="password" class="control-input" id="password" name="password" autocomplete="off" placeholder="변경 시 입력">
+                <input type="password" class="control-input" id="password" name="password" autocomplete="off" placeholder="변경 시 입력 (최소 6자리 이상)">
             </div>
             <div id="confirmPwdWrap" class="inputWrap">
                 <label class="inputLabel" for="confirmPwd">비밀번호 확인</label>
-                <input type="password" class="control-input" id="confirmPwd" name="confirmPwd" autocomplete="off" placeholder="변경 시 입력">
+                <input type="password" class="control-input" id="confirmPwd" name="confirmPwd" autocomplete="off" placeholder="변경 시 입력 (최소 6자리 이상)">
             </div>
             <div id="buttonWrap">
                 <button type="submit" onclick="modifyUserInfo()">정보수정</button>
-                <button type="button">취소</button>
+                <button type="button" id="cancel">취소</button>
             </div>
         </div>
     <!-- </form> -->
