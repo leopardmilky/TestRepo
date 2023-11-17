@@ -127,3 +127,11 @@ module.exports.validatePassword = (req, res, next) => {
     }
     next();
 }
+
+module.exports.withdrawPermission = (req, res, next) => {
+    if(req.session.canAccessWithdraw){
+        return next();
+    } else {
+        return res.redirect(`/index`)
+    }
+}

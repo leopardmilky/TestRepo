@@ -11,6 +11,7 @@ body {
     align-items: center;
     border: 1px solid red;
     height: 100vh;
+    /* z-index: 1; */
 }
 
 #userInfoInnerWrap {
@@ -92,7 +93,47 @@ button{
     margin: 0 0 15px 0;
 }
 
-#withdrawWrap{
+#withdrawWrap {
     border: 1px solid magenta;
     font-size: small;
+}
+
+#withdrawBtn {
+    border: none;
+    background-color: white;
+    font-size: small;
+}
+
+#withdrawBtn:hover {
+    text-decoration: underline;
+}
+
+#modalWrap {
+    display: none;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+#modalBody {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid black;
+    background-color: white;
+    border-radius: 10px;
+    width: 350px;
+    height: 150px;
+}
+
+#modalcontent{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }

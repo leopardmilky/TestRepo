@@ -13,10 +13,6 @@ const crypto = require('crypto');
 const sharp = require('sharp');
 require('dotenv').config();
 
-const mongoose = require('mongoose');
-
-
-
 
 const s3 = new S3Client({
     credentials: {
@@ -109,14 +105,6 @@ router.get('/:id', catchAsync( async(req, res) => {
     const comment = await Comment.find({ board:id }).sort({ createdAt: 1 }).populate({path: 'nestedComments', populate: {path: 'author'}}).populate('author'); // sort({ createdAt: -1 }) 이거 필요없나...?
     const nestedComment = await NestedComment.find({board:id});
     const commentSum = board.comments.length + nestedComment.length;
-
-
-
-
-
-    
-
-
 
 
     // const pagePerPost = 5;
@@ -434,6 +422,7 @@ router.delete('/:id', isSignedIn, isAuthor, catchAsync( async(req, res) => {
     const board = await Board.findById(id);
     const boardImg = board.images[0];
 
+    console.log("boardImg: ", boardImg);
     // s3삭제
     for(let img in boardImg) {
         const params = {

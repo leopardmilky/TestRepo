@@ -44,3 +44,20 @@ async function modifyUserInfo(){
 
     })
 }
+
+
+const withdrawBtn = document.getElementById('withdrawBtn');
+withdrawBtn.onclick = function() {
+    modalWrap.style.display = 'block';
+}
+
+const closeModal = document.getElementById('closeModal');
+closeModal.onclick = function() {
+    modalWrap.style.display = 'none';
+}
+
+const withdraw = document.getElementById('withdraw');
+withdraw.onclick = function() {
+    window.location.href = '/withdraw'
+}
+

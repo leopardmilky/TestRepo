@@ -1,13 +1,25 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { isSignedIn, verifyUser, validateNickname, validatePassword } = require('../middleware');
+const { isSignedIn, verifyUser, validateNickname, validatePassword, withdrawPermission } = require('../middleware');
 const nodemailer = require('nodemailer');
 const User = require('../models/user');
-const passport = require('passport')
+const Board = require('../models/board');
+const Comment = require('../models/comment');
+const NestedComment = require('../models/nestedComment');
+const passport = require('passport');
+const { S3Client, DeleteObjectsCommand, ListObjectsV2Command } = require( '@aws-sdk/client-s3' );
 const redis = require('redis');
 require('dotenv').config();
 
+
+const s3 = new S3Client({
+    credentials: {
+        accessKeyId: process.env.AWS_S3_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
+    },
+    region: process.env.AWS_S3_REGION
+})
 
 const redisClient = redis.createClient({
     url: `redis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}/0`,
@@ -44,7 +56,108 @@ router.get('/modifyUserInfo', (req, res) => {
 });
 router.post('/modifyUserInfo', isSignedIn, verifyUser, catchAsync( async(req, res) => {
     const{ nickname, email } = req.user;
+    req.session.canAccessWithdraw = true;   // 회원탈퇴 페이지 url로 접근 방지
     res.render('users/modifyUserInfo', {nickname, email});
+}));
+
+router.get('/withdraw', isSignedIn, withdrawPermission, catchAsync(async(req, res) => {
+    const { email } = req.user;
+    const randomString = Math.random().toString(36).slice(2);
+    console.log("randomString: ", randomString);
+    await redisCli.set(email, randomString); // OK
+    await redisCli.expire(email, 180);
+
+    // const smtpTransport = nodemailer.createTransport({
+    //     service: 'gmail', // 사용할 메일 서비스
+    //     auth: {
+    //       user: process.env.NODE_MAILER_ID,
+    //       pass: process.env.NODE_MAILER_PASSWORD,
+    //     },
+    //     tls: {
+    //       rejectUnauthorized: false,
+    //     },
+    //   });
+
+    //   const mailOptions = {
+    //     from: process.env.NODE_MAILER_ID,
+    //     to: email,
+    //     subject: "회원탈퇴 코드",
+    //     text: "nodemailer 테스트 메일입니다.",
+    //     html: `<p>회원탈퇴 코드는 ${randomString} 입니다. <br> 코드입력 후 탈퇴완료 버튼을 누르면 최종 탈퇴처리 됩니다.</p>`
+    //   };
+
+    //   await smtpTransport.sendMail(mailOptions, (error, responses) => {
+    //     if (error) {
+    //       res.status(400).json({ ok: false });
+    //     } else {
+    //       res.status(200).json({ ok: true });
+    //     }
+    //     smtpTransport.close();
+    //   });
+    res.render('users/withdraw')
+}));
+
+router.post('/withdraw/verifycode', isSignedIn, withdrawPermission, catchAsync( async(req, res) => {
+    const {userCode} = req.body;
+    let redisData = await redisCli.get(req.user.email); // 123
+
+    console.log("redisData: ",redisData);
+    console.log("userCode: ",userCode);
+
+    if( userCode === redisData) {
+        return res.status(200).json('ok');
+    }
+    if(!redisData) {
+        return res.status(400).json('not exist');
+    }
+    if(userCode != redisData){
+        return res.status(400).json('incorrect');
+    }
+}));
+
+router.get('/withdraw/verifycode/deleteUser', isSignedIn, withdrawPermission, catchAsync( async(req, res) => {
+    delete req.session.canAccessWithdraw
+
+    // s3삭제
+    // 폴더 내 객체들을 나열
+    const listParams = {
+        Bucket: process.env.AWS_S3_BUCKET,
+        Prefix: req.user.id,
+      };
+    const listCommand = new ListObjectsV2Command(listParams);
+    const S3data = await s3.send(listCommand);
+
+    // 폴더 내의 객체들을 삭제
+    if(S3data.Contents){
+        const deleteParams = {
+            Bucket: process.env.AWS_S3_BUCKET,
+            Delete: { Objects: S3data.Contents.map(item => ({ Key: item.Key })) },
+        };
+        const deleteCommand = new DeleteObjectsCommand(deleteParams);
+        await s3.send(deleteCommand);
+    }
+
+
+    // 대댓글 삭제
+    await NestedComment.deleteMany({author:req.user.id});
+
+    // 댓글 삭제(+연관 대댓글)
+    const comments = await Comment.find({author:req.user.id});
+    for(let comment of comments){
+        await NestedComment.deleteMany({ _id: { $in: comment.nestedComments } });
+    }
+    await Comment.deleteMany({author:req.user.id});
+
+    // 게시물 삭제(+연관 댓글,대댓글)
+    const boards = await Board.find({author:req.user.id});
+    for(let board of boards) {
+        await Board.findByIdAndDelete(board.id);
+    }
+
+    // 유저정보 삭제
+    await User.deleteOne({_id: req.user.id});
+
+    res.render('users/byebye')
 }));
 
 router.put('/saveUserInfo', isSignedIn, validateNickname, validatePassword, catchAsync( async(req, res) => {

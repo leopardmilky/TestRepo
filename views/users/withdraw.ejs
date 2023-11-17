@@ -1,0 +1,31 @@
+<% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/withdraw.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div id="withdrawWrap">
+    <div id="withdrawInnerWrap">
+        <h5><b>회원탈퇴 코드</b></h5>
+        <p>회원님의 이메일로 회원탈퇴 코드를 보냈습니다.</p>
+        <div id="inputWithdrawCodeWrap">
+            <input type="text" id="inputWithdrawCode" name="inputWithdrawCode" placeholder="코드 입력" autocomplete='off'>
+            <p id="timer_min">3:</p>
+            <p id="timer_sec">00</p>
+        </div>
+        <div id="withdrawCodeMsgWrap">
+            <p id="withdrawCodeMsg">잘못된 코드입니다.</p>
+        </div>
+        <!-- <div id="problemWrap">
+            <p id="problem">인증번호를 받지 못하셨나요?</p>
+        </div> -->
+        <div id="withdrawCodeBtnWrap">
+            <button id="withdrawCode" class="btn btn-success">탈퇴완료</button>
+            <button id="cancelWithdrawal" class="btn btn-secondary">취소</button>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/javascript/withdraw.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
