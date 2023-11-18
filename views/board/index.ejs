@@ -1,5 +1,6 @@
 <% layout('layouts/boilerplate') %>
     <link rel="stylesheet" href="/stylesheets/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body class="d-flex flex-column vh-100 border border-danger">
 <%- include('../partials/navbar') %>
@@ -16,17 +17,35 @@
             <tbody>
 
                 <% for (let content of contents) { %>
-                <tr id="tr">
+                    <% if(content.notice) { %>
+                        <tr id="tr" style="background-color: aliceblue;">
+                    <% } else { %>
+                        <tr id="tr">
+                    <% } %>
                     <td class="body wordoverflow">333</td>
                     <td class="py-2" onclick="location.href='/index/<%= content._id %>'">
-                        <p id="table_title"><%= content.title %> <b style="color: crimson;">
+                        <p id="table_title">
+                            <% if(content.notice) { %>
+                                <b style="color: red;">[알림]</b>
+                            <% } %>
+                            
+                            <%# 이미지 아이콘 %>
+                            <% if(Object.keys(content.images[0]).length > 0) { %>
+                                <i class="fa-regular fa-image image"></i>
+                            <% } %>
+                            
+                            <%# 제목 %>
+                            <%= content.title %> <b style="color: crimson;">
+
                             <%# 댓글 수 표시 %>
                             <% let sum = 0 %>
                             <% for(let i = 0; i < content.comments.length; i++) { %> 
                                 <% sum += content.comments[i].nestedComments.length %>
                             <% } %>                            
                             <%= sum + content.comments.length %>
-                        </b></p></td>
+                            </b>
+                        </p>
+                    </td>
                     <td class="body wordoverflow"><%= content.author.nickname %></td>
                     <td class="body wordoverflow">
                         <%= content.createdAt.getFullYear() %>-<%= String(content.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(content.createdAt.getDate()).padStart(2,'0') %> <%= String(content.createdAt.getHours()).padStart(2,'0') %>:<%= String(content.createdAt.getMinutes()).padStart(2,'0') %>

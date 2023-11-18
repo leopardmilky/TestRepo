@@ -21,6 +21,10 @@ table{
     font-size: small;
 }
 
+.image {
+    color: green;
+}
+
 #table_title {
     text-decoration-line: none;
     color: black;

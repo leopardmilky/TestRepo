@@ -5,6 +5,10 @@ const Schema = mongoose.Schema;
 
 const BoardSchema = new Schema({
     title: String,
+    notice: {
+        type: Boolean,
+        default: false
+    },
     createdAt: {
         type: Date,
         default: Date.now

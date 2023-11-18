@@ -2,12 +2,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/stylesheets/new2.css">
 </head>
-<body class="d-flex flex-column vh-100 border border-danger">
+<body>
 <%- include('../partials/navbar') %>
 <div class="n2Container">
     <div class="new2Wrap">
         <div id="new2TopWrap">
             <h3 id="new2Top">글쓰기</h3>
+        </div>
+        <div>
+            <input type="checkbox" id="notice" name="notice">
+            <label for="notice">공지글</label>
         </div>
         <div class="inputNew2" id="new2TitleWrap">
             <textarea type="text" id="new2Title" name="board[title]" placeholder="제목을 입력해 주세요." required></textarea>

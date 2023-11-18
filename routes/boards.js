@@ -35,7 +35,7 @@ router.get('/', catchAsync( async(req, res) => {
             throw Error();
         }
         let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = boardPaging(page, totalPost);
-        const board = await Board.find().sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate({path: 'comments', populate: {path: 'nestedComments'}}).populate('author');
+        const board = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate({path: 'comments', populate: {path: 'nestedComments'}}).populate('author');
         res.render("board/index", {
             contents: board,
             currentPage,
@@ -63,6 +63,7 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
     board.title = req.body.title;
     board.mainText = req.body.mainText;
     board.author = req.user._id;
+    board.notice = req.body.notice;
 
     const imgIndex = JSON.parse(req.body.imgIndex);
     for(let i = 0; i < req.files.length; i++) {
@@ -100,6 +101,9 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
 }));
 
 router.get('/:id', catchAsync( async(req, res) => {
+    console.log("req.cookies?: ", req.cookies);
+    console.log("req.session?: ", req.session);
+    console.log("req.ip?: ", req.ip);
     const { id } = req.params;
     const board = await Board.findById(id).populate({path: 'comments', populate: {path:'author'}}).populate('author'); // populate()가 있어야 ref
     const comment = await Comment.find({ board:id }).sort({ createdAt: 1 }).populate({path: 'nestedComments', populate: {path: 'author'}}).populate('author'); // sort({ createdAt: -1 }) 이거 필요없나...?

@@ -63,46 +63,44 @@ router.post('/modifyUserInfo', isSignedIn, verifyUser, catchAsync( async(req, re
 router.get('/withdraw', isSignedIn, withdrawPermission, catchAsync(async(req, res) => {
     const { email } = req.user;
     const randomString = Math.random().toString(36).slice(2);
-    console.log("randomString: ", randomString);
+
     await redisCli.set(email, randomString); // OK
     await redisCli.expire(email, 180);
 
-    // const smtpTransport = nodemailer.createTransport({
-    //     service: 'gmail', // 사용할 메일 서비스
-    //     auth: {
-    //       user: process.env.NODE_MAILER_ID,
-    //       pass: process.env.NODE_MAILER_PASSWORD,
-    //     },
-    //     tls: {
-    //       rejectUnauthorized: false,
-    //     },
-    //   });
+    const smtpTransport = nodemailer.createTransport({
+        service: 'gmail', // 사용할 메일 서비스
+        auth: {
+          user: process.env.NODE_MAILER_ID,
+          pass: process.env.NODE_MAILER_PASSWORD,
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
+      });
 
-    //   const mailOptions = {
-    //     from: process.env.NODE_MAILER_ID,
-    //     to: email,
-    //     subject: "회원탈퇴 코드",
-    //     text: "nodemailer 테스트 메일입니다.",
-    //     html: `<p>회원탈퇴 코드는 ${randomString} 입니다. <br> 코드입력 후 탈퇴완료 버튼을 누르면 최종 탈퇴처리 됩니다.</p>`
-    //   };
+      const mailOptions = {
+        from: process.env.NODE_MAILER_ID,
+        to: email,
+        subject: "회원탈퇴 코드",
+        text: "nodemailer 테스트 메일입니다.",
+        html: `<p>회원탈퇴 코드는 ${randomString} 입니다. <br> 코드입력 후 탈퇴완료 버튼을 누르면 최종 탈퇴처리 됩니다.</p>`
+      };
 
-    //   await smtpTransport.sendMail(mailOptions, (error, responses) => {
-    //     if (error) {
-    //       res.status(400).json({ ok: false });
-    //     } else {
-    //       res.status(200).json({ ok: true });
-    //     }
-    //     smtpTransport.close();
-    //   });
+      await smtpTransport.sendMail(mailOptions, (error, responses) => {
+        if (error) {
+          res.status(400).json({ ok: false });
+        } else {
+          res.status(200).json({ ok: true });
+        }
+        smtpTransport.close();
+      });
+
     res.render('users/withdraw')
 }));
 
 router.post('/withdraw/verifycode', isSignedIn, withdrawPermission, catchAsync( async(req, res) => {
     const {userCode} = req.body;
     let redisData = await redisCli.get(req.user.email); // 123
-
-    console.log("redisData: ",redisData);
-    console.log("userCode: ",userCode);
 
     if( userCode === redisData) {
         return res.status(200).json('ok');
@@ -217,7 +215,7 @@ router.post('/forgotpwd/temppwd', catchAsync( async(req, res) => {
       const mailOptions = {
         from: process.env.NODE_MAILER_ID,
         to: email,
-        subject: "temporary password",
+        subject: "임시 비밀번호",
         text: "nodemailer 테스트 메일입니다.",
         html: `<p>임시 비밀번호는 ${randomString} 입니다. 로그인 후 반드시 비밀번호를 변경해 주세요.</p>`
       };
@@ -287,7 +285,7 @@ router.get('/signup/verifyemail', catchAsync( async(req, res) => {
       const mailOptions = {
         from: process.env.NODE_MAILER_ID,
         to: email,
-        subject: "Message title",
+        subject: "회원가입 인증번호",
         text: "nodemailer 테스트 메일입니다.",
         html: `<p>인증번호는 ${payload} 입니다.</p>`
       };

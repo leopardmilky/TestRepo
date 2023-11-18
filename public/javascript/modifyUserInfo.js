@@ -24,7 +24,6 @@ async function modifyUserInfo(){
         window.location.href = 'http://localhost:3000/index/';
     })
     .catch((err) => {
-        console.log("ERR!@!@!@!@!@: ", err)
         if(err.response.data == 'nk'){
             window.alert('사용중인 닉네임입니다.');
             location.reload();
