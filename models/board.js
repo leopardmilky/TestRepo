@@ -28,6 +28,12 @@ const BoardSchema = new Schema({
         {
             type: Object,
         }
+    ],
+    likes: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }
     ]
 });
 

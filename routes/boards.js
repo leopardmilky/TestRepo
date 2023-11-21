@@ -26,7 +26,6 @@ const upload = multer({storage: storage})
 const randomImageName = (bytes = 16) => crypto.randomBytes(bytes).toString('hex');
 
 
-
 router.get('/', catchAsync( async(req, res) => {
     const { page } = req.query;
     try {
@@ -109,6 +108,10 @@ router.get('/:id', catchAsync( async(req, res) => {
     const comment = await Comment.find({ board:id }).sort({ createdAt: 1 }).populate({path: 'nestedComments', populate: {path: 'author'}}).populate('author'); // sort({ createdAt: -1 }) 이거 필요없나...?
     const nestedComment = await NestedComment.find({board:id});
     const commentSum = board.comments.length + nestedComment.length;
+
+
+    const sortTest = await NestedComment.find({board:id}).sort({comment:1, createdAt:1});
+    console.log("sortTest: ", sortTest);
 
 
     // const pagePerPost = 5;
@@ -314,7 +317,8 @@ router.get('/:id', catchAsync( async(req, res) => {
         return res.redirect('/index');
     }
 
-    res.render('board/show', { boardItems: board, commentItems:comment, commentSum, boardImg});
+    // res.render('board/show', { boardItems: board, commentItems:comment, commentSum, boardImg});
+    res.render('board/show2', { boardItems: board, commentItems:comment, commentSum, boardImg});
 }));
 
 router.get('/:id/edit', isSignedIn, isAuthor, catchAsync( async(req, res) => {

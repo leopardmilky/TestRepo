@@ -1,0 +1,72 @@
+<% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/show2.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div id="container">
+    <div id="content-wrap">
+        <div id="title-wrap">
+            <p id="title"><%= boardItems.title %></p>
+        </div>
+        <div id="content-info">
+            <div id="user-info">
+                <p id="nickname"><%= boardItems.author.nickname %>&nbsp;&nbsp;</p>
+                <p id="date">|&nbsp;&nbsp;<%= boardItems.createdAt.getFullYear() %>-<%= String(boardItems.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(boardItems.createdAt.getDate()).padStart(2,'0') %> <%= String(boardItems.createdAt.getHours()).padStart(2,'0') %>:<%= String(boardItems.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(boardItems.createdAt.getSeconds()).padStart(2,'0') %></p>    
+            </div>
+            <% if(signedInUser && boardItems.author.equals(signedInUser._id)) { %>
+            <div id="content-edit-btn-group">
+                <a id="content-edit" class="p-1 me-1 btn btn-outline-warning btn-sm" href="/index/<%= boardItems._id %>/edit2">수정</a>
+                <form action="/index/<%= boardItems._id %>?_method=DELETE" method="POST">
+                    <button id="content-delete" class="p-1 btn btn-outline-danger btn-sm">삭제</button>
+                </form>
+            </div>
+            <% } %>
+        </div>
+        <div id="content">
+            <div id="mainText" style="white-space: pre-wrap;"><%= boardItems.mainText.replace(/&nbsp;/g, ' ') %></div>
+            <textarea id="boardImg" style="display: none;"><%= boardImg %></textarea>
+        </div>
+        <div id="content-likes">
+            
+        </div>
+        <div id="content-bottom-btn-group">
+            <a id="index" class="p-1 me-1 btn btn-outline-secondary btn-sm" href="/index">목록</a>
+            <a id="report" class="p-1 btn btn-outline-danger btn-sm" href="#">신고</a>
+        </div>
+
+        <div id="best-comment-wrap">
+            <!-- 상위 3개  -->
+            <div id="best-comment-top">
+                Best Comment
+            </div>
+            <div id="best-comment-info">
+                <p>Nickname</p>
+                <p>123.456.78.900</p>
+                <p>2023-11-11</p>
+            </div>
+            <div id="best-comment-main">
+
+            </div>
+            <div id="best-comment-btn-group">
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+<%- include('../partials/footer') %>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/javascript/show.js"></script>
+<script src="/javascript/showComments.js"></script>

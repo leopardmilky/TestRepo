@@ -1,0 +1,93 @@
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    
+}
+
+#container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 50px;
+    border: 1px solid red;
+}
+
+#content-wrap {
+    border: 1px solid green;
+    width: 1000px;
+    /* min-width: 1000px; */
+}
+
+#title-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 50px;
+    padding-left: 10px;
+    border: 1px solid blue;
+}
+
+#title {
+    font-weight: bold;
+    font-size: large;
+    margin: 0;
+}
+
+#content-info {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    font-size: small;
+    background-color: whitesmoke;
+    border-top: 1px solid grey;
+    border-bottom: 1px solid grey;
+    /* border: 1px solid blue; */
+}
+
+#nickname, #date {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0;
+    height: 40px;
+}
+
+#user-info {
+    display: flex;
+    width: 50%;
+    padding-left: 10px;
+}
+
+#content-edit-btn-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    padding-right: 10px;
+    align-items: center;
+    width: 50%;
+}
+
+#content-edit, #content-delete, #index, #report {
+    height: 80%;
+}
+
+#mainText {
+    padding: 10px;
+}
+
+#content-bottom-btn-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    align-items: center;
+    padding-right: 10px;
+    height: 40px;
+    background-color: whitesmoke;
+    border-top: 1px solid grey;
+    border-bottom: 1px solid grey;
+}
+
+/* #best-comment-wrap {
+    
+} */
