@@ -1,72 +1,176 @@
 <% layout('layouts/boilerplate') %>
     <link rel="stylesheet" href="/stylesheets/show2.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
 <%- include('../partials/navbar') %>
 
 <div id="container">
     <div id="content-wrap">
+        <!-- 게시물 -->
         <div id="title-wrap">
-            <p id="title"><%= boardItems.title %></p>
+            <p id="title"><%= board.title %></p>
         </div>
         <div id="content-info">
             <div id="user-info">
-                <p id="nickname"><%= boardItems.author.nickname %>&nbsp;&nbsp;</p>
-                <p id="date">|&nbsp;&nbsp;<%= boardItems.createdAt.getFullYear() %>-<%= String(boardItems.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(boardItems.createdAt.getDate()).padStart(2,'0') %> <%= String(boardItems.createdAt.getHours()).padStart(2,'0') %>:<%= String(boardItems.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(boardItems.createdAt.getSeconds()).padStart(2,'0') %></p>    
+                <p id="nickname"><%= board.author.nickname %>&nbsp;&nbsp;</p>
+                <p id="post-date">|&nbsp;&nbsp;<%= board.createdAt.getFullYear() %>-<%= String(board.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(board.createdAt.getDate()).padStart(2,'0') %> <%= String(board.createdAt.getHours()).padStart(2,'0') %>:<%= String(board.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(board.createdAt.getSeconds()).padStart(2,'0') %></p>    
             </div>
-            <% if(signedInUser && boardItems.author.equals(signedInUser._id)) { %>
+            <% if(signedInUser && board.author.equals(signedInUser._id)) { %>
             <div id="content-edit-btn-group">
-                <a id="content-edit" class="p-1 me-1 btn btn-outline-warning btn-sm" href="/index/<%= boardItems._id %>/edit2">수정</a>
-                <form action="/index/<%= boardItems._id %>?_method=DELETE" method="POST">
+                <a id="content-edit" class="p-1 me-1 btn btn-outline-warning btn-sm" href="/index/<%= board._id %>/edit2">수정</a>
+                <form action="/index/<%= board._id %>?_method=DELETE" method="POST">
                     <button id="content-delete" class="p-1 btn btn-outline-danger btn-sm">삭제</button>
                 </form>
             </div>
             <% } %>
         </div>
         <div id="content">
-            <div id="mainText" style="white-space: pre-wrap;"><%= boardItems.mainText.replace(/&nbsp;/g, ' ') %></div>
+            <div id="mainText" style="white-space: pre-wrap;"><%= board.mainText.replace(/&nbsp;/g, ' ') %></div>
             <textarea id="boardImg" style="display: none;"><%= boardImg %></textarea>
         </div>
-        <div id="content-likes">
-            
+        <div id="content-like-wrap">
+            <button id="content-like" onclick="postLike()" data-postId="<%= board._id %>"><i id="content-thumb" class="fa-solid fa-thumbs-up fa-2xl"></i><p id="count-content-likes"><%= board.likes.length %></p></button>
         </div>
         <div id="content-bottom-btn-group">
             <a id="index" class="p-1 me-1 btn btn-outline-secondary btn-sm" href="/index">목록</a>
             <a id="report" class="p-1 btn btn-outline-danger btn-sm" href="#">신고</a>
         </div>
 
+        <!-- 베스트 댓글 -->
         <div id="best-comment-wrap">
-            <!-- 상위 3개  -->
             <div id="best-comment-top">
                 Best Comment
             </div>
-            <div id="best-comment-info">
-                <p>Nickname</p>
-                <p>123.456.78.900</p>
-                <p>2023-11-11</p>
+            <div id="best-comment-info" class="comments-info">
+                <div id="info-left" class="info-left">
+                    <p class="nickname">Nickname</p>
+                    <p class="user-ip">123.456.78.900</p>
+                </div>
+                <div id="info-right">
+                    <p class="comment-date">2023-11-11 12:21:45</p>
+                </div>
             </div>
             <div id="best-comment-main">
-
+                <p class="main-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laborum et nesciunt beatae doloremque repellendus animi consequuntur, dolor odio quasi dignissimos error nobis. Laborum, sunt! Eum temporibus dolorum debitis quasi sequi?</p>
             </div>
             <div id="best-comment-btn-group">
-
+                <div class="comment-like-wrap">
+                    <button id="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">23</p></button>
+                </div>
+                <div class="comment-control-btn">
+                    <button class="report control-btn">신고</button>
+                </div>
             </div>
+        </div>
 
+        <div id="comments-title">
+            <p id="count-comments"><%= comments.length %></p>&nbsp;Comments
         </div>
 
     </div>
 </div>
 
 
+<!-- 부모 댓글에 대댓글이 달리면 수정 못함. 삭제는 가능. -->
+<div id="comments-container">
+    <div id="comments-wrap">
+        <!-- 댓글 -->
+        <% for(comment of comments) { %>
+            <% if(comment._id.equals(comment.parentComment)) { %>
+                <% if(!comment.isDeleted) { %>
+                    <div id="parent-comments-wrap">
+                        <div id="parent-comments-info" class="comments-info">
+                            <div id="info-left" class="info-left">
+                                <p class="nickname"><%= comment.author.nickname %></p>
+                                <p class="user-ip">123.456.78.900</p>
+                            </div>
+                            <div id="info-right" class="info-right">
+                                <p class="comment-date"><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></p>
+                            </div>
+                        </div>
+                        <div id="parent-comments-content" class="comments-content">
+                            <p class="main-text"><%= comment.body %></p>
+                        </div>
+                        <div id="parent-comments-btn-group" class="comments-btn-group">
+                            <div class="comment-like-wrap">
+                                <button id="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
+                            </div>
+                            <div class="comment-control-btn">
+                                <% if(signedInUser) { %>
+                                    <button class="reply control-btn">답변</button>
+                                <% } %>
+                                <% if(signedInUser && comment.author.equals(signedInUser._id)) { %>
+                                <button class="modify control-btn">수정</button>
+                                <button class="delete control-btn">삭제</button>
+                                <% } else { %>
+                                    <button class="report control-btn">신고</button>
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div id="parent-comments-wrap"> is Deleted </div>
+                <% } %>
 
 
+            <% } else { %>    
+                <!-- 대댓글 -->
+                <div id="child-comments-wrap">
+                    <div id="child-comments-info" class="comments-info">
+                        <div id="info-left" class="info-left">
+                            <p class="nickname"><%= comment.author.nickname %></p>
+                            <p class="user-ip">123.456.78.900</p>
+                        </div>
+                        <div id="info-right">
+                            <p class="comment-date"><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></p>
+                        </div>
+                    </div>
+                    <div id="child-comments-content" class="comments-content">
+                        <p class="main-text"><%= comment.body %></p>
+                    </div>
+                    <div id="child-comments-btn-group" class="comments-btn-group">
+                        <div class="comment-like-wrap">
+                            <button id="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
+                        </div>
+                        <div class="comment-control-btn">
+                            <% if(signedInUser) { %>
+                                <button class="reply control-btn">답변</button>
+                            <% } %>
+                            <% if(signedInUser && comment.author.equals(signedInUser._id)) { %>
+                            <button class="modify control-btn">수정</button>
+                            <button class="delete control-btn">삭제</button>
+                            <% } else { %>
+                                <button class="report control-btn">신고</button>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        <% } %>
+    </div>
+</div>
 
 
-
-
-
+<% if(!signedInUser) { %>
+    <div id="login-required-wrap">
+        <div id="login-required">
+            <span>댓글 작성은 <a class="signInBtn" href="/signin?redirectUrl=/index/<%= board.id %>">로그인</a>이 필요합니다.</span>
+        </div>
+    </div>
+<% } else { %>
+    <div id="create-comment-wrap">
+        <form id="create-comment-form" action="/index/<%= board._id %>/comments" method="POST" novalidate>
+            <label id="comment-label" for="body">Comment</label>
+            <textarea class="form-control" name="comment[body]" id="comment" cols="10" rows="5" required></textarea>
+            <button class="w-100 btn btn-success btn-sm">등록</button>
+        </form>
+    </div>
+<% } %>
 
 <%- include('../partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/javascript/show.js"></script>
+<script src="/javascript/show2.js"></script>
 <script src="/javascript/showComments.js"></script>
+<script src="/javascript/showComments2.js"></script>

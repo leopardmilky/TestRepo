@@ -16,6 +16,21 @@ router.get('/', catchAsync( async(req, res) => { // 대댓글 작성 후 다시 
     res.json(comment);
 }));
 
+// router.post('/', isSignedIn, validateNestedComment, catchAsync( async(req, res) => {
+//     const comment = await Comment.findById(req.params.commentId);
+//     const commentReply = new NestedComment(req.body.nestedComment);
+    
+//     commentReply.author = req.user._id;
+//     commentReply.board = req.params.id;
+//     commentReply.comment = req.params.commentId;
+
+//     comment.nestedComments.push(commentReply);
+//     await commentReply.save();
+//     await comment.save();
+    
+//     res.json(comment);
+// }));
+
 router.post('/', isSignedIn, validateNestedComment, catchAsync( async(req, res) => {
     const comment = await Comment.findById(req.params.commentId);
     const commentReply = new NestedComment(req.body.nestedComment);

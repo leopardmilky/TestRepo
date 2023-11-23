@@ -44,6 +44,7 @@ router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {
 
     comment.author = req.user._id;
     comment.board = req.params.id;
+    comment.parentComment = comment._id
 
     board.comments.push(comment);
     await comment.save();

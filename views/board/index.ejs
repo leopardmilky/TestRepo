@@ -22,7 +22,7 @@
                     <% } else { %>
                         <tr id="tr">
                     <% } %>
-                    <td class="body wordoverflow">333</td>
+                    <td class="body wordoverflow"><%= content.likes.length %></td>
                     <td class="py-2" onclick="location.href='/index/<%= content._id %>'">
                         <p id="table_title">
                             <% if(content.notice) { %>
@@ -38,11 +38,12 @@
                             <%= content.title %> <b style="color: crimson;">
 
                             <%# 댓글 수 표시 %>
-                            <% let sum = 0 %>
-                            <% for(let i = 0; i < content.comments.length; i++) { %> 
-                                <% sum += content.comments[i].nestedComments.length %>
-                            <% } %>                            
-                            <%= sum + content.comments.length %>
+                            <%# let sum = 0 %>
+                            <%# for(let i = 0; i < content.comments.length; i++) { %> 
+                                <%# sum += content.comments[i].nestedComments.length %>
+                            <%# } %>                            
+                            <%#= sum + content.comments.length %>
+                            <%= content.comments.length %>
                             </b>
                         </p>
                     </td>

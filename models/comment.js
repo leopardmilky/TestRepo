@@ -21,7 +21,21 @@ const CommentSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: 'NestedComment'
         }
-    ]
+    ],
+    likes: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
+    parentComment: {
+        type: Schema.Types.ObjectId,
+        ref: "Comment"
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
+    }
 });
 
 module.exports = mongoose.model('Comment', CommentSchema);
