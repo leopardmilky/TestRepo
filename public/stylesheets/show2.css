@@ -100,6 +100,8 @@ body {
     padding: 5px;
     border-radius: 10px;
     margin-bottom: 10px;
+    background-color: whitesmoke;
+    border: 1px solid grey;
 }
 
 #count-content-likes {
@@ -165,11 +167,13 @@ body {
     margin: 10px;
 }
 
-#comment-like {
+.comment-like {
     display: flex;
     flex-direction: row;
     align-items: center;
     border-radius: 5px;
+    background-color: whitesmoke;
+    border: 1px solid grey;
 }
 
 #commnet-thumb {
@@ -184,6 +188,8 @@ body {
 .control-btn {
     border-radius: 5px;
     font-size: small;
+    background-color: whitesmoke;
+    border: 1px solid grey;
 }
 
 #count-comments {
@@ -280,4 +286,39 @@ body {
 
 #create-comment-form {
     width: 1000px;
+}
+
+
+
+/* 답변 */
+#input-reply-text-wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 5px;
+    /* border: 1px solid blue; */
+}
+
+#input-reply-text {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    margin-bottom: 5px;
+}
+
+#input-reply-text-box {
+    width: 95%;
+    height: 100px;
+    padding: 10px;
+}
+
+#input-reply-text-btn-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    padding-right: 10px;
+}
+
+.submit {
+    margin-right: 5px;
 }

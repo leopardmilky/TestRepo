@@ -56,7 +56,7 @@
             </div>
             <div id="best-comment-btn-group">
                 <div class="comment-like-wrap">
-                    <button id="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">23</p></button>
+                    <button class="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">23</p></button>
                 </div>
                 <div class="comment-control-btn">
                     <button class="report control-btn">신고</button>
@@ -94,11 +94,11 @@
                         </div>
                         <div id="parent-comments-btn-group" class="comments-btn-group">
                             <div class="comment-like-wrap">
-                                <button id="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
+                                <button class="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
                             </div>
                             <div class="comment-control-btn">
                                 <% if(signedInUser) { %>
-                                    <button class="reply control-btn">답변</button>
+                                    <button class="reply control-btn" onclick="createReplyInputBox(this)">답변</button>
                                 <% } %>
                                 <% if(signedInUser && comment.author.equals(signedInUser._id)) { %>
                                 <button class="modify control-btn">수정</button>
@@ -107,6 +107,15 @@
                                     <button class="report control-btn">신고</button>
                                 <% } %>
                             </div>
+                        </div>
+                    </div>
+                    <div id="input-reply-text-wrap">
+                        <div id="input-reply-text">
+                            <textarea name="" id="input-reply-text-box"></textarea>
+                        </div>
+                        <div id="input-reply-text-btn-group">
+                            <button class="submit control-btn">등록</button>
+                            <button class="cancel control-btn">취소</button>
                         </div>
                     </div>
                 <% } else { %>
@@ -131,7 +140,7 @@
                     </div>
                     <div id="child-comments-btn-group" class="comments-btn-group">
                         <div class="comment-like-wrap">
-                            <button id="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
+                            <button class="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
                         </div>
                         <div class="comment-control-btn">
                             <% if(signedInUser) { %>
