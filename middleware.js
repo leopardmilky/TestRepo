@@ -16,6 +16,16 @@ module.exports.isSignedIn = (req, res, next) => {
     next();
 };
 
+module.exports.isSignedIn2 = (req, res, next) => {
+    if(!req.isAuthenticated()) {
+        // 로그인이 필요하다는 알림 메세지 필요...?
+        req.session.backTo = req.originalUrl
+
+        return res.json('nk');
+    }
+    next();
+};
+
 module.exports.isAuthor = async(req, res, next) => {
     const {id} = req.params;
     const check = await Board.findById(id);

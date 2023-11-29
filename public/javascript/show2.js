@@ -2,7 +2,7 @@ async function postLike() {
 
     const postId = document.getElementById('content-like').getAttribute('data-postId');
 
-    axios.post(`/index/${postId}/postLike`)
+    await axios.post(`/index/${postId}/postLike`)
     .then((res) => {
 
         if(res.data === 'nk') {

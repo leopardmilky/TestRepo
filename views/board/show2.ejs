@@ -37,6 +37,13 @@
             <a id="report" class="p-1 btn btn-outline-danger btn-sm" href="#">신고</a>
         </div>
 
+
+    </div>
+</div>
+
+
+<div id="best-comment">
+    <% if( bestComment !== undefined ) { %>
         <!-- 베스트 댓글 -->
         <div id="best-comment-wrap">
             <div id="best-comment-top">
@@ -44,38 +51,38 @@
             </div>
             <div id="best-comment-info" class="comments-info">
                 <div id="info-left" class="info-left">
-                    <p class="nickname">Nickname</p>
+                    <p class="nickname"><%= bestComment.author.nickname %></p>
                     <p class="user-ip">123.456.78.900</p>
                 </div>
                 <div id="info-right">
-                    <p class="comment-date">2023-11-11 12:21:45</p>
+                    <p class="comment-date"><%= bestComment.createdAt.getFullYear() %>-<%= String(bestComment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(bestComment.createdAt.getDate()).padStart(2,'0') %> <%= String(bestComment.createdAt.getHours()).padStart(2,'0') %>:<%= String(bestComment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(bestComment.createdAt.getSeconds()).padStart(2,'0') %></p>
                 </div>
             </div>
             <div id="best-comment-main">
-                <p class="main-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laborum et nesciunt beatae doloremque repellendus animi consequuntur, dolor odio quasi dignissimos error nobis. Laborum, sunt! Eum temporibus dolorum debitis quasi sequi?</p>
+                <p class="main-text"><%= bestComment.body %></p>
             </div>
             <div id="best-comment-btn-group">
                 <div class="comment-like-wrap">
-                    <button class="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">23</p></button>
+                    <button class="comment-like" onclick="commentLike(this)" data-postId="<%= board._id %>" data-commentId="<%= bestComment._id %>"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= bestComment.likes.length %></p></button>
                 </div>
                 <div class="comment-control-btn">
+                    <% if(!(signedInUser && bestComment.author.equals(signedInUser._id))) { %>
                     <button class="report control-btn">신고</button>
+                    <% } %>
                 </div>
             </div>
         </div>
-
-        <div id="comments-title">
-            <p id="count-comments"><%= comments.length %></p>&nbsp;Comments
-        </div>
-
+    <% } %>
+    <div id="comments-title">
+        <p id="count-comments"><%= board.comments.length %></p>&nbsp;Comments
     </div>
 </div>
 
 
-<!-- 부모 댓글에 대댓글이 달리면 수정 못함. 삭제는 가능. -->
+<!-- 댓글 부분 -->
 <div id="comments-container">
     <div id="comments-wrap">
-        <!-- 댓글 -->
+        <!-- 부모 댓글 -->
         <% for(comment of comments) { %>
             <% if(comment._id.equals(comment.parentComment)) { %>
                 <% if(!comment.isDeleted) { %>
@@ -94,37 +101,51 @@
                         </div>
                         <div id="parent-comments-btn-group" class="comments-btn-group">
                             <div class="comment-like-wrap">
-                                <button class="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
+                                <button class="comment-like" onclick="commentLike(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
                             </div>
                             <div class="comment-control-btn">
                                 <% if(signedInUser) { %>
-                                    <button class="reply control-btn" onclick="createReplyInputBox(this)">답변</button>
+                                    <button class="reply control-btn" onclick="createReplyInputBox(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">답변</button>
                                 <% } %>
                                 <% if(signedInUser && comment.author.equals(signedInUser._id)) { %>
-                                <button class="modify control-btn">수정</button>
-                                <button class="delete control-btn">삭제</button>
+                                    <% if(!comment.hasReply) { %>
+                                        <button class="modify control-btn" onclick="createEditCommentInputBox(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">수정</button>
+                                    <% } %>
+                                        <button class="delete control-btn" onclick="deleteComment(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">삭제</button>
                                 <% } else { %>
                                     <button class="report control-btn">신고</button>
                                 <% } %>
                             </div>
                         </div>
                     </div>
-                    <div id="input-reply-text-wrap">
-                        <div id="input-reply-text">
-                            <textarea name="" id="input-reply-text-box"></textarea>
-                        </div>
-                        <div id="input-reply-text-btn-group">
-                            <button class="submit control-btn">등록</button>
-                            <button class="cancel control-btn">취소</button>
-                        </div>
+                    
+                <!-- <div id="input-reply-text-wrap">
+                    <div id="input-reply-text">
+                        <textarea name="comment[body]" id="input-reply-text-box" required></textarea>
                     </div>
-                <% } else { %>
-                    <div id="parent-comments-wrap"> is Deleted </div>
-                <% } %>
+                    <div id="input-reply-text-btn-group">
+                        <button type="submit" class="submit control-btn" onclick="submitReply()">등록</button>
+                        <button type="button" class="cancel control-btn" onclick="removeInputBox()">취소</button>
+                    </div> 
+                </div> -->
+            
+                <!-- <div id="input-edit-text-wrap">
+                    <div id="input-edit-text">
+                        <textarea name="comment[body]" id="input-edit-text-box" required></textarea>
+                    </div>
+                    <div id="input-edit-text-btn-group">
+                        <button class="submit control-btn" onclick="submitEditedComment()">등록</button>
+                        <button class="cancel control-btn" onclick="removeInputBox()">취소</button>
+                    </div>
+                </div> -->
+
+            <% } else { %>
+                <div id="deleted-parent-comments-wrap"> 해당 댓글은 삭제되었습니다. </div>
+            <% } %>
 
 
-            <% } else { %>    
-                <!-- 대댓글 -->
+        <% } else { %>    
+            <!-- 대댓글 -->
                 <div id="child-comments-wrap">
                     <div id="child-comments-info" class="comments-info">
                         <div id="info-left" class="info-left">
@@ -140,17 +161,13 @@
                     </div>
                     <div id="child-comments-btn-group" class="comments-btn-group">
                         <div class="comment-like-wrap">
-                            <button class="comment-like"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
+                            <button class="comment-like reply-btn" onclick="commentLike(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
                         </div>
                         <div class="comment-control-btn">
-                            <% if(signedInUser) { %>
-                                <button class="reply control-btn">답변</button>
-                            <% } %>
                             <% if(signedInUser && comment.author.equals(signedInUser._id)) { %>
-                            <button class="modify control-btn">수정</button>
-                            <button class="delete control-btn">삭제</button>
+                                <button class="delete reply-btn" onclick="deleteComment(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">삭제</button>
                             <% } else { %>
-                                <button class="report control-btn">신고</button>
+                                <button class="report reply-btn">신고</button>
                             <% } %>
                         </div>
                     </div>
@@ -160,6 +177,29 @@
     </div>
 </div>
 
+<% if(pagination) { %>
+<div id="pagination-wrap">
+    <div id="pagination">
+        <% if(startPage > maxPost) { %>
+            <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>">prev</button>
+        <% } else { %>
+            <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>">prev</button>
+        <% } %>
+        <% for(let i = startPage; i <= endPage; i++) { %>
+            <% if(i === currentPage) { %>
+                <button id="currentPage" class="commentPage" style="color: red;" onclick="commentPage(this)" data-postId="<%= board._id %>"><%= i %></button>   <!-- /index/:id/comments?comment_page=1 --> 
+            <% } else { %>
+                <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>"><%= i %></button>   <!-- /index/:id/comments?comment_page=1 --> 
+            <% } %>
+        <% } %>
+        <% if(endPage < totalPage) { %>
+            <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>">next</button>
+        <% } else { %>
+            <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>">next</button>
+        <% } %>
+    </div>
+</div>
+<% } %>
 
 <% if(!signedInUser) { %>
     <div id="login-required-wrap">
@@ -176,6 +216,7 @@
         </form>
     </div>
 <% } %>
+
 
 <%- include('../partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

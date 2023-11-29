@@ -12,16 +12,16 @@ const CommentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User'
     },
-    board:{
+    board: {
         type: Schema.Types.ObjectId,
         ref: 'Board'
     },
-    nestedComments: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: 'NestedComment'
-        }
-    ],
+    // nestedComments: [
+    //     {
+    //         type: Schema.Types.ObjectId,
+    //         ref: 'NestedComment'
+    //     }
+    // ],
     likes: [
         {
             type: Schema.Types.ObjectId,
@@ -32,10 +32,20 @@ const CommentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: "Comment"
     },
+    hasReply: {
+        type: Boolean,
+        default: false
+    },
     isDeleted: {
         type: Boolean,
         default: false
-    }
+    },
+    reports: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ]
 });
 
 module.exports = mongoose.model('Comment', CommentSchema);

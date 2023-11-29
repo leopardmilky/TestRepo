@@ -1,17 +1,18 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { isSignedIn, validateBoard, isAuthor } = require('../middleware');
+const { isSignedIn, isSignedIn2, validateBoard, isAuthor } = require('../middleware');
 const Board = require('../models/board');
 const Comment = require('../models/comment');
 const NestedComment = require('../models/nestedComment');
-const { boardPaging } = require('../paging');
+const { boardPaging, commentPaging } = require('../paging');
 const multer = require('multer');
 const  { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand }  =  require( '@aws-sdk/client-s3' );
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const crypto = require('crypto');
 const sharp = require('sharp');
 require('dotenv').config();
+const mongoose = require('mongoose');
 
 
 const s3 = new S3Client({
@@ -24,7 +25,6 @@ const s3 = new S3Client({
 const storage = multer.memoryStorage()
 const upload = multer({storage: storage})
 const randomImageName = (bytes = 16) => crypto.randomBytes(bytes).toString('hex');
-
 
 router.get('/', catchAsync( async(req, res) => {
     const { page } = req.query;
@@ -99,45 +99,48 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
     res.json(board.id);
 }));
 
-
-// router.get('/:id', catchAsync( async(req, res) => {
-//     const { id } = req.params;
-//     const board = await Board.findById(id).populate({path: 'comments', populate: {path:'author'}}).populate('author'); // populate()가 있어야 ref
-//     const comment = await Comment.find({ board:id }).sort({ createdAt: 1 }).populate({path: 'nestedComments', populate: {path: 'author'}}).populate('author'); // sort({ createdAt: -1 }) 이거 필요없나...?
-//     const nestedComment = await NestedComment.find({board:id});
-//     const commentSum = board.comments.length + nestedComment.length;
-
-//     const sortTest = await NestedComment.find({board:id}).sort({comment:1, createdAt:1});
-
-//     const boardImgObject = {};
-//     for(let i = 0; i < Object.keys(board.images[0]).length; i++) {
-//         const getObjectParams = {
-//             Bucket: process.env.AWS_S3_BUCKET,
-//             Key: board.images[0][i]
-//         }
-//         const command = new GetObjectCommand(getObjectParams);
-//         const url = await getSignedUrl(s3, command, { expiresIn: 3 });
-//         boardImgObject[i] = url;
-//     }
-
-//     const boardImg = JSON.stringify(boardImgObject);
-
-//     if(!board){
-//         return res.redirect('/index');
-//     }
-
-//     res.render('board/show', { boardItems: board, commentItems:comment, commentSum, boardImg});
-//     // res.render('board/show2', { boardItems: board, commentItems:comment, commentSum, boardImg});
-// }));
-
-
 router.get('/:id', catchAsync( async(req, res) => {
     const { id } = req.params;
+    let data = {};
     const board = await Board.findById(id).populate('author'); // populate()가 있어야 ref
-    // const comment = await Comment.find({ board:id }).sort({ createdAt: 1 }).populate({path: 'nestedComments', populate: {path: 'author'}}).populate('author');
-    const comments = await Comment.find({ board:id }).sort({ parentComment: 1, createdAt:1 }).populate('author');
-    // console.log("comments@@@@@@@@@@@@@@@@@@: ", comments);
+    if(!board){
+        return res.redirect('/index');
+    }
 
+    const totalPost = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
+    if(totalPost == 0) {
+        data.pagination = false;
+        data.comments = [];
+    } else {
+        data.pagination = true;
+        const page = req.query.page || Math.ceil(totalPost / 5);
+        const { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = commentPaging(page, totalPost);
+        const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hidePost).limit(maxPost).populate('author');  // .skip(hidePost).limit(maxPost)
+        data.comments = comments;
+        data.startPage = startPage;
+        data.endPage = endPage;
+        data.totalPage = totalPage;
+        data.currentPage = currentPage;
+        data.maxPost = maxPost;
+    }
+    
+    const boardId = new mongoose.Types.ObjectId(id);
+    const searchBestComment = await Comment.aggregate([
+        { $match: { board: boardId, isDeleted: false } }, // 같은 게시물 중, isDeleted가 false인것.
+        { $project: { _id: 1, likesCount: { $size: '$likes' } } }, // likes 배열의 길이를 likesCount로 프로젝션.
+        { $sort: { likesCount: -1, createdAt: -1 } }, // likesCount, createdAt를 기준으로 내림차순 정렬.
+        { $limit: 1 } // 최상위 결과 하나만.
+    ])
+    if(searchBestComment.length === 1) {
+        const bestComment = await Comment.findById(searchBestComment[0]._id).populate('author');
+        if(bestComment.likes.length >= 3) { // 좋아요 3개 이상일 경우 Best Comment 조건 만족.
+            data.bestComment = bestComment;
+        } else {
+            data.bestComment = undefined;
+        }
+    } else {
+        data.bestComment = undefined;
+    }
 
     const boardImgObject = {};
     for(let i = 0; i < Object.keys(board.images[0]).length; i++) {
@@ -149,17 +152,259 @@ router.get('/:id', catchAsync( async(req, res) => {
         const url = await getSignedUrl(s3, command, { expiresIn: 3 });
         boardImgObject[i] = url;
     }
-
     const boardImg = JSON.stringify(boardImgObject);
 
-    if(!board){
-        return res.redirect('/index');
-    }
+    data.board = board;
+    data.boardImg = boardImg;
 
-    res.render('board/show2', { board, comments, boardImg});
+    res.render('board/show2', data);
 }));
 
-router.post('/:id/postLike', catchAsync( async(req, res) => {
+router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 불러오기
+    const { id } = req.params;
+
+    const totalPost = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
+    const page = req.query.page;
+
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = commentPaging(page, totalPost);
+    const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hidePost).limit(maxPost).populate('author');  // .skip(hidePost).limit(maxPost)
+    const resData = {};
+    const commentsArr = [];
+
+    for(comment of comments) {        
+        if(comment._id.toString() == comment.parentComment.toString()){ // 부모 댓글인 경우.
+            if(!comment.isDeleted) {    // 삭제되지 않은것.
+                if(req.user == undefined) { // 유저가 로그인 안했을때.
+                    const data =   `<div id="parent-comments-wrap">
+                                <div id="parent-comments-info" class="comments-info">
+                                    <div id="info-left" class="info-left">
+                                        <p class="nickname">${comment.author.nickname}</p>
+                                        <p class="user-ip">123.456.78.900</p>
+                                    </div>
+                                    <div id="info-right" class="info-right">
+                                        <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
+                                    </div>
+                                </div>
+                                <div id="parent-comments-content" class="comments-content">
+                                    <p class="main-text">${comment.body}</p>
+                                </div>
+                                <div id="parent-comments-btn-group" class="comments-btn-group">
+                                    <div class="comment-like-wrap">
+                                        <button class="comment-like" onclick="commentLike(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">${comment.likes.length}</p></button>
+                                    </div>
+                                    <div class="comment-control-btn"> 
+                                        <button class="report control-btn">신고</button>
+                                    </div>
+                                </div>
+                            </div>`
+                            commentsArr.push(data);
+                } else {
+                    if(req.user.nickname == comment.author.nickname) {  // 자기가 쓴글일때.
+                        if(!comment.hasReply) { // 대댓글이 없을때.
+          const data = `<div id="parent-comments-wrap">
+                            <div id="parent-comments-info" class="comments-info">
+                                <div id="info-left" class="info-left">
+                                    <p class="nickname">${comment.author.nickname}</p>
+                                    <p class="user-ip">123.456.78.900</p>
+                                </div>
+                                <div id="info-right" class="info-right">
+                                    <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
+                                </div>
+                            </div>
+                            <div id="parent-comments-content" class="comments-content">
+                                <p class="main-text">${comment.body}</p>
+                            </div>
+                            <div id="parent-comments-btn-group" class="comments-btn-group">
+                                <div class="comment-like-wrap">
+                                    <button class="comment-like" onclick="commentLike(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">${comment.likes.length}</p></button>
+                                </div>
+                                <div class="comment-control-btn"> 
+                                    <button class="reply control-btn" onclick="createReplyInputBox(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">답변</button>
+                                    <button class="modify control-btn" onclick="createEditCommentInputBox(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">수정</button>
+                                    <button class="delete control-btn" onclick="deleteComment(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">삭제</button>
+                                </div>
+                            </div>
+                        </div>`
+                        commentsArr.push(data);
+                        } else {
+          const data = `<div id="parent-comments-wrap">
+                            <div id="parent-comments-info" class="comments-info">
+                                <div id="info-left" class="info-left">
+                                    <p class="nickname">${comment.author.nickname}</p>
+                                    <p class="user-ip">123.456.78.900</p>
+                                </div>
+                                <div id="info-right" class="info-right">
+                                    <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
+                                </div>
+                            </div>
+                            <div id="parent-comments-content" class="comments-content">
+                                <p class="main-text">${comment.body}</p>
+                            </div>
+                            <div id="parent-comments-btn-group" class="comments-btn-group">
+                                <div class="comment-like-wrap">
+                                    <button class="comment-like" onclick="commentLike(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">${comment.likes.length}</p></button>
+                                </div>
+                                <div class="comment-control-btn"> 
+                                    <button class="reply control-btn" onclick="createReplyInputBox(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">답변</button>
+                                    <button class="delete control-btn" onclick="deleteComment(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">삭제</button>
+                                </div>
+                            </div>
+                        </div>`
+                        commentsArr.push(data);
+                        }
+                    } else {    // 로그인한 유저가 쓴글이 아닐때.
+                        const data =   `<div id="parent-comments-wrap">
+                                            <div id="parent-comments-info" class="comments-info">
+                                                <div id="info-left" class="info-left">
+                                                    <p class="nickname">${comment.author.nickname}</p>
+                                                    <p class="user-ip">123.456.78.900</p>
+                                                </div>
+                                                <div id="info-right" class="info-right">
+                                                    <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
+                                                </div>
+                                            </div>
+                                            <div id="parent-comments-content" class="comments-content">
+                                                <p class="main-text">${comment.body}</p>
+                                            </div>
+                                            <div id="parent-comments-btn-group" class="comments-btn-group">
+                                                <div class="comment-like-wrap">
+                                                    <button class="comment-like" onclick="commentLike(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">${comment.likes.length}</p></button>
+                                                </div>
+                                                <div class="comment-control-btn"> 
+                                                    <button class="reply control-btn" onclick="createReplyInputBox(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">답변</button>
+                                                    <button class="report control-btn">신고</button>
+                                                </div>
+                                            </div>
+                                        </div>`
+                                        commentsArr.push(data);
+                    }
+                }
+            } else {
+                const data = `<div id="deleted-parent-comments-wrap"> 해당 댓글은 삭제되었습니다. </div>`
+                commentsArr.push(data);
+            }
+        } else {    // 대댓글인 경우.
+            if(req.user == undefined) {
+                const data =   `<div id="child-comments-wrap">
+                <div id="child-comments-info" class="comments-info">
+                    <div id="info-left" class="info-left">
+                        <p class="nickname">${comment.author.nickname}</p>
+                        <p class="user-ip">123.456.78.900</p>
+                    </div>
+                    <div id="info-right">
+                        <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
+                    </div>
+                </div>
+                <div id="child-comments-content" class="comments-content">
+                    <p class="main-text">${comment.body}</p>
+                </div>
+                <div id="child-comments-btn-group" class="comments-btn-group">
+                    <div class="comment-like-wrap">
+                        <button class="comment-like reply-btn" onclick="commentLike(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">${comment.likes.length}</p></button>
+                    </div>
+                    <div class="comment-control-btn">
+                        <button class="report reply-btn">신고</button>
+                    </div>
+                </div>
+            </div>`
+            commentsArr.push(data);
+            } else {
+                if(req.user.nickname == comment.author.nickname) {
+                    const data =   `<div id="child-comments-wrap">
+                                        <div id="child-comments-info" class="comments-info">
+                                            <div id="info-left" class="info-left">
+                                                <p class="nickname">${comment.author.nickname}</p>
+                                                <p class="user-ip">123.456.78.900</p>
+                                            </div>
+                                            <div id="info-right">
+                                                <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
+                                            </div>
+                                        </div>
+                                        <div id="child-comments-content" class="comments-content">
+                                            <p class="main-text">${comment.body}</p>
+                                        </div>
+                                        <div id="child-comments-btn-group" class="comments-btn-group">
+                                            <div class="comment-like-wrap">
+                                                <button class="comment-like reply-btn" onclick="commentLike(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">${comment.likes.length}</p></button>
+                                            </div>
+                                            <div class="comment-control-btn">
+                                                <button class="delete reply-btn" onclick="deleteComment(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">삭제</button>
+                                            </div>
+                                        </div>
+                                    </div>`
+                                    commentsArr.push(data);
+                } else {
+                    const data =   `<div id="child-comments-wrap">
+                <div id="child-comments-info" class="comments-info">
+                    <div id="info-left" class="info-left">
+                        <p class="nickname">${comment.author.nickname}</p>
+                        <p class="user-ip">123.456.78.900</p>
+                    </div>
+                    <div id="info-right">
+                        <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
+                    </div>
+                </div>
+                <div id="child-comments-content" class="comments-content">
+                    <p class="main-text">${comment.body}</p>
+                </div>
+                <div id="child-comments-btn-group" class="comments-btn-group">
+                    <div class="comment-like-wrap">
+                        <button class="comment-like reply-btn" onclick="commentLike(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">${comment.likes.length}</p></button>
+                    </div>
+                    <div class="comment-control-btn">
+                        <button class="report reply-btn">신고</button>
+                    </div>
+                </div>
+            </div>`
+            commentsArr.push(data);
+                }
+            }
+        }
+    }
+
+
+    // if(startPage > maxPost) {
+    //     const prev = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}">prev</button>`
+    //     resData.prev = prev;
+    // } else {
+    //     const prev = `<button class="commentPage">prev</button>`
+    //     resData.prev = prev;
+    // }
+    // for(let i = startPage; i <= endPage; i++) {
+    //     if(i === currentPage) {
+    //         const currPage =  `<button id="currentPage" class="commentPage" style="color: red;" onclick="commentPage(this)" data-postId="${id}">${i}</button>`
+    //         resData.currPage = currPage;
+    //     } else {
+    //         const page = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}">${i}</button>`
+    //         resData.i = page;
+    //     }
+    // }
+    // if(endPage < totalPage) {
+    //     const next = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}">next</button>`
+    //     resData.next = next;
+    // } else {
+    //     const next = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}">next</button>`
+    //     resData.next = next;
+    // }
+
+    // 1. 전체 게시물
+    // 2. 한 페이지에 보여줄 게시물
+    // 3. 페이지에 보여줄 페이지 수
+    // 4. 전체 페이지
+    // 5. 현재 페이지
+
+
+
+    resData.commentsArr = commentsArr;
+    res.json(resData);
+}));
+
+router.get('/:id/postLike', isSignedIn, catchAsync( async(req, res) => {
+    const { id } = req.params;
+    res.redirect(`/index/${id}`);
+}));
+
+router.post('/:id/postLike', isSignedIn2, catchAsync( async(req, res) => {
     const { id } = req.params;
     if(req.user){
         const board = await Board.find({_id: id, likes: req.user._id});
@@ -168,7 +413,6 @@ router.post('/:id/postLike', catchAsync( async(req, res) => {
             addLike.likes.push(req.user._id);
             await addLike.save();
 
-
             return res.json({ok: addLike.likes.length})
         }
         return res.json('exist')
@@ -176,7 +420,6 @@ router.post('/:id/postLike', catchAsync( async(req, res) => {
         return res.json('nk')
     }
 }));
-
 
 router.get('/:id/edit', isSignedIn, isAuthor, catchAsync( async(req, res) => {
     const {id} = req.params;
@@ -208,6 +451,7 @@ router.get('/:id/edit2', isSignedIn, isAuthor, catchAsync( async(req, res) => {
     if(!board){
         return res.redirect('/index')
     }
+    
     res.render('board/edit2', {content: board, boardImg});
 }));
 
@@ -287,7 +531,6 @@ router.delete('/:id', isSignedIn, isAuthor, catchAsync( async(req, res) => {
     const board = await Board.findById(id);
     const boardImg = board.images[0];
 
-    console.log("boardImg: ", boardImg);
     // s3삭제
     for(let img in boardImg) {
         const params = {
@@ -303,5 +546,3 @@ router.delete('/:id', isSignedIn, isAuthor, catchAsync( async(req, res) => {
 }));
 
 module.exports = router;
-
-

@@ -110,13 +110,18 @@ body {
 }
 
 
+#best-comment {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
 #best-comment-wrap {
+    width: 1000px;
     margin: 10px 0 20px 0;
     border-left: 1px solid grey;
     border-right: 1px solid grey;
     border-bottom: 1px solid grey;
-
 }
 
 #best-comment-top {
@@ -192,6 +197,13 @@ body {
     border: 1px solid grey;
 }
 
+.reply-btn {
+    border-radius: 5px;
+    font-size: small;
+    background-color: white;
+    border: 1px solid grey;
+}
+
 #count-comments {
     color: red;
     font-weight: bold;
@@ -202,6 +214,7 @@ body {
     display: flex;
     flex-direction: row;
     padding: 0 0 10px 10px;
+    width: 1000px;
     margin-bottom: 10px;
     border-bottom: 1px solid grey;
 }
@@ -228,6 +241,17 @@ body {
     width: 100%;
 }
 
+#deleted-parent-comments-wrap{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid grey;
+    margin-bottom: 5px;
+    width: 100%;
+    height: 100px;
+}
+
 .comments-info {
     display: flex;
     flex-direction: row;
@@ -251,11 +275,10 @@ body {
 /* 자식 댓글 */
 #child-comments-wrap {
     width: 95%;
+    margin-bottom: 5px;
     border: 1px solid grey;
     background-color: whitesmoke;
 }
-
-
 
 
 /* 댓글 작성 */
@@ -289,7 +312,6 @@ body {
 }
 
 
-
 /* 답변 */
 #input-reply-text-wrap {
     display: flex;
@@ -321,4 +343,52 @@ body {
 
 .submit {
     margin-right: 5px;
+}
+
+
+/* 수정 */
+#input-edit-text-wrap {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+#input-edit-text-box {
+    width: 100%;
+    height: 100px;
+    padding: 10px;
+}
+
+#input-edit-text-btn-group {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    padding-right: 10px;
+}
+
+
+
+#comments-inner-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: end;
+    width: 100%;
+}
+
+
+/* 페이징 */
+#pagination-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.commentPage {
+    text-decoration: none;
+    color: black;
+    border: none;
+    background-color: white;
 }
