@@ -4,42 +4,40 @@
 </head>
 <body>
 <%- include('../partials/navbar') %>
-
 <div id="container">
-    <div id="content-wrap">
-        <!-- 게시물 -->
-        <div id="title-wrap">
-            <p id="title"><%= board.title %></p>
-        </div>
-        <div id="content-info">
-            <div id="user-info">
-                <p id="nickname"><%= board.author.nickname %>&nbsp;&nbsp;</p>
-                <p id="post-date">|&nbsp;&nbsp;<%= board.createdAt.getFullYear() %>-<%= String(board.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(board.createdAt.getDate()).padStart(2,'0') %> <%= String(board.createdAt.getHours()).padStart(2,'0') %>:<%= String(board.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(board.createdAt.getSeconds()).padStart(2,'0') %></p>    
+    <div id="post-wrap">
+        <div id="content-wrap">
+            <!-- 게시물 -->
+            <div id="title-wrap">
+                <p id="title"><%= board.title %></p>
             </div>
-            <% if(signedInUser && board.author.equals(signedInUser._id)) { %>
-            <div id="content-edit-btn-group">
-                <a id="content-edit" class="p-1 me-1 btn btn-outline-warning btn-sm" href="/index/<%= board._id %>/edit2">수정</a>
-                <form action="/index/<%= board._id %>?_method=DELETE" method="POST">
-                    <button id="content-delete" class="p-1 btn btn-outline-danger btn-sm">삭제</button>
-                </form>
+            <div id="content-info">
+                <div id="user-info">
+                    <p id="nickname"><%= board.author.nickname %>&nbsp;&nbsp;</p>
+                    <p id="post-date">|&nbsp;&nbsp;<%= board.createdAt.getFullYear() %>-<%= String(board.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(board.createdAt.getDate()).padStart(2,'0') %> <%= String(board.createdAt.getHours()).padStart(2,'0') %>:<%= String(board.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(board.createdAt.getSeconds()).padStart(2,'0') %></p>    
+                </div>
+                <% if(signedInUser && board.author.equals(signedInUser._id)) { %>
+                <div id="content-edit-btn-group">
+                    <a id="content-edit" class="p-1 me-1 btn btn-outline-warning btn-sm" href="/index/<%= board._id %>/edit2">수정</a>
+                    <form action="/index/<%= board._id %>?_method=DELETE" method="POST">
+                        <button id="content-delete" class="p-1 btn btn-outline-danger btn-sm">삭제</button>
+                    </form>
+                </div>
+                <% } %>
             </div>
-            <% } %>
+            <div id="content">
+                <div id="mainText" style="white-space: pre-wrap;"><%= board.mainText.replace(/&nbsp;/g, ' ') %></div>
+                <textarea id="boardImg" style="display: none;"><%= boardImg %></textarea>
+            </div>
+            <div id="content-like-wrap">
+                <button id="content-like" onclick="postLike()" data-postId="<%= board._id %>"><i id="content-thumb" class="fa-solid fa-thumbs-up fa-2xl"></i><p id="count-content-likes"><%= board.likes.length %></p></button>
+            </div>
+            <div id="content-bottom-btn-group">
+                <a id="index" class="p-1 me-1 btn btn-outline-secondary btn-sm" href="/index">목록</a>
+                <a id="report" class="p-1 btn btn-outline-danger btn-sm" href="#">신고</a>
+            </div>
         </div>
-        <div id="content">
-            <div id="mainText" style="white-space: pre-wrap;"><%= board.mainText.replace(/&nbsp;/g, ' ') %></div>
-            <textarea id="boardImg" style="display: none;"><%= boardImg %></textarea>
-        </div>
-        <div id="content-like-wrap">
-            <button id="content-like" onclick="postLike()" data-postId="<%= board._id %>"><i id="content-thumb" class="fa-solid fa-thumbs-up fa-2xl"></i><p id="count-content-likes"><%= board.likes.length %></p></button>
-        </div>
-        <div id="content-bottom-btn-group">
-            <a id="index" class="p-1 me-1 btn btn-outline-secondary btn-sm" href="/index">목록</a>
-            <a id="report" class="p-1 btn btn-outline-danger btn-sm" href="#">신고</a>
-        </div>
-
-
     </div>
-</div>
 
 
 <div id="best-comment">
@@ -118,31 +116,9 @@
                             </div>
                         </div>
                     </div>
-                    
-                <!-- <div id="input-reply-text-wrap">
-                    <div id="input-reply-text">
-                        <textarea name="comment[body]" id="input-reply-text-box" required></textarea>
-                    </div>
-                    <div id="input-reply-text-btn-group">
-                        <button type="submit" class="submit control-btn" onclick="submitReply()">등록</button>
-                        <button type="button" class="cancel control-btn" onclick="removeInputBox()">취소</button>
-                    </div> 
-                </div> -->
-            
-                <!-- <div id="input-edit-text-wrap">
-                    <div id="input-edit-text">
-                        <textarea name="comment[body]" id="input-edit-text-box" required></textarea>
-                    </div>
-                    <div id="input-edit-text-btn-group">
-                        <button class="submit control-btn" onclick="submitEditedComment()">등록</button>
-                        <button class="cancel control-btn" onclick="removeInputBox()">취소</button>
-                    </div>
-                </div> -->
-
             <% } else { %>
                 <div id="deleted-parent-comments-wrap"> 해당 댓글은 삭제되었습니다. </div>
             <% } %>
-
 
         <% } else { %>    
             <!-- 대댓글 -->
@@ -181,21 +157,21 @@
 <div id="pagination-wrap">
     <div id="pagination">
         <% if(startPage > maxPost) { %>
-            <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>">prev</button>
+            <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>" data-page="<%= startPage - 1 %>">prev</button>
         <% } else { %>
-            <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>">prev</button>
+            <button class="commentPage" style="color: grey;">prev</button>
         <% } %>
         <% for(let i = startPage; i <= endPage; i++) { %>
             <% if(i === currentPage) { %>
-                <button id="currentPage" class="commentPage" style="color: red;" onclick="commentPage(this)" data-postId="<%= board._id %>"><%= i %></button>   <!-- /index/:id/comments?comment_page=1 --> 
+                <button id="currentPage" class="commentPage" style="color: red;" onclick="commentPage(this)" data-postId="<%= board._id %>"><%= i %></button>
             <% } else { %>
-                <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>"><%= i %></button>   <!-- /index/:id/comments?comment_page=1 --> 
+                <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>"><%= i %></button>
             <% } %>
         <% } %>
         <% if(endPage < totalPage) { %>
-            <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>">next</button>
+            <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>" data-page="<%= endPage+1 %>">next</button>
         <% } else { %>
-            <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>">next</button>
+            <button class="commentPage" style="color: grey;">next</button>
         <% } %>
     </div>
 </div>
@@ -217,10 +193,8 @@
     </div>
 <% } %>
 
-
+</div>
 <%- include('../partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-<script src="/javascript/show.js"></script>
 <script src="/javascript/show2.js"></script>
-<script src="/javascript/showComments.js"></script>
 <script src="/javascript/showComments2.js"></script>

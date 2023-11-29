@@ -17,6 +17,7 @@
             <tbody>
 
                 <% for (let content of contents) { %>
+                    <%# 공지글 구분색 %>
                     <% if(content.notice) { %>
                         <tr id="tr" style="background-color: aliceblue;">
                     <% } else { %>
@@ -25,6 +26,7 @@
                     <td class="body wordoverflow"><%= content.likes.length %></td>
                     <td class="py-2" onclick="location.href='/index/<%= content._id %>'">
                         <p id="table_title">
+                            <%# 공지글 표시 %>
                             <% if(content.notice) { %>
                                 <b style="color: red;">[알림]</b>
                             <% } %>
@@ -38,11 +40,6 @@
                             <%= content.title %> <b style="color: crimson;">
 
                             <%# 댓글 수 표시 %>
-                            <%# let sum = 0 %>
-                            <%# for(let i = 0; i < content.comments.length; i++) { %> 
-                                <%# sum += content.comments[i].nestedComments.length %>
-                            <%# } %>                            
-                            <%#= sum + content.comments.length %>
                             <%= content.comments.length %>
                             </b>
                         </p>

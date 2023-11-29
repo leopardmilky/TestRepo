@@ -113,7 +113,7 @@ router.get('/:id', catchAsync( async(req, res) => {
         data.comments = [];
     } else {
         data.pagination = true;
-        const page = req.query.page || Math.ceil(totalPost / 5);
+        const page = req.query.page || Math.ceil(totalPost / 10);
         const { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = commentPaging(page, totalPost);
         const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hidePost).limit(maxPost).populate('author');  // .skip(hidePost).limit(maxPost)
         data.comments = comments;
@@ -170,6 +170,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
     const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hidePost).limit(maxPost).populate('author');  // .skip(hidePost).limit(maxPost)
     const resData = {};
     const commentsArr = [];
+    const pageArr = [];
 
     for(comment of comments) {        
         if(comment._id.toString() == comment.parentComment.toString()){ // 부모 댓글인 경우.
@@ -363,39 +364,33 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
     }
 
 
-    // if(startPage > maxPost) {
-    //     const prev = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}">prev</button>`
-    //     resData.prev = prev;
-    // } else {
-    //     const prev = `<button class="commentPage">prev</button>`
-    //     resData.prev = prev;
-    // }
-    // for(let i = startPage; i <= endPage; i++) {
-    //     if(i === currentPage) {
-    //         const currPage =  `<button id="currentPage" class="commentPage" style="color: red;" onclick="commentPage(this)" data-postId="${id}">${i}</button>`
-    //         resData.currPage = currPage;
-    //     } else {
-    //         const page = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}">${i}</button>`
-    //         resData.i = page;
-    //     }
-    // }
-    // if(endPage < totalPage) {
-    //     const next = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}">next</button>`
-    //     resData.next = next;
-    // } else {
-    //     const next = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}">next</button>`
-    //     resData.next = next;
-    // }
-
-    // 1. 전체 게시물
-    // 2. 한 페이지에 보여줄 게시물
-    // 3. 페이지에 보여줄 페이지 수
-    // 4. 전체 페이지
-    // 5. 현재 페이지
-
-
+    if(startPage > maxPost) {
+        const prev = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}" data-page="${ startPage - 1 }">prev</button>`
+        pageArr.push(prev);
+    } else {
+        const prev = `<button class="commentPage" style="color: grey;">prev</button>`
+        pageArr.push(prev);
+    }
+    for(let i = startPage; i <= endPage; i++) {
+        if(i === currentPage) {
+            const currPage = `<button id="currentPage" class="commentPage" style="color: red;" onclick="commentPage(this)" data-postId="${id}">${i}</button>`
+            pageArr.push(currPage);
+        } else {
+            const page = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}">${i}</button>`
+            pageArr.push(page);
+        }
+    }
+    if(endPage < totalPage) {
+        const next = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}" data-page="${ endPage + 1 }">next</button>`
+        pageArr.push(next);
+    } else {
+        const next = `<button class="commentPage" style="color: grey;">next</button>`
+        pageArr.push(next);
+    }
 
     resData.commentsArr = commentsArr;
+    resData.pageArr = pageArr;
+
     res.json(resData);
 }));
 

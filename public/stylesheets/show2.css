@@ -1,15 +1,20 @@
 body {
     display: flex;
     flex-direction: column;
-    height: 100vh; 
+    /* height: 100%;  */
+    border: 5px solid red;
 }
 
-#container {
+#container{
+    min-height: 100vh;
+    border: 5px solid blue;
+}
+
+#post-wrap {
     display: flex;
     flex-direction: row;
     justify-content: center;
     margin-top: 50px;
-    /* border: 1px solid red; */
 }
 
 #content-wrap {

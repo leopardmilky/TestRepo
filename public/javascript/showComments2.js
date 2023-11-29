@@ -133,29 +133,34 @@ async function commentLike(e) {
 async function commentPage(e) {
 
     postId = e.getAttribute('data-postId');
-    let page = e.innerHTML;
-    if(page == 'prev') {
-        page = parseInt(document.getElementById('currentPage').innerHTML);
-        page -= 1;
-    }
-    if(page == 'next') {
-        page = parseInt(document.getElementById('currentPage').innerHTML);
-        page += 1;
+    let page = e.hasAttribute('data-page'); // hasAttribute 한 번 써보고 싶어서 써봄...
+    if(!page) { // data-page를 가지고 있지 않다면
+        page = e.innerHTML;
+    } else {
+        page = e.getAttribute('data-page');
     }
 
     await axios.post(`/index/${postId}?page=${page}`)
     .then((res) => {
 
-        console.log("res.data: ", res.data);
-        console.log("res.data.commentsArr: ", res.data.commentsArr);
+        // 댓글 로드
+        document.getElementById('comments-wrap').remove();
+        const commentsWrap = document.createElement('div');
+        commentsWrap.setAttribute('id', 'comments-wrap');
+        for(data of res.data.commentsArr) {
+            commentsWrap.innerHTML += data;
+        }
+        const commentsContainer = document.getElementById('comments-container');
+        commentsContainer.appendChild(commentsWrap);
 
-        // document.getElementById('comments-wrap').remove();
-        // const commentsWrap = document.createElement('div');
-        // commentsWrap.setAttribute('id', 'comments-wrap');
-        // for(data of res.data.commentsArr) {
-        //     commentsWrap.innerHTML += data;
-        // }
-        // const commentsContainer = document.getElementById('comments-container');
-        // commentsContainer.appendChild(commentsWrap);
+        // 페이징
+        document.getElementById('pagination').remove();
+        const pagination = document.createElement('div');
+        pagination.setAttribute('id', 'pagination');
+        for(data of res.data.pageArr) {
+            pagination.innerHTML += data;
+        }
+        const paginationWrap = document.getElementById('pagination-wrap');
+        paginationWrap.appendChild(pagination);
     })
 }

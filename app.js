@@ -4,23 +4,15 @@ const mongoose = require('mongoose');
 const ejsMate = require('ejs-mate');
 const session = require('express-session');
 const flash = require('connect-flash');
-// const catchAsync = require('./utils/catchAsync');
 const ExpressError = require('./utils/ExpressError');
 const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
-// const moment = require('moment');
-// const Joi = require('joi'); // Joi => JavaScript 유효성 검사 도구.
-// const Board = require('./models/board');
-// const Comment = require('./models/comment');
 const User = require('./models/user');
-// const { paging } = require('./paging');
-
 const boardRoutes = require('./routes/boards');
 const commentRoutes = require('./routes/comments');
 const userRoutes = require('./routes/users');
 const nestedCommentRoutes = require('./routes/nestedComments');
-// const urlParse = require('url')
 
 const app = express();
 

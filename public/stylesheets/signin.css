@@ -1,0 +1,47 @@
+body {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+#container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+#input-form {
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 30px;
+    width: 500px;
+}
+
+#input-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#input-email-wrap {
+    width: 100%;
+}
+
+#input-pwd-wrap {
+    margin-top: 10px;
+    width: 100%;
+}
+
+#submit-btn {
+    margin-top: 10px;
+    width: 100%;
+}
+
+#fotgot-pwd-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5px;
+}
