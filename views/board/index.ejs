@@ -2,28 +2,28 @@
     <link rel="stylesheet" href="/stylesheets/index.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
-<body class="d-flex flex-column vh-100 border border-danger">
+<body>
 <%- include('../partials/navbar') %>
-<div class="container mt-5 mb-5 d-flex justify-content-center border border-danger">
-    <div class="row w-75 border border-info" id="table_wrap">
-        <table class="table table-sm table-hover" id="index_table">
+<div id="container">
+    <div id="table_wrap">
+        <table id="index_table">
             <thead id="thead">
-                <th class="col-1 head wordoverflow">추천</th>
-                <th class="col-5 head wordoverflow">제목</th>
-                <th class="col-1 head wordoverflow">작성자</th>
-                <th class="col-2 head wordoverflow">날짜</th>
-                <th class="col-1 head wordoverflow">조회</th>
+                <th class="th col-1 head wordoverflow">추천</th>
+                <th class="th col-5 head wordoverflow">제목</th>
+                <th class="th col-1 head wordoverflow">작성자</th>
+                <th class="th col-2 head wordoverflow">날짜</th>
+                <th class="th col-1 head wordoverflow">조회</th>
             </thead>
             <tbody>
 
                 <% for (let content of contents) { %>
                     <%# 공지글 구분색 %>
                     <% if(content.notice) { %>
-                        <tr id="tr" style="background-color: aliceblue;">
+                        <tr id="tr" style="background-color: #f5f5f5;">
                     <% } else { %>
                         <tr id="tr">
                     <% } %>
-                    <td class="body wordoverflow"><%= content.likes.length %></td>
+                    <td class="body wordoverflow text-control"><%= content.likes.length %></td>
                     <td class="py-2" onclick="location.href='/index/<%= content._id %>'">
                         <p id="table_title">
                             <%# 공지글 표시 %>
@@ -44,11 +44,11 @@
                             </b>
                         </p>
                     </td>
-                    <td class="body wordoverflow"><%= content.author.nickname %></td>
-                    <td class="body wordoverflow">
+                    <td class="body wordoverflow text-control"><%= content.author.nickname %></td>
+                    <td class="body wordoverflow text-control">
                         <%= content.createdAt.getFullYear() %>-<%= String(content.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(content.createdAt.getDate()).padStart(2,'0') %> <%= String(content.createdAt.getHours()).padStart(2,'0') %>:<%= String(content.createdAt.getMinutes()).padStart(2,'0') %>
                     </td>
-                    <td class="body wordoverflow">999999999999</td>
+                    <td class="body wordoverflow text-control">999999999999</td>
                 </tr>
                 <% } %>
             </tbody>
@@ -56,8 +56,8 @@
 
             </tfoot>
         </table>
-        <div class="d-flex justify-content-end">
-            <a class="btn btn-primary btn-sm" href="/index/new2">글쓰기</a>
+        <div id="new-post">
+            <a class="btn btn-dark btn-sm" href="/index/new2">글쓰기</a>
         </div>
 
         <div class="d-flex justify-content-center">

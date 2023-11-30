@@ -2,12 +2,12 @@ body {
     display: flex;
     flex-direction: column;
     /* height: 100%;  */
-    border: 5px solid red;
+    /* border: 5px solid red; */
 }
 
 #container{
     min-height: 100vh;
-    border: 5px solid blue;
+    /* border: 5px solid blue; */
 }
 
 #post-wrap {
@@ -221,6 +221,7 @@ body {
     padding: 0 0 10px 10px;
     width: 1000px;
     margin-bottom: 10px;
+    margin-top: 10px;
     border-bottom: 1px solid grey;
 }
 

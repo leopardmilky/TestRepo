@@ -1,6 +1,6 @@
 
 module.exports.boardPaging = (page, totalPost) => {
-    const maxPost = 5;
+    const maxPost = 20;
     const maxPage = 5;
     let currentPage = page ? parseInt(page) : 1;
     const hidePost = page === 1 ? 0 : (page - 1) * maxPost;

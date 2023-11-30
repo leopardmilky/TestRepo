@@ -26,7 +26,7 @@ imgData.forEach((img) => {
 boardImg.remove();
 
 
-async function postLike() {
+async function postLike() { // 게시물 좋아요 버튼.
 
     const postId = document.getElementById('content-like').getAttribute('data-postId');
 

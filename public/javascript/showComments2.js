@@ -2,7 +2,7 @@
 let postId
 let commentId
 
-function createReplyInputBox(e) {
+function createReplyInputBox(e) {   // 답변하기 박스 생성.
     const hasReplyInputBox = document.getElementById('input-reply-text-wrap');
     const hasEditInputBox = document.getElementById('input-edit-text-wrap');
     if(hasReplyInputBox || hasEditInputBox){
@@ -25,7 +25,7 @@ function createReplyInputBox(e) {
     element.insertAdjacentHTML('afterend', replyInputBox);
 }
 
-function removeInputBox() {
+function removeInputBox() { // 글쓰기 박스 제거
     const replyInputBox = document.getElementById('input-reply-text-wrap');
     const editInputBox = document.getElementById('input-edit-text-wrap');
     if(replyInputBox){
@@ -36,7 +36,7 @@ function removeInputBox() {
     }
 }
 
-function createEditCommentInputBox(e) {
+function createEditCommentInputBox(e) { // 수정하기 박스 생성.
     const hasReplyInputBox = document.getElementById('input-reply-text-wrap');
     const hasEditInputBox = document.getElementById('input-edit-text-wrap');
     if(hasReplyInputBox || hasEditInputBox){
@@ -61,7 +61,7 @@ function createEditCommentInputBox(e) {
     element.insertAdjacentHTML('afterend', replyInputBox);
 }
 
-async function submitReply(e) {
+async function submitReply(e) { // 답변 제출.
     const text = document.getElementById('input-reply-text-box').value;
 
     if(text == '' || text.trim() == ''){
@@ -76,7 +76,7 @@ async function submitReply(e) {
     })
 }
 
-async function submitEditedComment(e) {
+async function submitEditedComment(e) { // 수정하기 제출.
     const text = document.getElementById('input-edit-text-box').value;
 
     if(text == '' || text.trim() == ''){
@@ -96,7 +96,7 @@ async function submitEditedComment(e) {
     })
 }
 
-async function deleteComment(e) {
+async function deleteComment(e) {   // 댓글 삭제.
     postId = e.getAttribute('data-postId');
     commentId = e.getAttribute('data-commentId');
     await axios.delete(`/index/${postId}/comments/${commentId}`)
@@ -106,7 +106,7 @@ async function deleteComment(e) {
     })
 }
 
-async function commentLike(e) {
+async function commentLike(e) { // 댓글 좋아요.
 
     postId = e.getAttribute('data-postId');
     commentId = e.getAttribute('data-commentId');
@@ -130,7 +130,7 @@ async function commentLike(e) {
 }
 
 
-async function commentPage(e) {
+async function commentPage(e) { // 댓글 페이징
 
     postId = e.getAttribute('data-postId');
     let page = e.hasAttribute('data-page'); // hasAttribute 한 번 써보고 싶어서 써봄...
