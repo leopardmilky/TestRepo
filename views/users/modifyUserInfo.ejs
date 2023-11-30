@@ -1,5 +1,6 @@
 <% layout('layouts/boilerplate') %>
     <link rel="stylesheet" href="/stylesheets/modifyUserInfo.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
 </head>
 <body>
 <%- include('../partials/navbar') %>
@@ -7,7 +8,7 @@
 <div id="userInfoWrap">
     <div id="userInfoInnerWrap">
         <div id="titleWrap">
-            <h5>회원정보수정</h5>
+            <h5 id="title">회원정보수정</h5>
         </div>
         <div id="userIdWrap" class="inputWrap">
             <label class="inputLabel" for="userId">아이디</label>
@@ -26,8 +27,8 @@
             <input type="password" class="control-input" id="confirmPwd" name="confirmPwd" autocomplete="off" placeholder="변경 시 입력 (최소 6자리 이상)">
         </div>
         <div id="buttonWrap">
-            <button type="submit" onclick="modifyUserInfo()">수정완료</button>
-            <button type="button" id="cancel">취소</button>
+            <button class="btn btn-success" type="submit" id="submit" onclick="modifyUserInfo()">수정완료</button>
+            <button class="btn btn-dark" type="button" id="cancel">취소</button>
         </div>
     </div>
     <div id="withdrawWrap">

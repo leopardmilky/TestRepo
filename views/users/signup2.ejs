@@ -1,5 +1,6 @@
 <% layout('layouts/boilerplate') %>
     <link rel="stylesheet" href="/stylesheets/signup2.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
 <body>
@@ -10,13 +11,13 @@
         <h5><b>이메일 인증</b></h5>
         <p>회원가입을 위해 이메일 인증을 진행해 주세요.</p>
         <div id="inputEmailWrap">
-            <input type="email" id="email" name="email" placeholder="이메일 입력" autocomplete='off'>
+            <input type="email" id="email" name="email" placeholder="이메일 입력" onkeydown="if(window.event.keyCode==13){checkEmail()}" autocomplete='off'>
         </div>
         <div id="emailMsgWrap">
             <p id="emailMsg"></p>
         </div>
         <div id="emailBtnWrap">
-            <button id="emailBtn" class="btn btn-success">인증하기</button>
+            <button id="emailBtn" onclick="checkEmail()" class="btn btn-success">인증하기</button>
         </div>
     </div>
 </div>

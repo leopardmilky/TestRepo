@@ -2,7 +2,6 @@ body {
     display: flex;
     flex-direction: column;
     height: 100vh;
-    /* border: 3px solid red; */
 }
 
 /* 이메일 인증 */
@@ -11,7 +10,6 @@ body {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    /* border: 1px solid black; */
     height: 100%;
 }
 

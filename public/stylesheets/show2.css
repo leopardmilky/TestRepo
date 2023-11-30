@@ -1,13 +1,10 @@
 body {
     display: flex;
     flex-direction: column;
-    /* height: 100%;  */
-    /* border: 5px solid red; */
 }
 
 #container{
-    min-height: 100vh;
-    /* border: 5px solid blue; */
+    min-height: 90vh;
 }
 
 #post-wrap {
@@ -18,9 +15,7 @@ body {
 }
 
 #content-wrap {
-    /* border: 1px solid green; */
     width: 1000px;
-    /* min-width: 1000px; */
 }
 
 #title-wrap {
@@ -29,7 +24,6 @@ body {
     align-items: center;
     height: 50px;
     padding-left: 10px;
-    /* border: 1px solid blue; */
 }
 
 #title {
@@ -46,7 +40,6 @@ body {
     background-color: whitesmoke;
     border-top: 1px solid grey;
     border-bottom: 1px solid grey;
-    /* border: 1px solid blue; */
 }
 
 #nickname, #post-date {
@@ -95,7 +88,6 @@ body {
 #content-like-wrap {
     display: flex;
     flex-direction: column;
-    /* justify-content: center; */
     align-items: center;
 }
 
@@ -234,7 +226,6 @@ body {
 #comments-wrap {
     display: flex;
     flex-direction: column;
-    /* justify-content: end; */
     align-items: end;
     width: 1000px;
 }
@@ -324,7 +315,6 @@ body {
     flex-direction: column;
     width: 100%;
     margin-bottom: 5px;
-    /* border: 1px solid blue; */
 }
 
 #input-reply-text {

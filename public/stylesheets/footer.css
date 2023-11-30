@@ -1,0 +1,22 @@
+#footer-wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    background-color: #212529!important;    
+    margin-top: 10px;
+}
+
+#footer-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 50px;
+    width: 1000px;
+    /* border: 1px solid red; */
+}
+
+#footer-content {
+    margin: 0;
+    color: #ddd;
+}

@@ -9,19 +9,18 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border: 1px solid red;
     height: 100vh;
-    /* z-index: 1; */
 }
 
 #userInfoInnerWrap {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* align-items: center; */
-    border: 1px solid blue;
+    border: 1px solid black;
+    border-radius: 10px;
+    padding: 20px;
     width: 500px;
-    height: 500px;
+    height: 400px;
 }
 
 #titleWrap{
@@ -36,7 +35,7 @@ h5{
 }
 
 .inputLabel{
-    width: 150px;
+    width: 140px;
     text-align : end;
     padding-right: 15px;
 }
@@ -51,41 +50,45 @@ h5{
     cursor: not-allowed;
 }
 
-#titleWrap{
-    border: 1px solid green;
+#title{
+    font-size: large;
+    font-weight: bold;
 }
 
 #userIdWrap{
     display: flex;
     flex-direction: row;
     vertical-align: baseline;
-    border: 1px solid green;
 }
 
 #nicknameWrap{
     display: flex;
     flex-direction: row;
-    border: 1px solid green;
 }
 
 #passwordWrap{
     display: flex;
     flex-direction: row;
-    border: 1px solid green;
 }
 
 #confirmPwdWrap{
     display: flex;
     flex-direction: row;
-    border: 1px solid green;
 }
 
 #buttonWrap{
     display: flex;
     flex-direction: row;
     justify-content: center;
-    border: 1px solid green;
 }
+
+#submit {
+    width: 30%;
+}
+#cancel {
+    width: 20%;
+}
+
 button{
     margin-right: 20px;
 }
@@ -94,7 +97,6 @@ button{
 }
 
 #withdrawWrap {
-    border: 1px solid magenta;
     font-size: small;
 }
 
