@@ -106,5 +106,28 @@ router.post('/:commentId/commentLike', isSignedIn2, catchAsync( async(req, res) 
     }
 }));
 
+router.get('/:commentId/commentReport', isSignedIn, catchAsync( async(req, res) => {
+    const { id } = req.params;
+    res.redirect(`/index/${id}`);
+}));
+
+router.post('/:commentId/commentReport', isSignedIn2, catchAsync( async(req, res) => {
+    const { commentId } = req.params;
+    if(req.user) {
+        const comment = await Comment.find({_id: commentId, reports: req.user._id});
+        if(comment.length === 0) {
+            const addReport = await Comment.findById(commentId);
+            addReport.reports.push(req.user._id);
+            await addReport.save();
+
+            return res.json('ok')
+        }
+        return res.json('exist')
+    } else {
+        return res.json('nk')
+    }
+}));
+
+
 
 module.exports = router;

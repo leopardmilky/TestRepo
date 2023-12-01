@@ -35,7 +35,9 @@
             </div>
             <div id="content-bottom-btn-group">
                 <a id="index" class="p-1 me-1 btn btn-outline-secondary btn-sm" href="/index">목록</a>
-                <a id="report" class="p-1 btn btn-outline-danger btn-sm" href="#">신고</a>
+                <% if(!(signedInUser && board.author.equals(signedInUser._id))) { %>
+                <a id="report" class="p-1 btn btn-outline-danger btn-sm" onclick="postReport()">신고</a>
+                <% } %>
             </div>
         </div>
     </div>
@@ -66,7 +68,7 @@
                 </div>
                 <div class="comment-control-btn">
                     <% if(!(signedInUser && bestComment.author.equals(signedInUser._id))) { %>
-                    <button class="report control-btn">신고</button>
+                    <button class="report control-btn" onclick="commentReport(this)" data-postId="<%= board._id %>" data-commentId="<%= bestComment._id %>">신고</button>
                     <% } %>
                 </div>
             </div>
@@ -110,9 +112,9 @@
                                     <% if(!comment.hasReply) { %>
                                         <button class="modify control-btn" onclick="createEditCommentInputBox(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">수정</button>
                                     <% } %>
-                                        <button class="delete control-btn" onclick="deleteComment(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">삭제</button>
+                                        <button class="delete control-btn" onclick="commentDelete(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">삭제</button>
                                 <% } else { %>
-                                    <button class="report control-btn">신고</button>
+                                    <button class="report control-btn" onclick="commentReport(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">신고</button>
                                 <% } %>
                             </div>
                         </div>
@@ -142,9 +144,9 @@
                         </div>
                         <div class="comment-control-btn">
                             <% if(signedInUser && comment.author.equals(signedInUser._id)) { %>
-                                <button class="delete reply-btn" onclick="deleteComment(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">삭제</button>
+                                <button class="delete reply-btn" onclick="commentDelete(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">삭제</button>
                             <% } else { %>
-                                <button class="report reply-btn">신고</button>
+                                <button class="report reply-btn" onclick="commentReport(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">신고</button>
                             <% } %>
                         </div>
                     </div>

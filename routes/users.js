@@ -39,7 +39,7 @@ router.get('/signup', (req, res) => {
     res.render('users/signup');
 });
 
-router.get('/signup2', (req, res) => {
+router.get('/signup2', async(req, res) => {
     res.render('users/signup2');
 });
 

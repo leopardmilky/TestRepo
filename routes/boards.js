@@ -394,7 +394,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
     res.json(resData);
 }));
 
-router.get('/:id/postLike', isSignedIn, catchAsync( async(req, res) => {
+router.get('/:id/postLike', isSignedIn, catchAsync( async(req, res) => {    // 비로그인 상태에서 신고버튼 누르고 로그인 후 보고있던 페이지로 리다이렉트 (안그럼 post라우트로감)
     const { id } = req.params;
     res.redirect(`/index/${id}`);
 }));
@@ -409,6 +409,28 @@ router.post('/:id/postLike', isSignedIn2, catchAsync( async(req, res) => {
             await addLike.save();
 
             return res.json({ok: addLike.likes.length})
+        }
+        return res.json('exist')
+    } else {
+        return res.json('nk')
+    }
+}));
+
+router.get('/:id/postReport', isSignedIn, catchAsync( async(req, res) => {
+    const { id } = req.params;
+    res.redirect(`/index/${id}`);
+}));
+
+router.post('/:id/postReport', isSignedIn2, catchAsync( async(req, res) => {
+    const {id} = req.params;
+    if(req.user) {
+        const board = await Board.find({_id: id, reports: req.user._id});
+        if(board.length === 0) {
+            const addReport = await Board.findById(id);
+            addReport.reports.push(req.user._id);
+            await addReport.save();
+
+            return res.json('ok');
         }
         return res.json('exist')
     } else {

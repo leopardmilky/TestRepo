@@ -96,7 +96,7 @@ async function submitEditedComment(e) { // 수정하기 제출.
     })
 }
 
-async function deleteComment(e) {   // 댓글 삭제.
+async function commentDelete(e) {   // 댓글 삭제.
     postId = e.getAttribute('data-postId');
     commentId = e.getAttribute('data-commentId');
     await axios.delete(`/index/${postId}/comments/${commentId}`)
@@ -162,5 +162,26 @@ async function commentPage(e) { // 댓글 페이징
         }
         const paginationWrap = document.getElementById('pagination-wrap');
         paginationWrap.appendChild(pagination);
+    })
+}
+
+async function commentReport(e) {
+
+    const postId = e.getAttribute('data-postId');
+    const commentId = e.getAttribute('data-commentId');
+
+    await axios.post(`/index/${postId}/comments/${commentId}/commentReport`)
+    .then((res) => {
+        if(res.data === 'nk') {
+            return window.alert('로그인이 필요합니다.')
+        }
+
+        if(res.data === 'exist') {
+            return window.alert('이미 신고한 댓글입니다.')
+        }
+
+        if(res.data === 'ok') {
+            return window.alert('신고 완료.')
+        }
     })
 }
