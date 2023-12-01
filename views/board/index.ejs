@@ -25,7 +25,7 @@
                         <tr id="tr">
                     <% } %>
                     <td class="body wordoverflow text-control"><%= content.likes.length %></td>
-                    <td class="py-2" onclick="location.href='/index/<%= content._id %>'">
+                    <td class="py-2" onclick="location.href='/index/<%= content._id %>?page=<%= currentPage %> '">
                         <p id="table-title">
                             <%# 공지글 표시 %>
                             <% if(content.notice) { %>

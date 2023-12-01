@@ -140,7 +140,7 @@ async function commentPage(e) { // 댓글 페이징
         page = e.getAttribute('data-page');
     }
 
-    await axios.post(`/index/${postId}?page=${page}`)
+    await axios.post(`/index/${postId}?commentPage=${page}`)
     .then((res) => {
 
         // 댓글 로드

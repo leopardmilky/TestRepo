@@ -7,7 +7,7 @@ const Comment = require('../models/comment');
 // const NestedComment = require('../models/nestedComment');
 const { boardPaging, commentPaging } = require('../paging');
 const multer = require('multer');
-const  { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand }  =  require( '@aws-sdk/client-s3' );
+const  { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require( '@aws-sdk/client-s3' );
 const { getSignedUrl } = require("@aws-sdk/s3-request-presigner");
 const crypto = require('crypto');
 const sharp = require('sharp');
@@ -22,8 +22,8 @@ const s3 = new S3Client({
     },
     region: process.env.AWS_S3_REGION
 })
-const storage = multer.memoryStorage()
-const upload = multer({storage: storage})
+const storage = multer.memoryStorage();
+const upload = multer({storage: storage});
 const randomImageName = (bytes = 16) => crypto.randomBytes(bytes).toString('hex');
 
 router.get('/', catchAsync( async(req, res) => {
@@ -100,6 +100,7 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
 }));
 
 router.get('/:id', catchAsync( async(req, res) => {
+    
     const { id } = req.params;
     let data = {};
     const board = await Board.findById(id).populate('author'); // populate()가 있어야 ref
@@ -113,7 +114,7 @@ router.get('/:id', catchAsync( async(req, res) => {
         data.comments = [];
     } else {
         data.pagination = true;
-        const page = req.query.page || Math.ceil(totalPost / 10);
+        const page = req.query.commentPage || Math.ceil(totalPost / 10);
         const { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = commentPaging(page, totalPost);
         const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hidePost).limit(maxPost).populate('author');  // .skip(hidePost).limit(maxPost)
         data.comments = comments;
@@ -156,6 +157,7 @@ router.get('/:id', catchAsync( async(req, res) => {
 
     data.board = board;
     data.boardImg = boardImg;
+    data.page = req.query.page;
 
     res.render('board/show2', data);
 }));
@@ -164,7 +166,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
     const { id } = req.params;
 
     const totalPost = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
-    const page = req.query.page;
+    const page = req.query.commentPage;
 
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = commentPaging(page, totalPost);
     const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hidePost).limit(maxPost).populate('author');  // .skip(hidePost).limit(maxPost)
