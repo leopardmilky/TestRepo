@@ -1,5 +1,6 @@
 <% layout('layouts/boilerplate') %>
     <link rel="stylesheet" href="/stylesheets/show2.css">
+    <link rel="stylesheet" href="/stylesheets/index.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -159,20 +160,20 @@
     <% if(pagination) { %>
     <div id="pagination-wrap">
         <div id="pagination">
-            <% if(startPage > maxPost) { %>
-                <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>" data-page="<%= startPage - 1 %>">prev</button>
+            <% if(startCommentPage > maxComment) { %>
+                <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>" data-page="<%= startCommentPage - 1 %>">prev</button>
             <% } else { %>
                 <button class="commentPage" style="color: grey;">prev</button>
             <% } %>
-            <% for(let i = startPage; i <= endPage; i++) { %>
-                <% if(i === currentPage) { %>
+            <% for(let i = startCommentPage; i <= endCommentPage; i++) { %>
+                <% if(i === currentCommentPage) { %>
                     <button id="currentPage" class="commentPage" style="color: red;" onclick="commentPage(this)" data-postId="<%= board._id %>"><%= i %></button>
                 <% } else { %>
                     <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>"><%= i %></button>
                 <% } %>
             <% } %>
-            <% if(endPage < totalPage) { %>
-                <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>" data-page="<%= endPage+1 %>">next</button>
+            <% if(endCommentPage < totalCommentPage) { %>
+                <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>" data-page="<%= endCommentPage+1 %>">next</button>
             <% } else { %>
                 <button class="commentPage" style="color: grey;">next</button>
             <% } %>
@@ -197,6 +198,101 @@
     <% } %>
 
 </div>
+
+
+
+
+
+
+
+
+
+<div id="container">
+    <div id="table-wrap">
+        <table id="index-table">
+            <thead id="thead">
+                <th class="th col-1 head wordoverflow">추천</th>
+                <th class="th col-5 head wordoverflow">제목</th>
+                <th class="th col-1 head wordoverflow">작성자</th>
+                <th class="th col-2 head wordoverflow">날짜</th>
+                <th class="th col-1 head wordoverflow">조회</th>
+            </thead>
+            <tbody>
+
+                <% for (let content of contents) { %>
+                    <%# 공지글 구분색 %>
+                    <% if(content.notice) { %>
+                        <tr id="tr" style="background-color: #f5f5f5;">
+                    <% } else { %>
+                        <tr id="tr">
+                    <% } %>
+                    <td class="body wordoverflow text-control"><%= content.likes.length %></td>
+                    <td class="py-2" onclick="location.href='/index/<%= content._id %>?page=<%= currentPage %> '">
+                        <p id="table-title">
+                            <%# 공지글 표시 %>
+                            <% if(content.notice) { %>
+                                <b style="color: red;">[알림]</b>
+                            <% } %>
+                            
+                            <%# 이미지 아이콘 %>
+                            <% if(Object.keys(content.images[0]).length > 0) { %>
+                                <i class="fa-regular fa-image image"></i>
+                            <% } %>
+                            
+                            <%# 제목 %>
+                            <%= content.title %> <b style="color: crimson;">
+
+                            <%# 댓글 수 표시 %>
+                            <%= content.comments.length %>
+                            </b>
+                        </p>
+                    </td>
+                    <td class="body wordoverflow text-control"><%= content.author.nickname %></td>
+                    <td class="body wordoverflow text-control">
+                        <%= content.createdAt.getFullYear() %>-<%= String(content.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(content.createdAt.getDate()).padStart(2,'0') %> <%= String(content.createdAt.getHours()).padStart(2,'0') %>:<%= String(content.createdAt.getMinutes()).padStart(2,'0') %>
+                    </td>
+                    <td class="body wordoverflow text-control">999999999999</td>
+                </tr>
+                <% } %>
+            </tbody>
+            <tfoot>
+
+            </tfoot>
+        </table>
+        <div id="new-post">
+            <a class="btn btn-dark btn-sm" href="/index/new2">글쓰기</a>
+        </div>
+
+        <div id="pagination-wrap">
+            <div id="pagination">
+                <% if(startPage > maxPost) { %>
+                    <a class="page page-prev-active" href="/index?page=<%= startPage-1 %>">Prev</a>
+                <% } else { %>
+                    <a class="page page-prev" href="javascript:void(0);">Prev</a>
+                <% } %>
+                <% for(let i = startPage; i <= endPage; i++) { %>
+                    <% if(i === currentPage) { %>
+                        <a class="page current-page" href="/index?page=<%= i %>"><%= i %></a>
+                    <% } else { %>
+                        <a class="page" href="/index?page=<%= i %>"><%= i %></a>
+                    <% } %>
+                <% } %>
+                <% if(endPage < totalPage) { %>
+                    <a class="page page-next-active" href="/index?page=<%= endPage+1 %>">Next</a>
+                <% } else { %>
+                    <a class="page page-next" href="javascript:void(0);">Next</a>
+                <% } %>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+
+
+
+
 <%- include('../partials/footer') %>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/javascript/show2.js"></script>

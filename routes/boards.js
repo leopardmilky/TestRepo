@@ -64,6 +64,15 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
     board.author = req.user._id;
     board.notice = req.body.notice;
 
+
+
+    console.log("req.body.title: ", req.body.title);
+    console.log("req.body.mainText: ", req.body.mainText);
+    console.log("req.user._id: ", req.user._id);
+    console.log("req.body.notice: ", req.body.notice);
+    console.log("req.body.imgIndex: ", req.body.imgIndex);
+    console.log("req.files: ", req.files);
+
     const imgIndex = JSON.parse(req.body.imgIndex);
     for(let i = 0; i < req.files.length; i++) {
 
@@ -100,7 +109,6 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
 }));
 
 router.get('/:id', catchAsync( async(req, res) => {
-    
     const { id } = req.params;
     let data = {};
     const board = await Board.findById(id).populate('author'); // populate()가 있어야 ref
@@ -108,21 +116,21 @@ router.get('/:id', catchAsync( async(req, res) => {
         return res.redirect('/index');
     }
 
-    const totalPost = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
-    if(totalPost == 0) {
+    const totalComments = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
+    if(totalComments == 0) {
         data.pagination = false;
         data.comments = [];
     } else {
         data.pagination = true;
-        const page = req.query.commentPage || Math.ceil(totalPost / 10);
-        const { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = commentPaging(page, totalPost);
-        const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hidePost).limit(maxPost).populate('author');  // .skip(hidePost).limit(maxPost)
+        const commentPage = req.query.commentPage || Math.ceil(totalComments / 10);
+        const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(commentPage, totalComments);
+        const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');  // .skip(hidePost).limit(maxPost)
         data.comments = comments;
-        data.startPage = startPage;
-        data.endPage = endPage;
-        data.totalPage = totalPage;
-        data.currentPage = currentPage;
-        data.maxPost = maxPost;
+        data.startCommentPage = startCommentPage;
+        data.endCommentPage = endCommentPage;
+        data.totalCommentPage = totalCommentPage;
+        data.currentCommentPage = currentCommentPage;
+        data.maxComment = maxComment;
     }
     
     const boardId = new mongoose.Types.ObjectId(id);
@@ -158,6 +166,20 @@ router.get('/:id', catchAsync( async(req, res) => {
     data.board = board;
     data.boardImg = boardImg;
     data.page = req.query.page;
+
+    const totalPost = await Board.countDocuments({});
+    if (!totalPost) {
+        throw Error();
+    }
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = boardPaging(req.query.page, totalPost);
+    const post = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author'); // .populate({path: 'comments', populate: {path: 'nestedComments'}})
+
+    data.contents = post;
+    data.currentPage = currentPage;
+    data.startPage = startPage;
+    data.endPage = endPage;
+    data.maxPost = maxPost;
+    data.totalPage = totalPage;
 
     res.render('board/show2', data);
 }));

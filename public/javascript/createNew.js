@@ -23,7 +23,7 @@ function imgUpload(obj) {
                 range.insertNode(img);
             }
         }
-    
+
         if(!range) { // caret의 range값이 없을때. (바로 사진 버튼 눌렀을때.)
             for(file of obj.files) {
                 const img = new Image();
@@ -70,7 +70,7 @@ async function uploadContent() { // 게시물 생성
             img.setAttribute("data-img-num", num);
             uploadImgArr.push(imgObj[img.src]);
             img.removeAttribute('src');
-            imgIndex[num] = img.alt
+            imgIndex[num] = img.alt;
             num++;
         }
     });
