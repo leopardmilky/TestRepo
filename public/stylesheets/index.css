@@ -48,7 +48,7 @@ table{
     color: green;
 }
 
-#table_title {
+#table-title {
     text-decoration-line: none;
     color: black;
     font-size: small;
@@ -66,40 +66,64 @@ table{
     margin-top: 5px;
 }
 
-#table_title:hover {
+#pagination {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.page {
+    margin: 0;
+    margin-right: 10px;
+    color: black;
+    text-decoration: none;
+}
+
+.current-page {
+    color: red;
+}
+
+.page-prev, .page-next {
+    color: grey;
+}
+
+.page-prev:hover, .page-next:hover {
+    color: grey;
+}
+
+#table-title:hover {
     color: crimson;
     padding: 0px;
     margin: 0px;
 }
 
-#table_title {
+#table-title {
     padding: 0px;
     margin: 0px;
 }
 
-#show_title {
+/* #show_title {
     font-size: larger;
-}
+} */
 
-#comments_color {
+/* #comments_color {
     color: red;
-}
+} */
 
-#commentBody, #nestedCommentBody {
+/* #commentBody, #nestedCommentBody {
     font-size: smaller;
-}
+} */
 
-.commentInfoWrap, .nestedCommentInfoWrap {
+/* .commentInfoWrap, .nestedCommentInfoWrap {
     font-size: smaller;
-}
+} */
 
-#index_table {
+#index-table {
     border-bottom: 2px solid black;
     border-top: 2px solid black;
-
 }
 
-#table_wrap {
+#table-wrap {
     width: 1000px;
 }
 
@@ -109,43 +133,43 @@ table{
     background-color: #dedede;
 }
 
-#success_progress {
+/* #success_progress {
     background-color: darkgreen;
-}
+} */
 
-#error_progress {
+/* #error_progress {
     background-color: darkred;
-}
+} */
 
-.nestedCommentInnerWrap {
+/* .nestedCommentInnerWrap {
     width: 95%;
-}
+} */
 
-.signupValid:focus {
+/* .signupValid:focus {
     box-shadow: 0px 0px 5px green;
     border-color: green;
-}
-.signupValid {
+} */
+/* .signupValid {
     border-color: green;
-}
+} */
 
-.signupInvalid:focus {
+/* .signupInvalid:focus {
     box-shadow: 0px 0px 5px red;
     border-color: red;
-}
-.signupInvalid {
+} */
+/* .signupInvalid {
     border-color: red;
-}
+} */
 
 .imgView{
     border: 1px dashed gray;
     min-height: 150px;
 }
 
-.inputHint{
+/* .inputHint{
     font-size: small;
     color: gray;
-}
+} */
 
 #findPwd{
     font-size: small;
