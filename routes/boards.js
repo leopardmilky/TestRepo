@@ -65,13 +65,13 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
     board.notice = req.body.notice;
 
 
-
     console.log("req.body.title: ", req.body.title);
     console.log("req.body.mainText: ", req.body.mainText);
     console.log("req.user._id: ", req.user._id);
     console.log("req.body.notice: ", req.body.notice);
     console.log("req.body.imgIndex: ", req.body.imgIndex);
     console.log("req.files: ", req.files);
+    
 
     const imgIndex = JSON.parse(req.body.imgIndex);
     for(let i = 0; i < req.files.length; i++) {

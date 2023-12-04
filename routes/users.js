@@ -303,7 +303,7 @@ router.get('/signup/verifyemail', catchAsync( async(req, res) => {
 }));
 
 router.post('/signup/verifycode', catchAsync( async(req, res) => {
-    const {userCode, email} = req.body;
+    const { userCode, email } = req.body;
     let redisData = await redisCli.get(email); // 123
 
     if( userCode === redisData) {
@@ -319,7 +319,7 @@ router.post('/signup/verifycode', catchAsync( async(req, res) => {
 
 router.post('/signup', catchAsync( async(req, res, next) => {
     try{
-        const {email, nickname, password} = req.body;
+        const { email, nickname, password } = req.body;
         const user = new User({email, nickname});
         const registeredUser = await User.register(user, password);
         req.login(registeredUser, err => {  // req.login()  => passport doc 참고
@@ -332,7 +332,8 @@ router.post('/signup', catchAsync( async(req, res, next) => {
 }));
 
 router.get('/signin', (req, res) => {
-    const {redirectUrl} = req.query
+    const { redirectUrl } = req.query
+    console.log("redirectUrl: ", redirectUrl);
     if(!req.session.backTo){    // navbar를 클릭해서 로그인 후 페이지 돌아가기 관련.
         req.session.backTo = redirectUrl
     }
