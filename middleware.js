@@ -145,3 +145,19 @@ module.exports.withdrawPermission = (req, res, next) => {
         return res.redirect(`/index`)
     }
 }
+
+module.exports.withdrawVerifycodePermission = (req, res, next) => {
+    if(req.session.canAccessWithdrawVerifycode){
+        return next();
+    } else {
+        return res.redirect(`/index`)
+    }
+}
+
+module.exports.deleteUserPermission = (req, res, next) => {
+    if(req.session.canAccessDeleteUser){
+        return next();
+    } else {
+        return res.redirect(`/index`)
+    }
+}

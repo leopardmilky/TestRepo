@@ -187,11 +187,12 @@ router.get('/:id', catchAsync( async(req, res) => {
 router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 불러오기
     const { id } = req.params;
 
-    const totalPost = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
-    const page = req.query.commentPage;
+    const totalComments = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
+    const commentPage = req.query.commentPage;
 
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = commentPaging(page, totalPost);
-    const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hidePost).limit(maxPost).populate('author');  // .skip(hidePost).limit(maxPost)
+    const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(commentPage, totalComments);
+
+    const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');  // .skip(hidePost).limit(maxPost)
     const resData = {};
     const commentsArr = [];
     const pageArr = [];
@@ -246,7 +247,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                                 <div class="comment-control-btn"> 
                                     <button class="reply control-btn" onclick="createReplyInputBox(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">답변</button>
                                     <button class="modify control-btn" onclick="createEditCommentInputBox(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">수정</button>
-                                    <button class="delete control-btn" onclick="deleteComment(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">삭제</button>
+                                    <button class="delete control-btn" onclick="commentDelete(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">삭제</button>
                                 </div>
                             </div>
                         </div>`
@@ -271,7 +272,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                                 </div>
                                 <div class="comment-control-btn"> 
                                     <button class="reply control-btn" onclick="createReplyInputBox(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">답변</button>
-                                    <button class="delete control-btn" onclick="deleteComment(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">삭제</button>
+                                    <button class="delete control-btn" onclick="commentDelete(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">삭제</button>
                                 </div>
                             </div>
                         </div>`
@@ -353,7 +354,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                                                 <button class="comment-like reply-btn" onclick="commentLike(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes">${comment.likes.length}</p></button>
                                             </div>
                                             <div class="comment-control-btn">
-                                                <button class="delete reply-btn" onclick="deleteComment(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">삭제</button>
+                                                <button class="delete reply-btn" onclick="commentDelete(this)" data-postId="${comment.board.toHexString()}" data-commentId="${comment._id.toHexString()}">삭제</button>
                                             </div>
                                         </div>
                                     </div>`
@@ -388,15 +389,15 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
     }
 
 
-    if(startPage > maxPost) {
-        const prev = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}" data-page="${ startPage - 1 }">prev</button>`
+    if(startCommentPage > maxComment) {
+        const prev = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}" data-page="${ startCommentPage - 1 }">prev</button>`
         pageArr.push(prev);
     } else {
         const prev = `<button class="commentPage" style="color: grey;">prev</button>`
         pageArr.push(prev);
     }
-    for(let i = startPage; i <= endPage; i++) {
-        if(i === currentPage) {
+    for(let i = startCommentPage; i <= endCommentPage; i++) {
+        if(i === currentCommentPage) {
             const currPage = `<button id="currentPage" class="commentPage" style="color: red;" onclick="commentPage(this)" data-postId="${id}">${i}</button>`
             pageArr.push(currPage);
         } else {
@@ -404,8 +405,8 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
             pageArr.push(page);
         }
     }
-    if(endPage < totalPage) {
-        const next = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}" data-page="${ endPage + 1 }">next</button>`
+    if(endCommentPage < totalCommentPage) {
+        const next = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}" data-page="${ endCommentPage + 1 }">next</button>`
         pageArr.push(next);
     } else {
         const next = `<button class="commentPage" style="color: grey;">next</button>`

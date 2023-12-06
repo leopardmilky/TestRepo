@@ -69,6 +69,7 @@ async function submitReply(e) { // 답변 제출.
     }
 
     const data = {body: text}
+    console.log("DATA???: ", data);
     await axios.post(`/index/${postId}/comments/${commentId}`, data)
     .then((res) => {
         removeInputBox();
@@ -128,7 +129,6 @@ async function commentLike(e) { // 댓글 좋아요.
         }
     })
 }
-
 
 async function commentPage(e) { // 댓글 페이징
 

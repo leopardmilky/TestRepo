@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { isSignedIn, verifyUser, validateNickname, validatePassword, withdrawPermission } = require('../middleware');
+const { isSignedIn, verifyUser, validateNickname, validatePassword, withdrawPermission, withdrawVerifycodePermission, deleteUserPermission } = require('../middleware');
 const nodemailer = require('nodemailer');
 const User = require('../models/user');
 const Board = require('../models/board');
@@ -47,7 +47,10 @@ router.get('/forgotpwd', (req, res) => {
     res.render('users/forgotPwd');
 });
 
-router.get('/userinfo', isSignedIn, (req, res) => {
+router.get('/userinfo', isSignedIn, async (req, res) => {
+    console.log("req.user: ", req.user);
+    const userInfo = await User.findById(req.user.id);
+    console.log("userInfo: ", userInfo);
     res.render('users/checkuser');
 });
 router.get('/modifyUserInfo', (req, res) => {
@@ -61,6 +64,9 @@ router.post('/modifyUserInfo', isSignedIn, verifyUser, catchAsync( async(req, re
 }));
 
 router.get('/withdraw', isSignedIn, withdrawPermission, catchAsync(async(req, res) => {
+    req.session.canAccessWithdrawVerifycode = true; 
+    delete req.session.canAccessWithdraw
+
     const { email } = req.user;
     const randomString = Math.random().toString(36).slice(2);
 
@@ -98,11 +104,14 @@ router.get('/withdraw', isSignedIn, withdrawPermission, catchAsync(async(req, re
     res.render('users/withdraw')
 }));
 
-router.post('/withdraw/verifycode', isSignedIn, withdrawPermission, catchAsync( async(req, res) => {
+router.post('/withdraw/verifycode', isSignedIn, withdrawVerifycodePermission, catchAsync( async(req, res) => {  
+    delete req.session.canAccessWithdrawVerifycode
+    
     const {userCode} = req.body;
     let redisData = await redisCli.get(req.user.email); // 123
 
     if( userCode === redisData) {
+        req.session.canAccessDeleteUser = true; 
         return res.status(200).json('ok');
     }
     if(!redisData) {
@@ -113,8 +122,8 @@ router.post('/withdraw/verifycode', isSignedIn, withdrawPermission, catchAsync( 
     }
 }));
 
-router.get('/withdraw/verifycode/deleteUser', isSignedIn, withdrawPermission, catchAsync( async(req, res) => {
-    delete req.session.canAccessWithdraw
+router.get('/withdraw/verifycode/deleteUser', isSignedIn, deleteUserPermission, catchAsync( async(req, res) => {
+    delete req.session.canAccessDeleteUser
 
     // s3삭제
     // 폴더 내 객체들을 나열

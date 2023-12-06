@@ -9,25 +9,7 @@ const NestedComment = require('../models/nestedComment');
 const { commentPaging } = require('../paging');
 
 
-router.get('/', catchAsync( async(req, res) => {
-    const { id } = req.params;
-    const { page } = req.query;
-
-    console.log("req.params: ", req.params);
-    console.log("req.query: ", req.query);
-
-    // let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = commentPaging(page, totalPost);
-    // const countComments = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
-    // const skipCount = Math.max(0, countComments - 5);
-    // const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(skipCount).populate('author');  // .skip(hidePost).limit(maxPost)
-
-
-    console.log("너는 사용은 되고 있니???????????????????");
-
-    // res.json(comment);
-}));
-
-router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {
+router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {  // 부모댓글
     const board = await Board.findById(req.params.id);
     const comment = new Comment(req.body.comment);
 
@@ -41,6 +23,26 @@ router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {
 
     res.redirect(`/index/${board._id}`);
 }));
+
+
+router.post('/:commentId', isSignedIn, catchAsync( async(req, res) => { // 대댓글
+    const board = await Board.findById(req.params.id);
+    const comment = await Comment.findById(req.params.commentId);
+    const reply = new Comment(req.body);
+
+    reply.author = req.user._id;
+    reply.board = req.params.id;
+    reply.parentComment = req.params.commentId;
+    comment.hasReply = true;
+
+    board.comments.push(reply);
+    await reply.save();
+    await comment.save();
+    await board.save();
+
+    res.json();
+}));
+
 
 router.put('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req, res) => {
     const {commentId} = req.params;
