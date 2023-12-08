@@ -47,6 +47,10 @@ router.get('/forgotpwd', (req, res) => {
     res.render('users/forgotPwd');
 });
 
+router.get('/mypage', (req, res) => {
+    res.render('users/mypage');
+});
+
 router.get('/userinfo', isSignedIn, async (req, res) => {
     console.log("req.user: ", req.user);
     const userInfo = await User.findById(req.user.id);
