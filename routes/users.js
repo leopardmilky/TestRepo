@@ -48,7 +48,11 @@ router.get('/forgotpwd', (req, res) => {
 });
 
 router.get('/mypage', (req, res) => {
-    res.render('users/mypage');
+    res.redirect('/mypage/mypost');
+});
+
+router.get('/mypage/mypost', (req, res) => {
+    res.render('users/myPost');
 });
 
 router.get('/userinfo', isSignedIn, async (req, res) => {

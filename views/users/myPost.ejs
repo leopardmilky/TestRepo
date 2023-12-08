@@ -1,0 +1,36 @@
+<% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/myPost.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div id="container">
+    <div id="mypage-wrap">
+        <div id="sidebar-wrap">
+            <nav id="sidebar">
+                <a class="sidebar-menu" href="/mypage/mypost">내 글</a>
+                <a class="sidebar-menu" href="/mypage/mylike">좋아요</a>
+                <a class="sidebar-menu" href="/mypage/myreport">신고</a>
+            </nav>
+        </div>
+        <div id="content-wrap">
+            <div id="sidebar-title-wrap">
+                <p id="sidebar-title">내 글</p>
+            </div>
+            <div id="tap-menu-wrap">
+                <a class="tap-item" href="/mypage/mypost?mode=1">게시물</a>
+                <a class="tap-item" href="/mypage/mypost?mode=2">댓글</a>
+            </div>
+            <div id="items-wrap">
+                <div class="item">
+                    
+                </div>
+                
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
