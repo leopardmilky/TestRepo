@@ -11,6 +11,7 @@ const passport = require('passport');
 const { S3Client, DeleteObjectsCommand, ListObjectsV2Command } = require( '@aws-sdk/client-s3' );
 const redis = require('redis');
 require('dotenv').config();
+const { myPagePostPaging, myPageCommentPaging } = require('../paging');
 
 
 const s3 = new S3Client({
@@ -48,12 +49,81 @@ router.get('/forgotpwd', (req, res) => {
 });
 
 router.get('/mypage', (req, res) => {
-    res.redirect('/mypage/mypost');
+    res.redirect('/mypage/mypost-post');
 });
 
-router.get('/mypage/mypost', (req, res) => {
-    res.render('users/myPost');
-});
+router.get('/mypage/mypost-post', isSignedIn, catchAsync( async(req, res) => {
+    const { id } = req.user;
+    const { page } = req.query;
+
+    const totalPost = await Board.find({author:id}).countDocuments({});
+
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
+    const posts = await Board.find({author:id}).sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author');
+
+    res.render('users/myPostPost', {posts, startPage, endPage, totalPage, currentPage, maxPost});
+}));
+
+router.get('/mypage/mypost-comment', isSignedIn, catchAsync( async(req, res) => {
+    const { id } = req.user;
+    const { page } = req.query;
+
+    const totalPost = await Comment.find({author:id}).countDocuments({});
+
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
+    const comments = await Comment.find({author:id, isDeleted: false}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author').populate('board');
+
+    res.render('users/myPostComment', {comments, startPage, endPage, totalPage, currentPage, maxPost});
+}));
+
+router.get('/mypage/mylike-post', isSignedIn, catchAsync( async(req, res) => {
+    const { id } = req.user;
+    const { page } = req.query;
+
+    const totalPost = await Board.find({likes: id}).countDocuments({});
+
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
+    const posts = await Board.find({likes: id}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author')
+
+    res.render('users/myLikePost', {posts, startPage, endPage, totalPage, currentPage, maxPost})
+}));
+
+router.get('/mypage/mylike-comment', isSignedIn, catchAsync( async(req, res) => {
+    const { id } = req.user;
+    const { page } = req.query;
+
+    const totalPost = await Comment.find({likes:id}).countDocuments({});
+
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
+    const comments = await Comment.find({likes:id, isDeleted: false}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author').populate('board');
+
+    res.render('users/myLikeComment', {comments, startPage, endPage, totalPage, currentPage, maxPost})
+}));
+
+router.get('/mypage/myreport-post', isSignedIn, catchAsync( async(req, res) => {
+    const { id } = req.user;
+    const { page } = req.query;
+
+    const totalPost = await Board.find({reports: id}).countDocuments({});
+
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
+    const posts = await Board.find({reports: id}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author')
+
+    res.render('users/myReportPost', {posts, startPage, endPage, totalPage, currentPage, maxPost})
+}));
+
+router.get('/mypage/myreport-comment', isSignedIn, catchAsync( async(req, res) => {
+    const { id } = req.user;
+    const { page } = req.query;
+
+    const totalPost = await Comment.find({reports:id}).countDocuments({});
+
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
+    const comments = await Comment.find({reports:id, isDeleted: false}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author').populate('board');
+    
+    res.render('users/myReportComment', {comments, startPage, endPage, totalPage, currentPage, maxPost})
+}));
+
 
 router.get('/userinfo', isSignedIn, async (req, res) => {
     console.log("req.user: ", req.user);
@@ -138,7 +208,7 @@ router.get('/withdraw/verifycode/deleteUser', isSignedIn, deleteUserPermission, 
     const listParams = {
         Bucket: process.env.AWS_S3_BUCKET,
         Prefix: req.user.id,
-      };
+    };
     const listCommand = new ListObjectsV2Command(listParams);
     const S3data = await s3.send(listCommand);
 
@@ -151,7 +221,6 @@ router.get('/withdraw/verifycode/deleteUser', isSignedIn, deleteUserPermission, 
         const deleteCommand = new DeleteObjectsCommand(deleteParams);
         await s3.send(deleteCommand);
     }
-
 
     // 대댓글 삭제
     await NestedComment.deleteMany({author:req.user.id});

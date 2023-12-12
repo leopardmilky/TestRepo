@@ -20,7 +20,6 @@ module.exports.boardPaging = (page, totalPost) => {
     return { startPage, endPage, hidePost, maxPost, totalPage, currentPage };
   };
   
-
 module.exports.commentPaging = (commentPage, totalComments) => {
   const maxComment = 10;  // 게시물 수
   const maxCommentPage = 5;  // 페이지 수
@@ -41,3 +40,46 @@ module.exports.commentPaging = (commentPage, totalComments) => {
 
   return { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage };
 };
+
+module.exports.myPagePostPaging = (page, totalPost) => {
+  const maxPost = 20;
+  const maxPage = 5;
+  let currentPage = page ? parseInt(page) : 1;
+  const hidePost = page === 1 ? 0 : (page - 1) * maxPost;
+  const totalPage = Math.ceil(totalPost / maxPost);
+
+  if (currentPage > totalPage) {
+    currentPage = totalPage;
+  }
+
+  const startPage = Math.floor(((currentPage - 1) / maxPage)) * maxPage + 1;
+  let endPage = startPage + maxPage - 1;
+
+  if (endPage > totalPage) {
+    endPage = totalPage;
+  }
+
+  return { startPage, endPage, hidePost, maxPost, totalPage, currentPage };
+};
+
+module.exports.myPageCommentPaging = (page, totalPost) => {
+  const maxPost = 15;
+  const maxPage = 5;
+  let currentPage = page ? parseInt(page) : 1;
+  const hidePost = page === 1 ? 0 : (page - 1) * maxPost;
+  const totalPage = Math.ceil(totalPost / maxPost);
+
+  if (currentPage > totalPage) {
+    currentPage = totalPage;
+  }
+
+  const startPage = Math.floor(((currentPage - 1) / maxPage)) * maxPage + 1;
+  let endPage = startPage + maxPage - 1;
+
+  if (endPage > totalPage) {
+    endPage = totalPage;
+  }
+
+  return { startPage, endPage, hidePost, maxPost, totalPage, currentPage };
+};
+

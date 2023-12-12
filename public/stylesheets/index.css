@@ -20,6 +20,11 @@ table{
     border-bottom: 1px solid #ddd;
 }
 
+#tr:hover {
+    /* background-color: blanchedalmond; */
+    cursor: pointer;
+}
+
 .th {
     padding: 5px;
 }
@@ -54,10 +59,7 @@ table{
     font-size: small;
 }
 
-#tr:hover {
-    /* background-color: blanchedalmond; */
-    cursor: pointer;
-}
+
 
 #new-post {
     display: flex;

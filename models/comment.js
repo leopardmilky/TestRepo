@@ -16,12 +16,6 @@ const CommentSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'Board'
     },
-    // nestedComments: [
-    //     {
-    //         type: Schema.Types.ObjectId,
-    //         ref: 'NestedComment'
-    //     }
-    // ],
     likes: [
         {
             type: Schema.Types.ObjectId,
