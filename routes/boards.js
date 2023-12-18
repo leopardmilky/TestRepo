@@ -4,7 +4,8 @@ const catchAsync = require('../utils/catchAsync');
 const { isSignedIn, isSignedIn2, validateBoard, isAuthor } = require('../middleware');
 const Board = require('../models/board');
 const Comment = require('../models/comment');
-// const NestedComment = require('../models/nestedComment');
+const ReportPost = require('../models/reportPost');
+const LikePost = require('../models/likePost');
 const { boardPaging, commentPaging } = require('../paging');
 const multer = require('multer');
 const  { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require( '@aws-sdk/client-s3' );
@@ -57,22 +58,12 @@ router.get('/new2', isSignedIn, (req, res) => {
 });
 
 router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, res) => {
-
     const board = new Board();
     board.title = req.body.title;
     board.mainText = req.body.mainText;
     board.author = req.user._id;
     board.notice = req.body.notice;
-
-
-    console.log("req.body.title: ", req.body.title);
-    console.log("req.body.mainText: ", req.body.mainText);
-    console.log("req.user._id: ", req.user._id);
-    console.log("req.body.notice: ", req.body.notice);
-    console.log("req.body.imgIndex: ", req.body.imgIndex);
-    console.log("req.files: ", req.files);
     
-
     const imgIndex = JSON.parse(req.body.imgIndex);
     for(let i = 0; i < req.files.length; i++) {
 
@@ -167,12 +158,15 @@ router.get('/:id', catchAsync( async(req, res) => {
     data.boardImg = boardImg;
     data.page = req.query.page;
 
-    const totalPost = await Board.countDocuments({});
+    const totalPost = await Board.countDocuments({});   // 뭐지 이건.....?
+    console.log("totalPost: ", totalPost);
     if (!totalPost) {
         throw Error();
     }
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = boardPaging(req.query.page, totalPost);
     const post = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author'); // .populate({path: 'comments', populate: {path: 'nestedComments'}})
+    // 얘도 뭐지....?
+
 
     data.contents = post;
     data.currentPage = currentPage;
@@ -180,6 +174,9 @@ router.get('/:id', catchAsync( async(req, res) => {
     data.endPage = endPage;
     data.maxPost = maxPost;
     data.totalPage = totalPage;
+
+    const result = await Board.findById(id).populate('reports');
+    console.log("result: ", result);
 
     res.render('board/show2', data);
 }));
@@ -430,8 +427,13 @@ router.post('/:id/postLike', isSignedIn2, catchAsync( async(req, res) => {
         const board = await Board.find({_id: id, likes: req.user._id});
         if(board.length === 0) {
             const addLike = await Board.findById(id);
+            const newLike = new LikePost();
+
+            newLike.user = req.user._id;
+            newLike.likedPost = id;
             addLike.likes.push(req.user._id);
             await addLike.save();
+            await newLike.save();
 
             return res.json({ok: addLike.likes.length})
         }
@@ -452,8 +454,13 @@ router.post('/:id/postReport', isSignedIn2, catchAsync( async(req, res) => {
         const board = await Board.find({_id: id, reports: req.user._id});
         if(board.length === 0) {
             const addReport = await Board.findById(id);
+            const newReport = new ReportPost();
+
+            newReport.user = req.user._id;
+            newReport.reportedPost = id;
             addReport.reports.push(req.user._id);
             await addReport.save();
+            await newReport.save();
 
             return res.json('ok');
         }

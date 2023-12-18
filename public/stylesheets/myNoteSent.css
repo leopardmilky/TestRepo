@@ -124,9 +124,9 @@
     border-bottom: 1px solid #ddd;
 }
 
-/* #tr:hover {
+#tr:hover {
     cursor: pointer;
-} */
+}
 
 .thead-common {
     /* border: 2px solid purple; */
@@ -135,16 +135,24 @@
     text-align : center;
 }
 
-.recommend, .view {
-    width: 10%;
+.select-btn {
+    width: 5%;
 }
 
-.title {
-    width: 60%;
+.sender {
+    width: 15%;
+}
+
+.note-content {
+    width: 55%;
 }
 
 .date {
     width: 20%;
+}
+
+.read {
+    width: 5%;
 }
 
 .tbody-common {
@@ -158,29 +166,13 @@
 .tbody-common-title {
     font-size: small;
     padding: 5px;
-}
-
-.tbody-common-title-deleted {
-    font-size: small;
-    padding: 5px;
-}
-
-.tbody-common-title:hover {
-    color: crimson;
-    cursor: pointer;
-}
-
-.tbody-common-body {
-    margin-bottom: 3px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
-.tbody-common-board {
-    margin: 0;
-    font-size: x-small;
-    color: #787878;
+.tbody-common-title:hover {
+    color: crimson;
 }
 
 .image {

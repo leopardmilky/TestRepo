@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Comment = require('./comment');
+const ReportComment = require('./reportComment');
 const NestedComment = require('./nestedComment');
 const Schema = mongoose.Schema;
 
@@ -45,6 +46,7 @@ const BoardSchema = new Schema({
 
 BoardSchema.post('findOneAndDelete', async function(doc){
     if(doc){
+        await ReportComment.deleteMany({reportedComment: { $in: doc.comments }})
         await Comment.deleteMany({_id: { $in: doc.comments }})
         await NestedComment.deleteMany({board: doc._id})
     }

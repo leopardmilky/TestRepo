@@ -9,7 +9,7 @@ window.onpageshow = function(event){
 
 const cancel = document.getElementById('cancel');
 cancel.addEventListener('click', ()=>{
-    window.location.href = 'http://localhost:3000/index/';
+    window.location.href = 'http://localhost:3000/index';
 })
 
 async function modifyUserInfo(){
@@ -21,7 +21,7 @@ async function modifyUserInfo(){
     await axios.put('/saveUserInfo', data)
     .then((res) => {
         window.alert('수정이 완료되었습니다.');
-        window.location.href = 'http://localhost:3000/index/';
+        window.location.href = 'http://localhost:3000/index';
     })
     .catch((err) => {
         if(err.response.data == 'nk'){

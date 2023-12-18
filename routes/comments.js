@@ -5,7 +5,8 @@ const ExpressError = require('../utils/ExpressError');
 const { validateComment, isSignedIn, isSignedIn2, isCommentAuthor } = require('../middleware');
 const Board = require('../models/board');
 const Comment = require('../models/comment');
-const NestedComment = require('../models/nestedComment');
+const ReportComment = require('../models/reportComment');
+const LikeComment = require('../models/likeComment');
 const { commentPaging } = require('../paging');
 
 
@@ -54,6 +55,7 @@ router.put('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req, re
     res.send();
 }));
 
+
 router.delete('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req, res) => {
     const {id, commentId} = req.params;
     const comment = await Comment.findById(commentId);
@@ -97,8 +99,13 @@ router.post('/:commentId/commentLike', isSignedIn2, catchAsync( async(req, res) 
         const comment = await Comment.find({_id: commentId, likes: req.user._id});
         if(comment.length === 0) {
             const addLike = await Comment.findById(commentId);
+            const newLike = new LikeComment();
+
+            newLike.user = req.user._id;
+            newLike.likedComment = commentId;
             addLike.likes.push(req.user._id);
             await addLike.save();
+            await newLike.save();
 
             return res.json({ok: addLike.likes.length})
         }
@@ -119,8 +126,13 @@ router.post('/:commentId/commentReport', isSignedIn2, catchAsync( async(req, res
         const comment = await Comment.find({_id: commentId, reports: req.user._id});
         if(comment.length === 0) {
             const addReport = await Comment.findById(commentId);
+            const newReport = new ReportComment();
+            
+            newReport.user = req.user._id;
+            newReport.reportedComment = commentId;
             addReport.reports.push(req.user._id);
             await addReport.save();
+            await newReport.save();
 
             return res.json('ok')
         }

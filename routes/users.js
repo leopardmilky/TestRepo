@@ -11,7 +11,6 @@ const passport = require('passport');
 const { S3Client, DeleteObjectsCommand, ListObjectsV2Command } = require( '@aws-sdk/client-s3' );
 const redis = require('redis');
 require('dotenv').config();
-const { myPagePostPaging, myPageCommentPaging } = require('../paging');
 
 
 const s3 = new S3Client({
@@ -20,21 +19,23 @@ const s3 = new S3Client({
         secretAccessKey: process.env.AWS_S3_SECRET_ACCESS_KEY,
     },
     region: process.env.AWS_S3_REGION
-})
+});
 
 const redisClient = redis.createClient({
     url: `redis://${process.env.REDIS_USERNAME}:${process.env.REDIS_PASSWORD}@${process.env.REDIS_HOST}:${process.env.REDIS_PORT}/0`,
     legacyMode: true, // 반드시 설정 !!
 });
+
 redisClient.on('connect', () => {
     console.info('Redis connected!@@');
 });
+
 redisClient.on('error', (err) => {
     console.error('Redis Client Error', err);
 });
+
 redisClient.connect().then(); // redis v4 연결 (비동기)
 const redisCli = redisClient.v4; // 기본 redisClient 객체는 콜백기반인데 v4버젼은 프로미스 기반이라 사용
-
 
 router.get('/signup', (req, res) => {
     res.render('users/signup');
@@ -48,93 +49,15 @@ router.get('/forgotpwd', (req, res) => {
     res.render('users/forgotPwd');
 });
 
-router.get('/mypage', (req, res) => {
-    res.redirect('/mypage/mypost-post');
-});
-
-router.get('/mypage/mypost-post', isSignedIn, catchAsync( async(req, res) => {
-    const { id } = req.user;
-    const { page } = req.query;
-
-    const totalPost = await Board.find({author:id}).countDocuments({});
-
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
-    const posts = await Board.find({author:id}).sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author');
-
-    res.render('users/myPostPost', {posts, startPage, endPage, totalPage, currentPage, maxPost});
-}));
-
-router.get('/mypage/mypost-comment', isSignedIn, catchAsync( async(req, res) => {
-    const { id } = req.user;
-    const { page } = req.query;
-
-    const totalPost = await Comment.find({author:id}).countDocuments({});
-
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
-    const comments = await Comment.find({author:id, isDeleted: false}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author').populate('board');
-
-    res.render('users/myPostComment', {comments, startPage, endPage, totalPage, currentPage, maxPost});
-}));
-
-router.get('/mypage/mylike-post', isSignedIn, catchAsync( async(req, res) => {
-    const { id } = req.user;
-    const { page } = req.query;
-
-    const totalPost = await Board.find({likes: id}).countDocuments({});
-
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
-    const posts = await Board.find({likes: id}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author')
-
-    res.render('users/myLikePost', {posts, startPage, endPage, totalPage, currentPage, maxPost})
-}));
-
-router.get('/mypage/mylike-comment', isSignedIn, catchAsync( async(req, res) => {
-    const { id } = req.user;
-    const { page } = req.query;
-
-    const totalPost = await Comment.find({likes:id}).countDocuments({});
-
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
-    const comments = await Comment.find({likes:id, isDeleted: false}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author').populate('board');
-
-    res.render('users/myLikeComment', {comments, startPage, endPage, totalPage, currentPage, maxPost})
-}));
-
-router.get('/mypage/myreport-post', isSignedIn, catchAsync( async(req, res) => {
-    const { id } = req.user;
-    const { page } = req.query;
-
-    const totalPost = await Board.find({reports: id}).countDocuments({});
-
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
-    const posts = await Board.find({reports: id}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author')
-
-    res.render('users/myReportPost', {posts, startPage, endPage, totalPage, currentPage, maxPost})
-}));
-
-router.get('/mypage/myreport-comment', isSignedIn, catchAsync( async(req, res) => {
-    const { id } = req.user;
-    const { page } = req.query;
-
-    const totalPost = await Comment.find({reports:id}).countDocuments({});
-
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
-    const comments = await Comment.find({reports:id, isDeleted: false}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author').populate('board');
-    
-    res.render('users/myReportComment', {comments, startPage, endPage, totalPage, currentPage, maxPost})
-}));
-
-
 router.get('/userinfo', isSignedIn, async (req, res) => {
-    console.log("req.user: ", req.user);
-    const userInfo = await User.findById(req.user.id);
-    console.log("userInfo: ", userInfo);
     res.render('users/checkuser');
 });
+
 router.get('/modifyUserInfo', (req, res) => {
     //페이지를 잘못 찾았을 때 표시할 페이지도 만들어야 할듯함.
     res.redirect('/index');
 });
+
 router.post('/modifyUserInfo', isSignedIn, verifyUser, catchAsync( async(req, res) => {
     const{ nickname, email } = req.user;
     req.session.canAccessWithdraw = true;   // 회원탈퇴 페이지 url로 접근 방지

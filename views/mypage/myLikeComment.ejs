@@ -12,7 +12,14 @@
             <nav id="sidebar">
                 <a id="sidebar-post" class="sidebar-menu" href="/mypage/mypost-post">내 글</a>
                 <a id="sidebar-like" class="sidebar-menu sidebar-active" href="/mypage/mylike-post">좋아요</a>
-                <a id="sidebar-report" class="sidebar-menu" href="/mypage/myreport-post">신고</a>
+                <a id="sidebar-report" class="sidebar-menu" href="/mypage/mynote-received">쪽지함</a>
+                <a id="sidebar-report" class="sidebar-menu" href="#">알림</a>
+                <% if(role === 'master' || role === 'superman') { %>
+                    <a id="sidebar-report" class="sidebar-menu" href="#">신고관리</a>
+                <% } %>
+                <% if(role === 'superman') { %>
+                    <a id="sidebar-report" class="sidebar-menu" href="#">매니저관리</a>
+                <% } %>
             </nav>
         </div>
 
@@ -29,25 +36,27 @@
                     <thead id="mode1-thead">
                         <th class="thead-common recommend">추천</th>
                         <th class="thead-common title">댓글/게시물 정보</th>
-                        <th class="thead-common date">날짜</th>
+                        <th class="thead-common date">활성일</th>
                     </thead>
                     <tbody>
                         <% for(comment of comments) { %>
+                            <% if(!comment.likedComment.isDeleted) { %>
                             <tr id="tr">
-                                <td class="tbody-common"><%= comment.likes.length %></td>
-                                <td class="tbody-common-title" onclick="location.href='/index/<%= comment.board._id %>'">
-                                    <p class="tbody-common-body"><%= comment.body %></p>
-                                    <p class="tbody-common-board">게시물: 
-                                        <% if(comment.board.notice) { %>
+                                <td class="tbody-common"><%= comment.likedComment.likes.length %></td>
+                                <td class="tbody-common-title" onclick="location.href='/index/<%= comment.likedComment.board._id %>'">
+                                    <p class="tbody-common-body"><%= comment.likedComment.body %></p>
+                                    <p class="tbody-common-board">제목: 
+                                        <% if(comment.likedComment.board.notice) { %>
                                             [알림]
                                         <% } %>
-                                            <%= comment.board.title %>
+                                            <%= comment.likedComment.board.title %>
                                     </p>
                                 </td>
                                 <td class="tbody-common">
                                     <%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %>
                                 </td>
                             </tr>
+                            <% } %>
                         <% } %>
                     </tbody>
                 </table>

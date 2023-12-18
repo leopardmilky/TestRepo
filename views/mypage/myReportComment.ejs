@@ -10,38 +10,43 @@
     <div id="mypage-wrap">
         <div id="sidebar-wrap">
             <nav id="sidebar">
-                <a id="sidebar-post" class="sidebar-menu sidebar-active" href="/mypage/mypost-post">내 글</a>
+                <a id="sidebar-post" class="sidebar-menu" href="/mypage/mypost-post">내 글</a>
                 <a id="sidebar-like" class="sidebar-menu" href="/mypage/mylike-post">좋아요</a>
-                <a id="sidebar-report" class="sidebar-menu" href="/mypage/myreport-post">신고</a>
+                <!-- <a id="sidebar-report" class="sidebar-menu sidebar-active" href="/mypage/myreport-post">신고</a> -->
             </nav>
         </div>
 
         <div id="content-wrap">
             <div id="sidebar-title-wrap">
-                <p id="sidebar-title">내 글</p>
+                <p id="sidebar-title">신고</p>
             </div>
             <div id="tap-menu-wrap">
-                <button id="tap-post" class="tap-item" onclick="myPostTapMenu(this)">게시물</button>
-                <button id="tap-comment" class="tap-item tap-active" onclick="myPostTapMenu(this)">댓글</button>
+                <button id="tap-post" class="tap-item" onclick="myReportTapMenu(this)">게시물</button>
+                <button id="tap-comment" class="tap-item tap-active" onclick="myReportTapMenu(this)">댓글</button>
             </div>
             <div id="items-wrap">
                 <table id="mode1-table">
                     <thead id="mode1-thead">
                         <th class="thead-common recommend">추천</th>
                         <th class="thead-common title">댓글/게시물 정보</th>
-                        <th class="thead-common date">날짜</th>
+                        <th class="thead-common date">신고일</th>
                     </thead>
                     <tbody>
                         <% for(comment of comments) { %>
                             <tr id="tr">
-                                <td class="tbody-common"><%= comment.likes.length %></td>
-                                <td class="tbody-common-title" onclick="location.href='/index/<%= comment.board._id %>'">
-                                    <p class="tbody-common-body"><%= comment.body %></p>
-                                    <p class="tbody-common-board">게시물: 
-                                        <% if(comment.board.notice) { %>
+                                <td class="tbody-common"><%= comment.reportedComment.likes.length %></td>
+                                    <% if(comment.reportedComment.isDeleted) { %>
+                                        <td class="tbody-common-title-deleted">
+                                        <p class="tbody-common-body"><del>해당 댓글은 삭제되었습니다.</del></p>
+                                    <% } else { %>
+                                        <td class="tbody-common-title" onclick="location.href='/index/<%= comment.reportedComment.board._id %>'">
+                                        <p class="tbody-common-body"><%= comment.reportedComment.body %></p>
+                                    <% } %>
+                                    <p class="tbody-common-board">제목: 
+                                        <% if(comment.reportedComment.board.notice) { %>
                                             [알림]
                                         <% } %>
-                                            <%= comment.board.title %>
+                                            <%= comment.reportedComment.board.title %>
                                     </p>
                                 </td>
                                 <td class="tbody-common">
@@ -56,19 +61,19 @@
             <% if(comments.length !== 0) { %>
                 <div id="pagination-wrap">
                     <% if(startPage > maxPost) { %>
-                        <a class="page page-prev-active" href="/mypage/mypost-comment?page=<%= startPage-1 %>">Prev</a>
+                        <a class="page page-prev-active" href="/mypage/myreport-comment?page=<%= startPage-1 %>">Prev</a>
                     <% } else { %>
                         <a class="page page-prev" href="javascript:void(0);">Prev</a>
                     <% } %>
                     <% for(let i = startPage; i <= endPage; i++) { %>
                         <% if(i === currentPage) { %>
-                            <a class="page current-page" href="/mypage/mypost-comment?page=<%= i %>"><%= i %></a>
+                            <a class="page current-page" href="/mypage/myreport-comment?page=<%= i %>"><%= i %></a>
                         <% } else { %>
-                            <a class="page" href="/mypage/mypost-comment?page=<%= i %>"><%= i %></a>
+                            <a class="page" href="/mypage/myreport-comment?page=<%= i %>"><%= i %></a>
                         <% } %>
                     <% } %>
                     <% if(endPage < totalPage) { %>
-                        <a class="page page-next-active" href="/mypage/mypost-comment?page=<%= endPage+1 %>">Next</a>
+                        <a class="page page-next-active" href="/mypage/myreport-comment?page=<%= endPage+1 %>">Next</a>
                     <% } else { %>
                         <a class="page page-next" href="javascript:void(0);">Next</a>
                     <% } %>
