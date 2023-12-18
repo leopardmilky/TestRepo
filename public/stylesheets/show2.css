@@ -234,6 +234,7 @@ body {
 /* 부모 댓글 */
 #parent-comments-wrap {
     border: 1px solid grey;
+    /* background-color: blanchedalmond; */
     margin-bottom: 5px;
     width: 100%;
 }

@@ -9,6 +9,7 @@ const LikePost = require('../models/likePost');
 const ReportComment = require('../models/reportComment');
 const ReportPost = require('../models/reportPost');
 const Note = require('../models/note');
+const User = require('../models/user');
 require('dotenv').config();
 const { myPagePostPaging, myPageCommentPaging } = require('../paging');
 
@@ -89,12 +90,23 @@ router.get('/mynote-received', catchAsync( async(req, res) => {
 
     const totalPost = await Note.find({recipient: id}).countDocuments({});
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
-    const comments = await Note.find({recipient: id}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('sender.nickname'); //.populate('reportedComment') 
-
-    res.render('mypage/myNoteReceived', {comments, startPage, endPage, totalPage, currentPage, maxPost, role});
+    const notes = await Note.find({recipient: id}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('sender'); //.populate('reportedComment') 
+    console.log("notes: ", notes)
+    res.render('mypage/myNoteReceived', {notes, startPage, endPage, totalPage, currentPage, maxPost, role});
 }));
 
 router.get('/mynote-sent', catchAsync( async(req, res) => {
+    const {id, role} = req.user;
+    const { page } = req.query;
+
+    const totalPost = await Note.find({sender: id}).countDocuments({});
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
+    const notes = await Note.find({sender: id}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('recipient'); //.populate('reportedComment') 
+
+    res.render('mypage/myNoteSent', {notes, startPage, endPage, totalPage, currentPage, maxPost, role});
+}));
+
+router.get('/mynote-inbox', catchAsync( async(req, res) => {
     const {id, role} = req.user;
     const { page } = req.query;
 
@@ -102,14 +114,40 @@ router.get('/mynote-sent', catchAsync( async(req, res) => {
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
     const comments = await Note.find({recipient: id}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('sender.nickname'); //.populate('reportedComment') 
 
-    res.render('mypage/myNoteSent', {comments, startPage, endPage, totalPage, currentPage, maxPost, role});
+
+    res.render('mypage/myNoteInbox', {comments, startPage, endPage, totalPage, currentPage, maxPost, role})
 }));
 
 
 router.get('/send-note', catchAsync( async(req, res) => {
-
     res.render('mypage/sendNote')
-}))
+}));
+
+router.post('/send-note', catchAsync( async(req, res) => {
+    const {recipient, content} = req.body;
+    const {id} = req.user;
+
+    if(!recipient.trim() || !content.trim()) {
+        return res.json('nk');
+    }
+
+    const recipientId = await User.findOne({nickname: recipient});
+    if(!recipientId) {
+        return res.json('nk2');
+    }
+
+    const newNote = new Note();
+    newNote.recipient = recipientId.id;
+    newNote.content = content;
+    newNote.sender = id;
+    await newNote.save();
+
+    res.json('ok');
+}));
+
+router.get('/view-note', catchAsync( async(req, res) => {
+    res.render('mypage/viewNote');
+}));
 
 
 module.exports = router;

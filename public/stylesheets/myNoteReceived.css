@@ -182,7 +182,30 @@
     margin-top: 5px;
 }
 
-#send-note-btn {
+#control-note-wrap {
+    width: 50%;
+    
+}
+
+#delete-note-btn, #inbox-note-btn {
+    border: 1px solid #999;
+    background-color: white;
+    font-size: small;
+    padding: 5px 10px 5px 10px;
+}
+
+#delete-note-btn:hover, #inbox-note-btn:hover {
+    border: 1px solid black;
+}
+
+#write-note-wrap {
+    width: 50%;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+}
+
+#write-note-btn {
     color: white;
     background-color: black;
     border: none;

@@ -25,7 +25,19 @@ const NoteSchema = new Schema({
     readAt: { 
         type: Date 
     },
-    saved: {
+    senderSaved: {
+        type: Boolean,
+        default: false 
+    },
+    recipientSaved:{
+        type: Boolean,
+        default: false 
+    },
+    senderDeleted: {
+        type: Boolean,
+        default: false 
+    },
+    recipientDeleted:{
         type: Boolean,
         default: false 
     }

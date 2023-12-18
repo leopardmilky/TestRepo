@@ -1,5 +1,5 @@
 <% layout('layouts/boilerplate') %>
-    <link rel="stylesheet" href="/stylesheets/myNoteSent.css">
+    <link rel="stylesheet" href="/stylesheets/myNoteInbox.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -28,18 +28,17 @@
                 <p id="sidebar-title">쪽지함</p>
             </div>
             <div id="tap-menu-wrap">
-                <button id="tap-received" class="tap-item" onclick="myNotTapMenu(this)">받은 쪽지</button>
-                <button id="tap-sent" class="tap-item" onclick="myNotTapMenu(this)">보낸 쪽지</button>
-                <button id="tap-note-inbox" class="tap-item tap-active" onclick="myNotTapMenu(this)">쪽지 보관함</button>
+                <button id="tap-received" class="tap-item" onclick="myNoteTapMenu(this)">받은 쪽지</button>
+                <button id="tap-sent" class="tap-item" onclick="myNoteTapMenu(this)">보낸 쪽지</button>
+                <button id="tap-note-inbox" class="tap-item tap-active" onclick="myNoteTapMenu(this)">쪽지 보관함</button>
             </div>
             <div id="items-wrap">
                 <table id="mode1-table">
                     <thead id="mode1-thead">
                         <th class="thead-common select-btn">버튼</th>
-                        <th class="thead-common recipient">받는사람</th>
+                        <th class="thead-common recipient">닉네임</th>
                         <th class="thead-common note-content">내용</th>
                         <th class="thead-common date">발신일</th>
-                        <th class="thead-common read">읽음</th>
                     </thead>
                     <tbody>
                         <tr id="tr">
@@ -47,10 +46,18 @@
                             <td class="tbody-common-title" onclick="location.href='#'"></td>
                             <td class="tbody-common"></td>
                             <td class="tbody-common">999999999999999999999999</td>
-                            <td class="tbody-common">999999999999999999999999</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div id="button-wrap">
+                <div id="control-note-wrap">
+                    <button id="delete-note-btn">삭제</button>
+                    <!-- <button id="inbox-note-btn">보관</button> -->
+                </div>
+                <div id="write-note-wrap">
+                    <button id="write-note-btn" onclick="sendNotePopUp()">쪽지쓰기</button>
+                </div>
             </div>
 
             <% if(comments.length !== 0) { %>
