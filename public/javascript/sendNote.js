@@ -27,3 +27,7 @@ function sendNote() {
     })
 
 }
+
+function closeNote() {
+    window.close();
+}

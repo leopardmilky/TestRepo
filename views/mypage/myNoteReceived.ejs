@@ -35,9 +35,7 @@
             <div id="items-wrap">
                 <table id="mode1-table">
                     <thead id="mode1-thead">
-                        <th class="thead-common select-btn">
-                            <input type="checkbox" id="check-all" onclick="checkAll(this)">
-                        </th>
+                        <th class="thead-common select-btn"><input type="checkbox" id="check-all" onclick="checkAll(this)"></th>
                         <th class="thead-common sender">보낸사람</th>
                         <th class="thead-common note-content">내용</th>
                         <th class="thead-common date">발신일</th>
@@ -45,11 +43,17 @@
                     <tbody>
                         <% for(note of notes) { %>
                             <tr id="tr">
-                                <td class="tbody-common">
-                                    <input type="checkbox" class="check-one-note" data-check-note-id="<%= note._id %>">
-                                </td>
-                                <td class="tbody-common"><%= note.sender.nickname %></td>
-                                <td class="tbody-common-title" id="content" onclick="openNote(this)" data-note-id="<%= note._id %>"><%= note.content %></td>
+                                <td class="tbody-common"><input type="checkbox" class="check-one-note" onclick="checkOne(this)" data-check-note-id="<%= note._id %>"></td>
+                                <% if(note.sender.id === me) { %>
+                                    <td class="tbody-common">나</td>
+                                <% } else { %>
+                                    <td class="tbody-common"><%= note.sender.nickname %></td>
+                                <% } %>
+                                <% if(note.read) { %>
+                                    <td class="tbody-common-title received read" id="content" onclick="openNote(this)" data-note-id="<%= note._id %>"><%= note.content %></td>
+                                <% } else { %>
+                                    <td class="tbody-common-title received" id="content" onclick="openNote(this)" data-note-id="<%= note._id %>"><%= note.content %></td>
+                                <% } %>
                                 <td class="tbody-common">
                                     <%= note.sentAt.getFullYear() %>-<%= String(note.sentAt.getMonth()+1).padStart(2,'0') %>-<%= String(note.sentAt.getDate()).padStart(2,'0') %> <%= String(note.sentAt.getHours()).padStart(2,'0') %>:<%= String(note.sentAt.getMinutes()).padStart(2,'0') %>:<%= String(note.sentAt.getSeconds()).padStart(2,'0') %>
                                 </td>
@@ -60,7 +64,7 @@
             </div>
             <div id="button-wrap">
                 <div id="control-note-wrap">
-                    <button id="delete-note-btn" onclick="deleteNote()">삭제</button>
+                    <button id="delete-note-btn" class="delete-received" onclick="deleteNote(this)">삭제</button>
                     <button id="inbox-note-btn" onclick="inboxNote()">보관</button>
                 </div>
                 <div id="write-note-wrap">
@@ -94,4 +98,5 @@
 </div>
 
 <%- include('../partials/footer') %>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/javascript/myPost.js"></script>

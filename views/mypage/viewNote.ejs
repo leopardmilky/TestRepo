@@ -8,6 +8,28 @@
 </head>
 <body>
 
+    <div id="container">
+        <div id="note-info-wrap">
+            <div id="nickname"><%= note.sender.nickname %></div>
+            <div id="date">
+                <%= note.sentAt.getFullYear() %>-<%= String(note.sentAt.getMonth()+1).padStart(2,'0') %>-<%= String(note.sentAt.getDate()).padStart(2,'0') %> <%= String(note.sentAt.getHours()).padStart(2,'0') %>:<%= String(note.sentAt.getMinutes()).padStart(2,'0') %>:<%= String(note.sentAt.getSeconds()).padStart(2,'0') %>
+            </div>
+        </div>
+        <div id="note-content-wrap">
+            <div id="content"><%= note.content %></div>
+        </div>
+        <% if(type === 'sent') { %>
+            <div id="btn-group-wrap">
+                <button id="close2" onclick="closeNote()">닫기</button>
+            </div>
+        <% } else { %>
+            <div id="btn-group-wrap">
+                <button id="close" onclick="closeNote()">닫기</button>
+                <button id="reply" onclick="sendNote()">답장하기</button>
+            </div>
+        <% } %>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="/javascript/viewNote.js"></script>
 </body>

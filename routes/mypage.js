@@ -12,6 +12,7 @@ const Note = require('../models/note');
 const User = require('../models/user');
 require('dotenv').config();
 const { myPagePostPaging, myPageCommentPaging } = require('../paging');
+const mongoose = require('mongoose');
 
 
 router.get('/', (req, res) => {
@@ -88,34 +89,107 @@ router.get('/mynote-received', catchAsync( async(req, res) => {
     const {id, role} = req.user;
     const { page } = req.query;
 
-    const totalPost = await Note.find({recipient: id}).countDocuments({});
+    const totalPost = await Note.find({recipient: id, recipientSaved: false, recipientDeleted: false}).countDocuments({});
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
-    const notes = await Note.find({recipient: id}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('sender'); //.populate('reportedComment') 
-    console.log("notes: ", notes)
-    res.render('mypage/myNoteReceived', {notes, startPage, endPage, totalPage, currentPage, maxPost, role});
+    const notes = await Note.find({recipient: id, recipientSaved: false, recipientDeleted: false}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('sender'); //.populate('reportedComment') 
+
+    res.render('mypage/myNoteReceived', {notes, startPage, endPage, totalPage, currentPage, maxPost, role, me:id});
 }));
 
 router.get('/mynote-sent', catchAsync( async(req, res) => {
     const {id, role} = req.user;
     const { page } = req.query;
 
-    const totalPost = await Note.find({sender: id}).countDocuments({});
+    const totalPost = await Note.find({sender: id, senderSaved: false, senderDeleted: false}).countDocuments({});
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
-    const notes = await Note.find({sender: id}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('recipient'); //.populate('reportedComment') 
+    const notes = await Note.find({sender: id, senderSaved: false, senderDeleted: false}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('recipient'); //.populate('reportedComment') 
 
-    res.render('mypage/myNoteSent', {notes, startPage, endPage, totalPage, currentPage, maxPost, role});
+    res.render('mypage/myNoteSent', {notes, startPage, endPage, totalPage, currentPage, maxPost, role, me:id});
 }));
 
 router.get('/mynote-inbox', catchAsync( async(req, res) => {
-    const {id, role} = req.user;
-    const { page } = req.query;
+    const {id, nickname, role} = req.user;
+    let { page } = req.query;
+    if(!page) { page = 1; }
 
-    const totalPost = await Note.find({recipient: id}).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
-    const comments = await Note.find({recipient: id}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('sender.nickname'); //.populate('reportedComment') 
+    const userId = new mongoose.Types.ObjectId(id);
+    const totalPost = await Note.aggregate([
+        {
+            $match: {
+                $or: [
+                    { recipient: userId, recipientSaved: true, recipientDeleted: false},
+                    { sender: userId, senderSaved: true, senderDeleted: false }
+                ]
+            }
+        },
+        {
+            $group: {
+                _id: '$_id',
+                note: { $first: '$$ROOT' }, 
+            }
+        },
+        { $replaceRoot: { newRoot: '$note' } }, 
+    ]);
+
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost.length);
+
+    const notes = await Note.aggregate([
+        {
+            $lookup: {
+              from: 'users', // User 모델의 컬렉션 이름
+              localField: 'recipient',
+              foreignField: '_id',
+              as: 'recipientInfo'
+            }
+        },
+        {
+            $lookup: {
+                from: 'users', // User 모델의 컬렉션 이름
+                localField: 'sender',
+                foreignField: '_id',
+                as: 'senderInfo'
+            }
+        },
+        { $unwind: '$recipientInfo' },
+        { $unwind: '$senderInfo' },
+        {
+            $match: {
+                $or: [
+                    { recipient: userId, recipientSaved: true, recipientDeleted: false},
+                    { sender: userId, senderSaved: true, senderDeleted: false }
+                ]
+            }
+        },
+        {
+            $group: {
+                _id: '$_id', // 중복을 확인할 필드를 선택
+                note: { $first: '$$ROOT' } // 중복된 첫 번째 노트를 선택
+            }
+        },
+        { $replaceRoot: { newRoot: '$note' } },  // 선택된 노트를 새로운 루트로 설정
+        {
+            $project: {
+                _id: 1,
+                read: 1,
+                senderSaved: 1,
+                recipientSaved: 1,
+                senderDeleted: 1,
+                recipientDeleted: 1,
+                sentAt: 1,
+                content: 1,
+                'recipientInfo._id': 1,
+                'recipientInfo.nickname': 1,
+                'senderInfo._id': 1,
+                'senderInfo.nickname': 1
+            }
+        },
+        { $sort: { sentAt: -1 } }, 
+        { $skip: hidePost }, 
+        { $limit: maxPost } 
+    ]);
 
 
-    res.render('mypage/myNoteInbox', {comments, startPage, endPage, totalPage, currentPage, maxPost, role})
+    res.render('mypage/myNoteInbox', {notes, startPage, endPage, totalPage, currentPage, maxPost, role, me:nickname})
 }));
 
 
@@ -124,8 +198,8 @@ router.get('/send-note', catchAsync( async(req, res) => {
 }));
 
 router.post('/send-note', catchAsync( async(req, res) => {
-    const {recipient, content} = req.body;
-    const {id} = req.user;
+    const { recipient, content } = req.body;
+    const { id } = req.user;
 
     if(!recipient.trim() || !content.trim()) {
         return res.json('nk');
@@ -144,10 +218,66 @@ router.post('/send-note', catchAsync( async(req, res) => {
 
     res.json('ok');
 }));
-
+ 
 router.get('/view-note', catchAsync( async(req, res) => {
-    res.render('mypage/viewNote');
+    const {noteId, type} = req.query;
+    const {id, nickname} = req.user;
+
+    if(type === 'received') {
+        const note = await Note.findOne({_id: noteId, recipient: id}).populate('sender').populate('recipient');
+        note.read = true;
+        note.readAt = Date.now();
+        await note.save();
+        return res.render('mypage/viewNote', {note, type});
+    }
+
+    if(type === 'sent') {
+        const note = await Note.findOne({_id: noteId, sender: id}).populate('sender').populate('recipient');
+        return res.render('mypage/viewNote', {note, type});
+    }
+
+    if(type === 'inbox') {
+        const note = await Note.findOne({_id: noteId}).populate('sender').populate('recipient');
+        console.log("note.recipient.nickname: ", note.recipient.nickname)
+        console.log("nickname: ", nickname)
+        if(note.recipient.nickname === nickname){
+            note.read = true;
+            note.readAt = Date.now();
+            await note.save();
+        }
+        return res.render('mypage/viewNote', {note, type});
+    }
 }));
 
+router.put('/save-note', catchAsync( async(req, res) => {
+    console.log("req.body: ", req.body);
+    
+    for(nodeId of req.body) {
+        const note = await Note.findById(nodeId).populate('sender').populate('recipient');
+        if(note.recipient.nickname === req.user.nickname) {
+            note.recipientSaved = true;
+        }
+        if(note.sender.nickname === req.user.nickname) {
+            note.senderSaved = true;
+        }
+        await note.save();
+    }
+    res.json('ok')
+}));
+
+router.delete('/delete-note', catchAsync( async(req, res) => {
+
+    for(nodeId of req.body) {
+        const note = await Note.findById(nodeId).populate('sender').populate('recipient');
+        if(note.recipient.nickname === req.user.nickname) {
+            note.recipientDeleted = true;
+        }
+        if(note.sender.nickname === req.user.nickname) {
+            note.senderDeleted = true;
+        }
+        await note.save();
+    }
+    res.json('ok');
+}));
 
 module.exports = router;

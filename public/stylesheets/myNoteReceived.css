@@ -165,10 +165,16 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-weight: bold;
 }
 
 .tbody-common-title:hover {
     color: crimson;
+}
+
+.read {
+    color: #999;
+    font-weight: lighter;
 }
 
 .image {

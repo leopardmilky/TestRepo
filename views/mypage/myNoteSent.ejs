@@ -35,7 +35,7 @@
             <div id="items-wrap">
                 <table id="mode1-table">
                     <thead id="mode1-thead">
-                        <th class="thead-common select-btn"><input type="checkbox"></th>
+                        <th class="thead-common select-btn"><input type="checkbox" id="check-all" onclick="checkAll(this)"></th>
                         <th class="thead-common recipient">받는사람</th>
                         <th class="thead-common note-content">내용</th>
                         <th class="thead-common date">발신일</th>
@@ -44,9 +44,13 @@
                     <tbody>
                         <% for(note of notes) { %>
                             <tr id="tr">
-                                <td class="tbody-common"><input type="checkbox"></td>
-                                <td class="tbody-common" onclick="location.href='#'" data-note-id="<%= note._id %>"><%= note.recipient.nickname %></td>
-                                <td class="tbody-common-title"><%= note.content %></td>
+                                <td class="tbody-common"><input type="checkbox" class="check-one-note" onclick="checkOne(this)" data-check-note-id="<%= note._id %>"></td>
+                                <% if(note.recipient.id === me) { %>
+                                    <td class="tbody-common">나</td>
+                                <% } else { %>
+                                    <td class="tbody-common"><%= note.recipient.nickname %></td>
+                                <% } %>
+                                <td class="tbody-common-title sent" onclick="openNote(this)" data-note-id="<%= note._id %>"><%= note.content %></td>
                                 <td class="tbody-common">
                                     <%= note.sentAt.getFullYear() %>-<%= String(note.sentAt.getMonth()+1).padStart(2,'0') %>-<%= String(note.sentAt.getDate()).padStart(2,'0') %> <%= String(note.sentAt.getHours()).padStart(2,'0') %>:<%= String(note.sentAt.getMinutes()).padStart(2,'0') %>:<%= String(note.sentAt.getSeconds()).padStart(2,'0') %>
                                 </td>
@@ -64,8 +68,8 @@
             </div>
             <div id="button-wrap">
                 <div id="control-note-wrap">
-                    <button id="delete-note-btn">삭제</button>
-                    <button id="inbox-note-btn">보관</button>
+                    <button id="delete-note-btn" class="delete-sent" onclick="deleteNote(this)">삭제</button>
+                    <button id="inbox-note-btn" onclick="inboxNote()">보관</button>
                 </div>
                 <div id="write-note-wrap">
                     <button id="write-note-btn" onclick="sendNotePopUp()">쪽지쓰기</button>
@@ -98,4 +102,5 @@
 </div>
 
 <%- include('../partials/footer') %>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/javascript/myPost.js"></script>
