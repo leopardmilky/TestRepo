@@ -67,6 +67,11 @@
     font-weight: bold;
 }
 
+#sidebar-title-sub {
+    font-size: x-small;
+    color: grey;
+}
+
 #tap-menu-wrap {
     display: flex;
     flex-direction: row;
@@ -108,71 +113,83 @@
     table-layout: fixed;
 }
 
-#tr {
-    border-bottom: 1px solid #ddd;
-}
-
-/* #tr:hover {
-    cursor: pointer;
-} */
-
 .thead-common {
-    border-top: 2px solid black;
-    border-bottom: 2px solid black;
-    text-align : center;
+    border-bottom: 1px solid grey;
+    padding-right: 20px;
+    text-align : end;
 }
 
-.recommend, .view {
-    width: 10%;
-}
-
-.title {
-    width: 60%;
-}
-
-.date {
-    width: 20%;
-}
-
-.tbody-common {
+#check-all-btn {
+    border: 1px solid grey;
+    background-color: white;
+    color: grey;
     font-size: small;
-    text-align : center;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    margin-bottom: 10px;
 }
 
-.tbody-common-title {
-    font-size: small;
-    padding: 5px;
+#check-all-btn:hover {
+    border: 1px solid black;
+    color: black;
 }
 
-.tbody-common-title-deleted {
-    font-size: small;
-    padding: 5px;
-}
-
-.tbody-common-title:hover {
-    color: crimson;
+.tr-noti:hover {
     cursor: pointer;
 }
 
-.tbody-common-body {
-    margin-bottom: 3px;
+.tr-noti {
+    font-size: small;
+}
+
+.td-noti {
+    padding: 10px 20px 10px 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.td-noti:hover {
+    background-color: #ddd;
+}
+
+.icon {
+    font-size: large;
+}
+
+.content-noti-wrap {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    margin-right: 20px;
 }
 
-.tbody-common-board {
+.noti-check {
+    font-size: 150%;
+    color: #ddd;
+}
+
+.noti-check-active {
+    font-size: 150%;
+    color: black;
+}
+
+.top-text {
+    margin-bottom: 5px;
+}
+
+.bottom-text {
     margin: 0;
-    font-size: x-small;
-    color: #787878;
 }
 
-.image {
-    color: green;
+.ref-text {
+    margin: 0;
+    margin-top: 5px;
+    font-size: xx-small;
 }
+
+
+
+
 
 #pagination-wrap {
     display: flex;

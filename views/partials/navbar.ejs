@@ -8,10 +8,23 @@
       <% if(!signedInUser) { %>
         <a class="sign-option signInBtn" style="cursor:pointer">로그인</a>
         <a class="sign-option" href="/signup2">회원가입</a>
-        <% } else { %>
-        <span class="p-2 text-white"></span>
+      <% } else { %>
+        <div id="noti-wrap">
+          <i class="fa-solid fa-bell noti-alarm-icon" onclick="notiDropdown(this)"></i>
+          <% if(notiAlarm > 0) { %>
+            <div id="noti-alarm"></div>
+          <% } %>
+          <div id="noti-dropdown-wrap" class="noti-dropdown-wrap">
+            <div id="noti-count"></div>
+            <div id="noti-content-wrap"></div>
+            <div id="noti-inbox">
+              <a href="/mypage/mynotification">알림 페이지로 이동</a>
+            </div>
+          </div>
+
+        </div>
         <div class="dropdown">
-          <span class="user_nickname text-white"><%= signedInUser.nickname %> ▼</span>
+          <p class="user-nickname text-white"><%= signedInUser.nickname %> ▼</p>
           <div class="dropdown-options">
             <a class="dropdown-option userInfo" href="/mypage">마이페이지</a>
             <a class="dropdown-option userInfo" href="/userinfo">회원정보수정</a>

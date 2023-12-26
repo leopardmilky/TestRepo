@@ -9,6 +9,8 @@ const methodOverride = require('method-override');
 const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
+const Notification = require('./models/notification');
+
 const boardRoutes = require('./routes/boards');
 const commentRoutes = require('./routes/comments');
 const userRoutes = require('./routes/users');
@@ -55,11 +57,19 @@ passport.use(new LocalStrategy({usernameField: 'email'}, User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use((req, res, next) => {
+app.use( async (req, res, next) => {
     // res.locals.previousUrl = urlParse.parse(urlStr, true);
-    res.locals.signedInUser = req.user;
     // res.locals.success = req.flash('success');
     // res.locals.error = req.flash('error');
+    res.locals.signedInUser = req.user;
+    // console.log("req.user@@@@@@@@@@@@@@@@@@@@@@@@@@: ", req.user);
+    if(req.user) {
+        const {id} = req.user;
+        const notis = await Notification.find({recipient:id, isRead: false}).sort({createdAt: -1}).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
+        res.locals.notiAlarm = notis.length;
+    }
+
+
     next();
 });
 

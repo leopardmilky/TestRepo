@@ -6,6 +6,7 @@ const Board = require('../models/board');
 const Comment = require('../models/comment');
 const ReportPost = require('../models/reportPost');
 const LikePost = require('../models/likePost');
+const Notification = require('../models/notification');
 const { boardPaging, commentPaging } = require('../paging');
 const multer = require('multer');
 const  { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require( '@aws-sdk/client-s3' );
@@ -159,7 +160,6 @@ router.get('/:id', catchAsync( async(req, res) => {
     data.page = req.query.page;
 
     const totalPost = await Board.countDocuments({});   // 뭐지 이건.....?
-    console.log("totalPost: ", totalPost);
     if (!totalPost) {
         throw Error();
     }
@@ -176,7 +176,6 @@ router.get('/:id', catchAsync( async(req, res) => {
     data.totalPage = totalPage;
 
     const result = await Board.findById(id).populate('reports');
-    console.log("result: ", result);
 
     res.render('board/show2', data);
 }));
@@ -426,7 +425,7 @@ router.post('/:id/postLike', isSignedIn2, catchAsync( async(req, res) => {
     if(req.user){
         const board = await Board.find({_id: id, likes: req.user._id});
         if(board.length === 0) {
-            const addLike = await Board.findById(id);
+            const addLike = await Board.findById(id).populate('author');
             const newLike = new LikePost();
 
             newLike.user = req.user._id;
@@ -434,6 +433,15 @@ router.post('/:id/postLike', isSignedIn2, catchAsync( async(req, res) => {
             addLike.likes.push(req.user._id);
             await addLike.save();
             await newLike.save();
+
+            if(addLike.author.id !== req.user.id) { // 자신의 글에 좋아요는 알림 안함.
+                const newNotification = new Notification();
+                newNotification.sender = req.user.id;
+                newNotification.recipient = addLike.author.id;
+                newNotification.notificationType = 'likePost';
+                newNotification.postId = addLike.id; // 타이틀 확인
+                await newNotification.save();
+            }
 
             return res.json({ok: addLike.likes.length})
         }

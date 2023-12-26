@@ -4,15 +4,15 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
-    
+    height: 70px;
 }
 
 #navbarWrap {
-    /* border: 1px solid red; */
     width: 1000px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     padding: 15px;
 }
 
@@ -31,6 +31,7 @@
 #userSignWrap {
     display: flex;
     flex-direction: row;
+    align-items: center;
 }
 
 .sign-option {
@@ -39,10 +40,118 @@
     margin-left: 20px;
 }
 
-.dropdown {
-    display: inline-block;
+#noti-wrap {
+    border-radius: 50%;
     position: relative;
-  }
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+    width: 30px;
+    height: 30px;
+    margin-right: 20px;
+}
+
+#noti-wrap:hover {
+    border-radius: 50%;
+    position: relative;
+    z-index: 3;
+    background-color: grey;
+}
+
+.noti-alarm-icon {
+    z-index: 4;
+    color: white;
+    position: relative;
+}
+
+#noti-alarm {
+    display: block;
+    background-color: red;
+    position: absolute;
+    top: 5px;
+    left: 4px;
+    z-index: 5;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+#noti-dropdown-wrap {
+    display: none;
+    position: absolute;
+    background-color: white;
+    border: 1px solid black;
+    top: 100%;
+    right: 0%;
+    width: 350px;
+}
+
+#noti-count {
+    font-size: small;
+    padding: 5px;
+    border-bottom: 1px solid black;
+}
+
+#noti-content-wrap {
+    overflow-y: scroll;
+    height: 400px;
+}
+
+#noti-none {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: grey;
+}
+
+.noti-dropdown {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-bottom: 1px solid grey;
+    cursor: pointer;
+}
+
+.noti-dropdown:hover {
+    background-color: #ddd;
+}
+
+.noti-dropdown-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: small;
+}
+
+.noti-icon {
+    margin-right: 5px;
+    color: black;
+}
+
+.noti-title-text {
+    margin: 0;
+    font-size: small;
+}
+
+.noti-dropdown-text {
+    font-size: small;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+#noti-inbox {
+    position: relative;
+    top: 0%;
+    font-size: small;
+    padding: 5px;
+    text-align: center;
+    border-top: 1px solid black;
+}
 
 .dropdown-options {
     display: none;
@@ -58,7 +167,10 @@
 
 .dropdown:hover .dropdown-options {
     display: block;
-    
+}
+
+.user-nickname {
+    margin: 0;
 }
 
 .dropdown-option {
@@ -67,6 +179,7 @@
     text-decoration: none;
     color: white;
 }
+
 .dropdown-option:hover{
     color: #0d6efd;
 }

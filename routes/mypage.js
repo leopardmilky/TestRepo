@@ -9,6 +9,7 @@ const LikePost = require('../models/likePost');
 const ReportComment = require('../models/reportComment');
 const ReportPost = require('../models/reportPost');
 const Note = require('../models/note');
+const Notification = require('../models/notification');
 const User = require('../models/user');
 require('dotenv').config();
 const { myPagePostPaging, myPageCommentPaging } = require('../paging');
@@ -216,6 +217,15 @@ router.post('/send-note', catchAsync( async(req, res) => {
     newNote.sender = id;
     await newNote.save();
 
+    if(id !== recipientId.id) { // 나 자신에게 쓴건 알림 안함.
+        const newNotification = new Notification();
+        newNotification.sender = id;
+        newNotification.recipient = recipientId.id;
+        newNotification.notificationType = 'note';
+        newNotification.noteId = newNote.id;
+        await newNotification.save();
+    }
+
     res.json('ok');
 }));
  
@@ -238,8 +248,6 @@ router.get('/view-note', catchAsync( async(req, res) => {
 
     if(type === 'inbox') {
         const note = await Note.findOne({_id: noteId}).populate('sender').populate('recipient');
-        console.log("note.recipient.nickname: ", note.recipient.nickname)
-        console.log("nickname: ", nickname)
         if(note.recipient.nickname === nickname){
             note.read = true;
             note.readAt = Date.now();
@@ -250,7 +258,6 @@ router.get('/view-note', catchAsync( async(req, res) => {
 }));
 
 router.put('/save-note', catchAsync( async(req, res) => {
-    console.log("req.body: ", req.body);
     
     for(nodeId of req.body) {
         const note = await Note.findById(nodeId).populate('sender').populate('recipient');
@@ -278,6 +285,20 @@ router.delete('/delete-note', catchAsync( async(req, res) => {
         await note.save();
     }
     res.json('ok');
+}));
+
+router.get('/mynotification', catchAsync( async(req, res) => {
+    const {id} = req.user;
+    const notis = await Notification.find({recipient:id}).sort({createdAt: -1}).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
+
+    res.render('mypage/myNotification', {notis});
+}));
+
+router.get('/mynoti', catchAsync( async(req, res) => {
+    const {id} = req.user;
+    const notis = await Notification.find({recipient:id, isRead: false}).sort({createdAt: -1}).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
+
+    res.json(notis);
 }));
 
 module.exports = router;

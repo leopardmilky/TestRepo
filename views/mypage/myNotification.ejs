@@ -1,0 +1,125 @@
+<% layout('layouts/boilerplate') %>
+    <!-- <link rel="stylesheet" href="/stylesheets/myPagePost.css"> -->
+    <link rel="stylesheet" href="/stylesheets/myNotification.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div id="container">
+    <div id="mypage-wrap">
+        <div id="sidebar-wrap">
+            <nav id="sidebar">
+                <a id="sidebar-post" class="sidebar-menu" href="/mypage/mypost-post">내 글</a>
+                <a id="sidebar-like" class="sidebar-menu" href="/mypage/mylike-post">좋아요</a>
+                <a id="sidebar-report" class="sidebar-menu" href="/mypage/mynote-received">쪽지함</a>
+                <a id="sidebar-notification" class="sidebar-menu sidebar-active" href="/mypage/mynotification">알림</a>
+
+            </nav>
+        </div>
+
+        <div id="content-wrap">
+            <div id="sidebar-title-wrap">
+                <p id="sidebar-title">알림<span id="sidebar-title-sub"></span></p>
+            </div>
+            <!-- <div id="tap-menu-wrap">
+                <button id="tap-post" class="tap-item tap-active" onclick="myPostTapMenu(this)">게시물</button>
+                <button id="tap-comment" class="tap-item" onclick="myPostTapMenu(this)">댓글</button>
+            </div> -->
+            <div id="items-wrap">
+                <table id="mode1-table">
+                    <thead id="mode1-thead">
+                        <th class="thead-common"><button id="check-all-btn">모두 읽음</button></th>
+                    </thead>
+                    <tbody>
+                        <% for(noti of notis) { %>
+                            <% if(noti.notificationType === 'note') { %>
+                                <tr class="tr-noti">
+                                    <td class="td-noti">
+                                        <div class="content-noti-wrap">
+                                            <p class="top-text"><b><%= noti.sender.nickname %></b>님이 <b>쪽지</b>를 보냈습니다.</p>
+                                            <p class="bottom-text">"<%= noti.noteId.content %>"</p>
+                                        </div>
+                                        <div class="check-noti-wrap">
+                                            <% if(noti.isRead) { %>
+                                                <i class="fa-sharp fa-solid fa-check noti-check-active"></i>
+                                            <% } else { %>
+                                                <i class="fa-sharp fa-solid fa-check noti-check"></i>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% } %>
+                            <% if(noti.notificationType === 'postComment') { %>
+                                <tr class="tr-noti">
+                                    <td class="td-noti">
+                                        <div class="content-noti-wrap">
+                                            <p class="top-text"><b><%= noti.sender.nickname %></b>님이 <b>댓글</b>을 남겼습니다.</p>
+                                            <p class="bottom-text">"<%= noti.commentId.body %>"</p>
+                                            <p class="ref-text">연관게시물: "<%= noti.postId.title %>"</p>
+                                        </div>
+                                        <div class="check-noti-wrap">
+                                            <% if(noti.isRead) { %>
+                                                <i class="fa-sharp fa-solid fa-check noti-check-active"></i>
+                                            <% } else { %>
+                                                <i class="fa-sharp fa-solid fa-check noti-check"></i>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% } %>
+                            <% if(noti.notificationType === 'commentReply') { %>
+                                <tr class="tr-noti">
+                                    <td class="td-noti">
+                                        <div class="content-noti-wrap">
+                                            <p class="top-text"><b><%= noti.sender.nickname %></b>님이 <b>대댓글</b>을 남겼습니다.</p>
+                                            <p class="bottom-text">"<%= noti.replyId.body %>"</p>
+                                            <p class="ref-text">연관댓글: "<%= noti.commentId.body %>"</p>
+                                        </div>
+                                        <div class="check-noti-wrap">
+                                            <% if(noti.isRead) { %>
+                                                <i class="fa-sharp fa-solid fa-check noti-check-active"></i>
+                                            <% } else { %>
+                                                <i class="fa-sharp fa-solid fa-check noti-check"></i>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% } %>
+                            <% if(noti.notificationType === 'likePost') { %>
+                                <tr class="tr-noti">
+                                    <td class="td-noti">
+                                        <div class="content-noti-wrap">
+                                            <p class="top-text">해당 <b>게시물에 좋아요</b>를 받았습니다.</p>
+                                            <p class="bottom-text">"<%= noti.postId.title %>"</p>
+                                        </div>
+                                        <div class="check-noti-wrap">
+                                            <i class="fa-sharp fa-solid fa-check noti-check-active"></i>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% } %>
+                            <% if(noti.notificationType === 'likeComment') { %>
+                                <tr class="tr-noti">
+                                    <td class="td-noti">
+                                        <div class="content-noti-wrap">
+                                            <p class="top-text">해당 <b>댓글에 좋아요</b>를 받았습니다.</p>
+                                            <p class="bottom-text">"<%= noti.commentId.body %>"</p>
+                                        </div>
+                                        <div class="check-noti-wrap">
+                                            <i class="fa-sharp fa-solid fa-check noti-check-active"></i>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/javascript/myPost.js"></script>

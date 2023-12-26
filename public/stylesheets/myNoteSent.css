@@ -1,5 +1,4 @@
 #container {
-    /* border: 2px solid red; */
     min-height: 90vh;
     display: flex;
     flex-direction: row;
@@ -7,7 +6,6 @@
 }
 
 #mypage-wrap {
-    /* border: 2px solid blue; */
     width: 1000px;
     margin-top: 2%;
     display: flex;
@@ -16,12 +14,10 @@
 }
 
 #sidebar-wrap {
-    /* border: 2px solid green; */
     width: 200px;
 }
 
 #sidebar {
-    /* border: 2px solid grey; */
     border-bottom: 1px solid grey;
     display: flex;
     flex-direction: column;
@@ -45,7 +41,6 @@
 
 .sidebar-active {
     background-color: #ddd;
-    /* border-right: 2px solid crimson; */
 }
 
 .sidebar-menu:hover {
@@ -53,13 +48,11 @@
 }
 
 #content-wrap {
-    /* border: 2px solid green; */
     width: 800px;
     box-sizing: border-box;
 }
 
 #sidebar-title-wrap {
-    /* border: 2px solid black; */
     border-bottom: 2px solid grey;
     display: flex;
     flex-direction: row;
@@ -72,11 +65,9 @@
     margin-left: 20px;
     font-size: 1.5em;
     font-weight: bold;
-    /* border: 2px solid red; */
 }
 
 #tap-menu-wrap {
-    /* border: 2px solid salmon; */
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -97,7 +88,6 @@
 }
 
 .tap-active {
-    /* border-bottom: 2px solid crimson; */
     background-color: #ddd;
 }
 
@@ -106,7 +96,6 @@
 }
 
 #items-wrap {
-    /* border: 2px solid blue; */
     margin-top: 10px;
     display: flex;
     flex-direction: row;
@@ -114,7 +103,6 @@
 }
 
 #mode1-table {
-    /* border: 2px solid red; */
     border-bottom: 2px solid black;
     width: 100%;
     table-layout: fixed;
@@ -129,7 +117,6 @@
 }
 
 .thead-common {
-    /* border: 2px solid purple; */
     border-top: 2px solid black;
     border-bottom: 2px solid black;
     text-align : center;

@@ -7,11 +7,12 @@ const Board = require('../models/board');
 const Comment = require('../models/comment');
 const ReportComment = require('../models/reportComment');
 const LikeComment = require('../models/likeComment');
+const Notification = require('../models/notification');
 const { commentPaging } = require('../paging');
 
 
 router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {  // 부모댓글
-    const board = await Board.findById(req.params.id);
+    const board = await Board.findById(req.params.id).populate('author');
     const comment = new Comment(req.body.comment);
 
     comment.author = req.user._id;
@@ -22,13 +23,23 @@ router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {  
     await comment.save();
     await board.save();
 
+    if(board.author.id !== req.user.id) { // 나 자신에게 쓴건 알림 안함.
+        const newNotification = new Notification();
+        newNotification.sender = req.user.id;
+        newNotification.recipient = board.author.id;
+        newNotification.notificationType = 'postComment';
+        newNotification.commentId = comment.id; // 부모댓글 (연관 댓글이 뭔지 확인하려고)
+        newNotification.postId = board.id; // 게시물(무슨 글썻지 확인하려고)
+        await newNotification.save();
+    }
+
     res.redirect(`/index/${board._id}`);
 }));
 
 
 router.post('/:commentId', isSignedIn, catchAsync( async(req, res) => { // 대댓글
     const board = await Board.findById(req.params.id);
-    const comment = await Comment.findById(req.params.commentId);
+    const comment = await Comment.findById(req.params.commentId).populate('author');
     const reply = new Comment(req.body);
 
     reply.author = req.user._id;
@@ -40,6 +51,16 @@ router.post('/:commentId', isSignedIn, catchAsync( async(req, res) => { // 대�
     await reply.save();
     await comment.save();
     await board.save();
+
+    if(req.user.id !== comment.author.id) { // 나 자신에게 쓴건 알림 안함.
+        const newNotification = new Notification();
+        newNotification.sender = req.user.id;
+        newNotification.recipient = comment.author.id;
+        newNotification.notificationType = 'commentReply';
+        newNotification.commentId = comment.id; // 부모댓글 (연관 댓글이 뭔지 확인하려고)
+        newNotification.replyId = reply.id; // 대댓글(무슨 글썻지 확인하려고)
+        await newNotification.save();
+    }
 
     res.json();
 }));
@@ -98,7 +119,7 @@ router.post('/:commentId/commentLike', isSignedIn2, catchAsync( async(req, res) 
     if(req.user) {
         const comment = await Comment.find({_id: commentId, likes: req.user._id});
         if(comment.length === 0) {
-            const addLike = await Comment.findById(commentId);
+            const addLike = await Comment.findById(commentId).populate('author');
             const newLike = new LikeComment();
 
             newLike.user = req.user._id;
@@ -106,6 +127,15 @@ router.post('/:commentId/commentLike', isSignedIn2, catchAsync( async(req, res) 
             addLike.likes.push(req.user._id);
             await addLike.save();
             await newLike.save();
+
+            if(addLike.author.id !== req.user.id) { // 자신의 글에 좋아요는 알림 안함.
+                const newNotification = new Notification();
+                newNotification.sender = req.user.id;
+                newNotification.recipient = addLike.author.id;
+                newNotification.notificationType = 'likeComment';
+                newNotification.commentId = addLike.id; // 타이틀 확인
+                await newNotification.save();
+            }
 
             return res.json({ok: addLike.likes.length})
         }
