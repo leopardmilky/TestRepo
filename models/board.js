@@ -41,7 +41,18 @@ const BoardSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "User"
         }
-    ]
+    ],
+    isDeleted: {
+        type: Boolean,
+        default: false
+    },
+    whoDeleted: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    },
+    deletedDate: {
+        type:Date
+    }
 });
 
 BoardSchema.post('findOneAndDelete', async function(doc){

@@ -47,7 +47,7 @@
     <div id="best-comment">
         <% if( bestComment !== undefined ) { %>
             <!-- 베스트 댓글 -->
-            <div id="best-comment-wrap">
+            <div class="best-comment-wrap">
                 <div id="best-comment-top">
                     Best Comment
                 </div>
@@ -88,7 +88,7 @@
             <% for(comment of comments) { %>
                 <% if(comment._id.equals(comment.parentComment)) { %>
                     <% if(!comment.isDeleted) { %>
-                        <div id="parent-comments-wrap">
+                        <div class="parent-comments-wrap">
                             <div id="parent-comments-info" class="comments-info">
                                 <div id="info-left" class="info-left">
                                     <p class="nickname"><%= comment.author.nickname %></p>
@@ -126,7 +126,7 @@
 
             <% } else { %>    
                 <!-- 대댓글 -->
-                    <div id="child-comments-wrap">
+                    <div class="child-comments-wrap">
                         <div id="child-comments-info" class="comments-info">
                             <div id="info-left" class="info-left">
                                 <p class="nickname"><%= comment.author.nickname %></p>
@@ -254,6 +254,7 @@
 
             </tfoot>
         </table>
+
         <div id="new-post">
             <a class="btn btn-dark btn-sm" href="/index/new2">글쓰기</a>
         </div>

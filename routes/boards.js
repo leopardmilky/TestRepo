@@ -58,7 +58,7 @@ router.get('/new2', isSignedIn, (req, res) => {
     res.render('board/new2');
 });
 
-router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, res) => {
+router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, res) => {    // 게시물 등록하기
     const board = new Board();
     board.title = req.body.title;
     board.mainText = req.body.mainText;
@@ -100,23 +100,56 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
     res.json(board.id);
 }));
 
-router.get('/:id', catchAsync( async(req, res) => {
+router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
     const { id } = req.params;
-    let data = {};
-    const board = await Board.findById(id).populate('author'); // populate()가 있어야 ref
+    const {commentId, notiIdC, notiIdP} = req.query;
+    let data = {};  // 이곳에 페이지 로딩에 필요한 데이터를 담아서 보낼 예정.
+    const board = await Board.findById(id).populate('author'); // 해당 게시물이 있는지 확인        populate()가 있어야 참조함
     if(!board){
         return res.redirect('/index');
     }
+    data.board = board;
+    data.page = req.query.page; // 목록 버튼에 필요한 페이지넘버
 
-    const totalComments = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
-    if(totalComments == 0) {
+    // 댓글
+    const totalComments = await Comment.find({ board: id }).countDocuments();  // 총 댓글갯수
+    if(totalComments == 0) {    // 댓글 없을 때
         data.pagination = false;
         data.comments = [];
-    } else {
+
+    } else if(commentId && notiIdC) {  // 알림 기능을 통해 해당 댓글을 확인할때(쿼리스트링)
+
+        const noti = await Notification.findOne({_id: notiIdC, recipient: req.user.id}); // 알림ID와 알림 수신자가 일치하는지 확인.
+        if(noti) {
+            noti.isRead = true;
+            await noti.save();
+        } else {
+            return res.status(500).send('SERVER ERROR...');
+        }
+
+        const sortComments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }) // 해당 게시물의 모든 댓글 순서에 맞춰 정렬
+        let cnt = 0
+        for(comment of sortComments) {  // 찾는 댓글의 순번 찾기. (뭔가 노가다식으로 찾는 느낌인데 좋은 방법이 안떠오름)
+            if(comment.id !== commentId) { cnt += 1;} else { cnt += 1; break; }
+        }
+
+        const targetCommentPage = Math.ceil(cnt / 10);  // 나누는 값은 바로아래 commentPaging()의 maxComment와 일치해야함.
+        const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(targetCommentPage, totalComments);
+        const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');  // .skip(hidePost).limit(maxPost)
         data.pagination = true;
+        data.comments = comments;
+        data.startCommentPage = startCommentPage;
+        data.endCommentPage = endCommentPage;
+        data.totalCommentPage = totalCommentPage;
+        data.currentCommentPage = currentCommentPage;
+        data.maxComment = maxComment;
+
+    } else {
+        
         const commentPage = req.query.commentPage || Math.ceil(totalComments / 10);
         const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(commentPage, totalComments);
         const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');  // .skip(hidePost).limit(maxPost)
+        data.pagination = true;
         data.comments = comments;
         data.startCommentPage = startCommentPage;
         data.endCommentPage = endCommentPage;
@@ -124,7 +157,15 @@ router.get('/:id', catchAsync( async(req, res) => {
         data.currentCommentPage = currentCommentPage;
         data.maxComment = maxComment;
     }
+
+    if(notiIdP) {   // 게시물 좋아요. 알림 확인.
+        const noti = await Notification.findOne({_id: notiIdP, recipient: req.user.id}); // 알림ID와 알림 수신자가 일치하는지 확인.
+        noti.isRead = true;
+        await noti.save();
+    }
     
+
+    // 베스트 댓글
     const boardId = new mongoose.Types.ObjectId(id);
     const searchBestComment = await Comment.aggregate([
         { $match: { board: boardId, isDeleted: false } }, // 같은 게시물 중, isDeleted가 false인것.
@@ -143,6 +184,8 @@ router.get('/:id', catchAsync( async(req, res) => {
         data.bestComment = undefined;
     }
 
+
+    // 게시물 이미지
     const boardImgObject = {};
     for(let i = 0; i < Object.keys(board.images[0]).length; i++) {
         const getObjectParams = {
@@ -154,20 +197,13 @@ router.get('/:id', catchAsync( async(req, res) => {
         boardImgObject[i] = url;
     }
     const boardImg = JSON.stringify(boardImgObject);
-
-    data.board = board;
     data.boardImg = boardImg;
-    data.page = req.query.page;
+    
 
-    const totalPost = await Board.countDocuments({});   // 뭐지 이건.....?
-    if (!totalPost) {
-        throw Error();
-    }
+    // 게시물 하단 index
+    const totalPost = await Board.countDocuments({});
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = boardPaging(req.query.page, totalPost);
-    const post = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author'); // .populate({path: 'comments', populate: {path: 'nestedComments'}})
-    // 얘도 뭐지....?
-
-
+    const post = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author');
     data.contents = post;
     data.currentPage = currentPage;
     data.startPage = startPage;
@@ -175,7 +211,7 @@ router.get('/:id', catchAsync( async(req, res) => {
     data.maxPost = maxPost;
     data.totalPage = totalPage;
 
-    const result = await Board.findById(id).populate('reports');
+    // const result = await Board.findById(id).populate('reports');
 
     res.render('board/show2', data);
 }));
@@ -197,7 +233,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
         if(comment._id.toString() == comment.parentComment.toString()){ // 부모 댓글인 경우.
             if(!comment.isDeleted) {    // 삭제되지 않은것.
                 if(req.user == undefined) { // 유저가 로그인 안했을때.
-                    const data =   `<div id="parent-comments-wrap">
+                    const data =   `<div class="parent-comments-wrap">
                                 <div id="parent-comments-info" class="comments-info">
                                     <div id="info-left" class="info-left">
                                         <p class="nickname">${comment.author.nickname}</p>
@@ -223,7 +259,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                 } else {
                     if(req.user.nickname == comment.author.nickname) {  // 자기가 쓴글일때.
                         if(!comment.hasReply) { // 대댓글이 없을때.
-          const data = `<div id="parent-comments-wrap">
+          const data = `<div class="parent-comments-wrap">
                             <div id="parent-comments-info" class="comments-info">
                                 <div id="info-left" class="info-left">
                                     <p class="nickname">${comment.author.nickname}</p>
@@ -249,7 +285,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                         </div>`
                         commentsArr.push(data);
                         } else {
-          const data = `<div id="parent-comments-wrap">
+          const data = `<div class="parent-comments-wrap">
                             <div id="parent-comments-info" class="comments-info">
                                 <div id="info-left" class="info-left">
                                     <p class="nickname">${comment.author.nickname}</p>
@@ -275,7 +311,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                         commentsArr.push(data);
                         }
                     } else {    // 로그인한 유저가 쓴글이 아닐때.
-                        const data =   `<div id="parent-comments-wrap">
+                        const data =   `<div class="parent-comments-wrap">
                                             <div id="parent-comments-info" class="comments-info">
                                                 <div id="info-left" class="info-left">
                                                     <p class="nickname">${comment.author.nickname}</p>
@@ -307,7 +343,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
             }
         } else {    // 대댓글인 경우.
             if(req.user == undefined) {
-                const data =   `<div id="child-comments-wrap">
+                const data =   `<div class="child-comments-wrap">
                 <div id="child-comments-info" class="comments-info">
                     <div id="info-left" class="info-left">
                         <p class="nickname">${comment.author.nickname}</p>
@@ -332,7 +368,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
             commentsArr.push(data);
             } else {
                 if(req.user.nickname == comment.author.nickname) {
-                    const data =   `<div id="child-comments-wrap">
+                    const data =   `<div class="child-comments-wrap">
                                         <div id="child-comments-info" class="comments-info">
                                             <div id="info-left" class="info-left">
                                                 <p class="nickname">${comment.author.nickname}</p>
@@ -356,7 +392,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                                     </div>`
                                     commentsArr.push(data);
                 } else {
-                    const data =   `<div id="child-comments-wrap">
+                    const data =   `<div class="child-comments-wrap">
                 <div id="child-comments-info" class="comments-info">
                     <div id="info-left" class="info-left">
                         <p class="nickname">${comment.author.nickname}</p>

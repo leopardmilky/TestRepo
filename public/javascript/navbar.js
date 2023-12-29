@@ -14,121 +14,128 @@ document.addEventListener('click', function(event){  // navbar의 signin, signou
     }
 });
 
-// const notiDropdownWrap = document.getElementById('noti-dropdown-wrap');
-notiDropdownWrap.addEventListener('click', function(e) {
 
-    // const notiDropdownWrap = document.getElementById('noti-dropdown-wrap');
+document.addEventListener('click', (e) => {  // 알림 드롭다운 영역 밖에 클릭 시 꺼짐 기능
+    const notiCommon = e.target.classList.contains('noti-common');
+    if(!notiCommon) {
+        const notiDropdownWrap = document.getElementById('noti-dropdown-wrap');
+        if(notiDropdownWrap) {
+            if(notiDropdownWrap.style.display === 'block') notiDropdownWrap.style.display = 'none';
+        }
+    }
+});
 
-    // const targetElement = e.target;
-    // const notiDropdownWrap = document.querySelector('.noti-dropdown-wrap');
-    // const isDropdownOpen = notiDropdownWrap.style.display === 'block';
-    // console.log("isDropdownOpen: ", isDropdownOpen);
-    // if (!targetElement.closest('.noti-dropdown-wrap') && isDropdownOpen) {
-    //     notiDropdownWrap.style.display = 'none';
+
+function openNote_nav(e) {
+    const noteId = e.getAttribute('data-note-id');
+    window.open(`/mypage/view-note?noteId=${noteId}&type=received`,"_blank","width=550, height=370, top=100px, left=100px");
+    // if(e.classList.contains('received')) {
+    //     return window.open(`/mypage/view-note?noteId=${noteId}&type=received`,"_blank","width=550, height=370, top=100px, left=100px");
     // }
+    // if(e.classList.contains('sent')) {
+    //     return window.open(`/mypage/view-note?noteId=${noteId}&type=sent`,"_blank","width=550, height=370, top=100px, left=100px");
+    // }
+    // if(e.classList.contains('inbox')) {
+    //     return window.open(`/mypage/view-note?noteId=${noteId}&type=inbox`,"_blank","width=550, height=370, top=100px, left=100px");
+    // }
+}
 
-    // const result = targetElement.closest('.noti-dropdown-wrap');
-    // console.log("result: ", result);
+function goToComment_nav(e) {
+    const postId = e.getAttribute('data-post-id');
+    const commentId = e.getAttribute('data-comment-id');
+    const notiId = e.getAttribute('data-noti-id');
+    window.location.href = `/index/${postId}?commentId=${commentId}&notiIdC=${notiId}`;
+}
 
-});
+function goToPost_nav(e) {
+    const postId = e.getAttribute('data-post-id');
+    const notiId = e.getAttribute('data-noti-id');
+    window.location.href = `/index/${postId}?notiIdP=${notiId}`;
+}
 
-// const notiAlarmIcon = document.getElementsByClassName('noti-alarm-icon');
-// console.log("notiAlarmIcon: ", notiAlarmIcon);
+function notiDropdown(e) {
+    const notiDropdownWrap = document.getElementById('noti-dropdown-wrap');
+    const isDisplayed = notiDropdownWrap.style.display !== 'block';
+    notiDropdownWrap.style.display = isDisplayed ? 'block' : 'none';
 
-document.addEventListener('click', () => {
-    const notiDropdownWrap = document.querySelector('#noti-dropdown-wrap');
-    console.log("notiDropdownWrap: ", notiDropdownWrap);
-    notiDropdownWrap.style.display === 'block';
-});
+    if(isDisplayed) {
+        axios.get('/mypage/nav-noti')
+        .then((res) => {
 
-document.addEventListener('blur', () => {
-    const notiDropdownWrap = document.querySelector('#noti-dropdown-wrap');
-    notiDropdownWrap.style.display === 'none';
-});
+            if(res.data.length === 0) {
+                const notiContentWrap = document.getElementById('noti-content-wrap');
+                while(notiContentWrap.firstChild){ notiContentWrap.removeChild(notiContentWrap.firstChild) }
+                notiContentWrap.insertAdjacentHTML('beforeend', `<div id="noti-none">새로운 알림이 없습니다.</div>`)
 
+                const notiCount = document.getElementById('noti-count');
+                while(notiCount.firstChild){ notiCount.removeChild(notiCount.firstChild) }
+                notiCount.insertAdjacentHTML('beforeend', `총 <b>${res.data.length}</b>개의 새 알림이 있습니다.`)
+            }
 
+            if(res.data.length > 0) {
+                const notiCount = document.getElementById('noti-count');
+                while(notiCount.firstChild){ notiCount.removeChild(notiCount.firstChild) }
+                notiCount.insertAdjacentHTML('beforeend', `총 <b>${res.data.length}</b>개의 새 알림이 있습니다.`);
 
+                const notiContentWrap = document.getElementById('noti-content-wrap');
+                while(notiContentWrap.firstChild){ notiContentWrap.removeChild(notiContentWrap.firstChild) }
+                for(noti of res.data) {
+                    if(noti.notificationType === 'postComment') {
+                        const alarm = 
+                        `<div class="noti-dropdown" data-post-id="${noti.postId._id}" data-comment-id="${noti.commentId._id}" data-noti-id="${noti._id}" onclick="goToComment_nav(this)">
+                            <div class="noti-dropdown-title">
+                                <i class="fa-sharp fa-solid fa-comment"></i></i> ${noti.sender.nickname}님이 댓글을 남겼습니다.
+                            </div>
+                            <div class="noti-dropdown-text">"${noti.commentId.body}"</div>
+                        </div>`
+                        notiContentWrap.insertAdjacentHTML('beforeend', alarm);
+                    }
 
-// function notiDropdown(e) {
-//     const notiDropdownWrap = document.getElementById('noti-dropdown-wrap');
-//     const isDisplayed = notiDropdownWrap.style.display !== 'block';
-//     notiDropdownWrap.style.display = isDisplayed ? 'block' : 'none';
+                    if(noti.notificationType === 'commentReply') {
+                        const alarm = 
+                        `<div class="noti-dropdown" data-post-id="${noti.postId._id}" data-comment-id="${noti.replyId._id}" data-noti-id="${noti._id}" onclick="goToComment_nav(this)">
+                            <div class="noti-dropdown-title">
+                                <i class="fa-sharp fa-solid fa-comments"></i></i> ${noti.sender.nickname}님이 답변을 남겼습니다.
+                            </div>
+                            <div class="noti-dropdown-text">"${noti.replyId.body}"</div>
+                        </div>`
+                        notiContentWrap.insertAdjacentHTML('beforeend', alarm);
+                    }
 
-//     if(isDisplayed) {
-//         axios.get('/mypage/mynoti')
-//         .then((res) => {
+                    if(noti.notificationType === 'likePost') {
+                        const alarm = 
+                        `<div class="noti-dropdown" data-post-id="${noti.postId._id}" data-noti-id="${noti._id}" onclick="goToPost_nav(this)">
+                            <div class="noti-dropdown-title">
+                                <i class="fa-sharp fa-solid fa-thumbs-up"></i> 해당 게시물에 좋아요를 받았습니다.
+                            </div>
+                            <div class="noti-dropdown-text">"${noti.postId.title}"</div>
+                        </div>`
+                        notiContentWrap.insertAdjacentHTML('beforeend', alarm);
+                    }
 
-//             if(res.data.length === 0) {
-//                 const notiContentWrap = document.getElementById('noti-content-wrap');
-//                 const notiCount = document.getElementById('noti-count');
-//                 notiContentWrap.innerHTML = `<div id="noti-none">새로운 알림이 없습니다.</div>`;
-//                 notiCount.innerHTML = `총 <b>${res.data.length}</b>개의 알림이 있습니다.`;
-//             }
+                    if(noti.notificationType === 'likeComment') {
+                        const alarm = 
+                        `<div class="noti-dropdown" data-post-id="${noti.postId._id}" data-comment-id="${noti.commentId._id}" data-noti-id="${noti._id}" onclick="goToComment_nav(this)">
+                            <div class="noti-dropdown-title">
+                                <i class="fa-sharp fa-solid fa-thumbs-up"></i> 해당 댓글에 좋아요를 받았습니다.
+                            </div>
+                            <div class="noti-dropdown-text">"${noti.commentId.body}"</div>
+                        </div>`
+                        notiContentWrap.insertAdjacentHTML('beforeend', alarm);
+                    }
 
-//             if(res.data.length > 0) {
-//                 const notiCount = document.getElementById('noti-count');
-//                 notiCount.innerHTML = `총 <b>${res.data.length}</b>개의 알림이 있습니다.`;
-
-//                 const notiContentWrap = document.getElementById('noti-content-wrap');
-//                 notiContentWrap.innerHTML = '';
-
-//                 for(data of res.data) {
-//                     if(data.notificationType === 'postComment') {
-//                         const alarm = 
-//                         `<div class="noti-dropdown">
-//                             <div class="noti-dropdown-title">
-//                                 <i class="fa-sharp fa-solid fa-comment"></i></i> ${data.sender.nickname}님이 댓글을 남겼습니다.
-//                             </div>
-//                             <div class="noti-dropdown-text">"${data.commentId.body}"</div>
-//                         </div>`
-//                         notiContentWrap.innerHTML += alarm;
-//                     }
-
-//                     if(data.notificationType === 'commentReply') {
-//                         const alarm = 
-//                         `<div class="noti-dropdown">
-//                             <div class="noti-dropdown-title">
-//                                 <i class="fa-sharp fa-solid fa-comments"></i></i> ${data.sender.nickname}님이 답변을 남겼습니다.
-//                             </div>
-//                             <div class="noti-dropdown-text">"${data.commentId.body}"</div>
-//                         </div>`
-//                         notiContentWrap.innerHTML += alarm;
-//                     }
-
-//                     if(data.notificationType === 'likePost') {
-//                         const alarm = 
-//                         `<div class="noti-dropdown">
-//                             <div class="noti-dropdown-title">
-//                                 <i class="fa-sharp fa-solid fa-thumbs-up"></i> 해당 게시물에 좋아요를 받았습니다.
-//                             </div>
-//                             <div class="noti-dropdown-text">"${data.postId.title}"</div>
-//                         </div>`
-//                         notiContentWrap.innerHTML += alarm;
-//                     }
-
-//                     if(data.notificationType === 'likeComment') {
-//                         const alarm = 
-//                         `<div class="noti-dropdown">
-//                             <div class="noti-dropdown-title">
-//                                 <i class="fa-sharp fa-solid fa-thumbs-up"></i> 해당 댓글에 좋아요를 받았습니다.
-//                             </div>
-//                             <div class="noti-dropdown-text">"${data.commentId.body}"</div>
-//                         </div>`
-//                         notiContentWrap.innerHTML += alarm;
-//                     }
-
-//                     if(data.notificationType === 'note') {
-//                         const alarm = 
-//                         `<div class="noti-dropdown">
-//                             <div class="noti-dropdown-title">
-//                                 <i class="fa-sharp fa-solid fa-envelope noti-icon"></i> ${data.sender.nickname}님이 쪽지를 보냈습니다.
-//                             </div>
-//                             <div class="noti-dropdown-text">"${data.noteId.content}"</div>
-//                         </div>`
-//                         notiContentWrap.innerHTML += alarm;
-//                     }
-//                 }
-//             }
-//         })
-//     }
-// }
+                    if(noti.notificationType === 'note') {
+                        const alarm = 
+                        `<div class="noti-dropdown" data-note-id="${noti.noteId._id}" onclick="openNote_nav(this)">
+                            <div class="noti-dropdown-title">
+                                <i class="fa-sharp fa-solid fa-envelope noti-icon"></i> ${noti.sender.nickname}님이 쪽지를 보냈습니다.
+                            </div>
+                            <div class="noti-dropdown-text">"${noti.noteId.content}"</div>
+                        </div>`
+                        notiContentWrap.insertAdjacentHTML('beforeend', alarm);
+                    }
+                }
+            }
+        })
+    }
+}

@@ -9,20 +9,21 @@
         <a class="sign-option signInBtn" style="cursor:pointer">로그인</a>
         <a class="sign-option" href="/signup2">회원가입</a>
       <% } else { %>
-        <div id="noti-wrap">
-          <i class="fa-solid fa-bell noti-alarm-icon" onclick="notiDropdown(this)"></i>
+        
+        <div id="noti-wrap" class="noti-common">
+          <i class="fa-solid fa-bell noti-alarm-icon noti-common" onclick="notiDropdown(this)"></i>
           <% if(notiAlarm > 0) { %>
             <div id="noti-alarm"></div>
           <% } %>
-          <div id="noti-dropdown-wrap" class="noti-dropdown-wrap">
-            <div id="noti-count"></div>
-            <div id="noti-content-wrap"></div>
-            <div id="noti-inbox">
+          <div id="noti-dropdown-wrap" class="noti-dropdown-wrap noti-common">
+            <div id="noti-count" class="noti-common"></div>
+            <div id="noti-content-wrap" class="noti-common"></div>
+            <div id="noti-inbox" class="noti-common">
               <a href="/mypage/mynotification">알림 페이지로 이동</a>
             </div>
           </div>
-
         </div>
+
         <div class="dropdown">
           <p class="user-nickname text-white"><%= signedInUser.nickname %> ▼</p>
           <div class="dropdown-options">

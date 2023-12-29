@@ -56,6 +56,10 @@
     border-bottom: 2px solid grey;
     display: flex;
     flex-direction: row;
+
+    justify-content: space-between;
+    padding-right: 10px;
+
     align-items: center;
     height: 50px;
 }
@@ -105,10 +109,26 @@
     display: flex;
     flex-direction: row;
     justify-content: center;
+    border-bottom: 1px solid black;
+    overflow-y: auto;
+    max-height: 70vh;
+}
+
+#items-wrap::-webkit-scrollbar {
+    width: 10px;
+    height: 20px;
+}
+
+#items-wrap::-webkit-scrollbar-thumb {
+    background: grey;
+    border-radius: 12px 12px 12px 12px;
+}
+
+#items-wrap::-webkit-scrollbar-track {
+    background: #ddd;
 }
 
 #mode1-table {
-    border-bottom: 2px solid black;
     width: 100%;
     table-layout: fixed;
 }
@@ -119,17 +139,19 @@
     text-align : end;
 }
 
-#check-all-btn {
+.check-all-btn {
     border: 1px solid grey;
     background-color: white;
     color: grey;
     font-size: small;
-    margin-bottom: 10px;
+    cursor: not-allowed;
 }
 
-#check-all-btn:hover {
-    border: 1px solid black;
-    color: black;
+.check-all-btn-active {
+    border: 1px solid #212529;
+    background-color: #212529;
+    color: white;
+    font-size: small;
 }
 
 .tr-noti:hover {

@@ -35,9 +35,14 @@
 }
 
 .sign-option {
+    padding: 10px;
     color: white;
     text-decoration: none;
-    margin-left: 20px;
+}
+
+.sign-option:hover {
+    background-color: grey;
+    color: black;
 }
 
 #noti-wrap {
@@ -95,8 +100,22 @@
 }
 
 #noti-content-wrap {
-    overflow-y: scroll;
+    overflow-y: auto;
     height: 400px;
+}
+
+#noti-content-wrap::-webkit-scrollbar {
+    width: 10px;
+    height: 20px;
+}
+
+#noti-content-wrap::-webkit-scrollbar-thumb {
+    background: grey;
+    border-radius: 12px 12px 12px 12px;
+}
+
+#noti-content-wrap::-webkit-scrollbar-track {
+    background: #ddd;
 }
 
 #noti-none {
@@ -154,14 +173,13 @@
 }
 
 .dropdown-options {
+    border: 1px solid black;
     display: none;
     position: absolute;
     overflow: auto;
     font-size: small;
     margin-bottom: 10px;
-    background-color: #212529;
-    padding: 5px;
-    border-radius: 5px;
+    background-color: white;
     width: 100px;
 }
 
@@ -175,11 +193,12 @@
 
 .dropdown-option {
     display: block;
-    border-radius: 10px;
     text-decoration: none;
-    color: white;
+    color: black;
+    padding: 3px;
 }
 
 .dropdown-option:hover{
-    color: #0d6efd;
+    color: black;
+    background-color: #ddd;
 }

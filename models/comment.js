@@ -22,6 +22,12 @@ const CommentSchema = new Schema({
             ref: "User"
         }
     ],
+    reports: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "User"
+        }
+    ],
     parentComment: {
         type: Schema.Types.ObjectId,
         ref: "Comment"
@@ -34,12 +40,13 @@ const CommentSchema = new Schema({
         type: Boolean,
         default: false
     },
-    reports: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "User"
-        }
-    ]
+    whoDeleted: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    },
+    deletedDate: {
+        type:Date
+    }
 });
 
 module.exports = mongoose.model('Comment', CommentSchema);

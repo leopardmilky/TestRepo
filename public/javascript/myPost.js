@@ -46,7 +46,6 @@ function openNote(e) {
     }
 }
 
-
 function checkAll(e) {
     const checkOneNote = document.getElementsByClassName('check-one-note');  // checkOneNote는 HTMLCollection이므로 배열로 변환해야함. => Array.from() 또는 ...(스프레드 연산자)
     if(e.checked) {
@@ -59,6 +58,7 @@ function checkAll(e) {
         });
     }
 }
+
 function checkOne(e) {
     if(e.checked) {
         const checkBtnCnt = document.getElementsByClassName('check-one-note');
@@ -71,7 +71,6 @@ function checkOne(e) {
         document.getElementById('check-all').checked = false;
     }
 }
-
 
 function deleteNote(e) {
     const checkedCnt = document.querySelectorAll('.check-one-note:checked');

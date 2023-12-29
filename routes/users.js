@@ -342,7 +342,6 @@ router.post('/signup', catchAsync( async(req, res, next) => {
 
 router.get('/signin', (req, res) => {
     const { redirectUrl } = req.query
-    console.log("redirectUrl: ", redirectUrl);
     if(!req.session.backTo){    // navbar를 클릭해서 로그인 후 페이지 돌아가기 관련.
         req.session.backTo = redirectUrl
     }

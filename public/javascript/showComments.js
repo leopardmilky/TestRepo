@@ -50,7 +50,6 @@ function commentEditBox(event){ // 댓글 수정 박스 생성
     const ctag = atag.appendChild(c);
     const dtag = atag.appendChild(d);
     const etag = dtag.appendChild(e);
-
 }
 
 function commentReplyBox(event) { // 댓글 답변 박스 생성
@@ -76,13 +75,11 @@ function commentReplyBox(event) { // 댓글 답변 박스 생성
     const ctag = atag.appendChild(c);
     const dtag = atag.appendChild(d);
     const etag = dtag.appendChild(e);
-
 }
 
 function commentReply(event, replyText) { // 대댓글 생성
 
     const parentEle = event.target.parentElement.parentElement.parentElement.nextElementSibling;
-    // console.log("parentEle: ", parentEle)
 
     const a = document.createElement('div');
     const b = document.createElement('div');
@@ -120,7 +117,6 @@ function commentReply(event, replyText) { // 대댓글 생성
     const itag = btag.appendChild(i);
     const jtag = itag.appendChild(j);
     const ktag = itag.appendChild(k);
-
 }
 
 async function reloadCommentReply(pageId, commentId){  // 댓글 페이지 리로드
@@ -137,7 +133,6 @@ async function reloadCommentReply(pageId, commentId){  // 댓글 페이지 리�
 
     const countComment = document.querySelector('.countComment');
     countComment.insertAdjacentElement('afterend', allCommentsWrap)
-
 
     // 댓글
     result.data.comments.forEach((element) => {
@@ -195,8 +190,8 @@ async function reloadCommentReply(pageId, commentId){  // 댓글 페이지 리�
         commentBody.setAttribute('data-comment-body', `${element._id}`);
         commentBody.innerHTML = `${element.body}`;
         commentBodyWrap.appendChild(commentBody);
-
         commentWrap.appendChild(commentBtnWrap);
+
         if(currentUser){
             commentReplyBtn.setAttribute('data-page-id', pageId);
             commentReplyBtn.setAttribute('data-reply-comment', `${element._id}`);
@@ -278,7 +273,6 @@ async function reloadCommentReply(pageId, commentId){  // 댓글 페이지 리�
             }
         })
     })
-
 };
 
 document.addEventListener('click', function(event){  // 답변,수정 버튼 클릭
@@ -352,14 +346,4 @@ document.addEventListener('click', async function(event){   // 댓글 답변등�
         .catch((err) => { console.log("err: ", err) })
     }
 });
-
-// document.addEventListener('click', async function(event){   // 댓글 페이징
-//     const pageNum = event.target.classList.contains('commentPage');
-//     if(pageNum){
-//         const result = await axios.get(`/index/6511adba651c17574ded39e8/comments?page=1`)
-
-//         console.log("result: ", result);
-//         console.log("result.data: ", result.data);
-//     }
-// });
 

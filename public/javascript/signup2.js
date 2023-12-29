@@ -18,7 +18,6 @@ async function checkEmail() {
                 emailMsg.innerHTML = '';
                 await axios.get(`/signup/verifyemail?email=${email.value}`)
                 .then((res) => {
-                    console.log("RES_RESULT: ", res.data);
                     createVerifyCodePage(email.value);
                 })
             }

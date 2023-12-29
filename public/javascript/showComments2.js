@@ -2,6 +2,21 @@
 let postId
 let commentId
 
+
+// 알림에서 댓글 찾아가는 자동 스크롤 및 색상 표시
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const parameterValue = urlParams.get('commentId');
+if(parameterValue) {
+    const element = document.querySelector('[data-commentid="' + parameterValue + '"]');
+    const targetComment = element.parentElement.parentElement.parentElement;
+    targetComment.scrollIntoView({ behavior: 'auto', block: 'center' });
+    targetComment.setAttribute('id', 'targetComment');
+    setTimeout(function () {
+        targetComment.removeAttribute('id');
+    }, 2000);
+}
+
 function createReplyInputBox(e) {   // 답변하기 박스 생성.
     const hasReplyInputBox = document.getElementById('input-reply-text-wrap');
     const hasEditInputBox = document.getElementById('input-edit-text-wrap');

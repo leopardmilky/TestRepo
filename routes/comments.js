@@ -57,8 +57,10 @@ router.post('/:commentId', isSignedIn, catchAsync( async(req, res) => { // 대�
         newNotification.sender = req.user.id;
         newNotification.recipient = comment.author.id;
         newNotification.notificationType = 'commentReply';
+        newNotification.postId = board.id;  // 댓글이 달린 게시물
         newNotification.commentId = comment.id; // 부모댓글 (연관 댓글이 뭔지 확인하려고)
         newNotification.replyId = reply.id; // 대댓글(무슨 글썻지 확인하려고)
+
         await newNotification.save();
     }
 
@@ -81,7 +83,7 @@ router.delete('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req,
     const {id, commentId} = req.params;
     const comment = await Comment.findById(commentId);
 
-    if(comment._id.toString() !== comment.parentComment.toString()) {
+    if(comment._id.toString() !== comment.parentComment.toString()) {   // 대댓글일때
         await Board.findByIdAndUpdate(id, {$pull: {comments: commentId}});  // 게시물에 저장된 댓글목록 지우고.
         await Comment.findByIdAndDelete(commentId); // 해당 댓글도 찾아서 지운다.
         const countComments = await Comment.find({parentComment: comment.parentComment}).countDocuments();  // 그리고 parentComment필드의 갯수가
@@ -115,8 +117,9 @@ router.get('/:commentId/commentLike', isSignedIn, catchAsync( async(req, res) =>
 }));
 
 router.post('/:commentId/commentLike', isSignedIn2, catchAsync( async(req, res) => {
-    const { commentId } = req.params;
+    const { id ,commentId } = req.params;
     if(req.user) {
+        
         const comment = await Comment.find({_id: commentId, likes: req.user._id});
         if(comment.length === 0) {
             const addLike = await Comment.findById(commentId).populate('author');
@@ -129,10 +132,12 @@ router.post('/:commentId/commentLike', isSignedIn2, catchAsync( async(req, res) 
             await newLike.save();
 
             if(addLike.author.id !== req.user.id) { // 자신의 글에 좋아요는 알림 안함.
+                const board = await Board.findById(id);
                 const newNotification = new Notification();
                 newNotification.sender = req.user.id;
                 newNotification.recipient = addLike.author.id;
                 newNotification.notificationType = 'likeComment';
+                newNotification.postId = board.id;  // 좋아요 달린 게시물
                 newNotification.commentId = addLike.id; // 타이틀 확인
                 await newNotification.save();
             }

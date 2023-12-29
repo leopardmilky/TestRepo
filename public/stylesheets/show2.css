@@ -113,7 +113,14 @@ body {
     align-items: center;
 }
 
-#best-comment-wrap {
+/* #best-comment-wrap {
+    width: 1000px;
+    margin: 10px 0 20px 0;
+    border-left: 1px solid grey;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+} */
+.best-comment-wrap {
     width: 1000px;
     margin: 10px 0 20px 0;
     border-left: 1px solid grey;
@@ -232,7 +239,7 @@ body {
 
 
 /* 부모 댓글 */
-#parent-comments-wrap {
+.parent-comments-wrap {
     border: 1px solid grey;
     /* background-color: blanchedalmond; */
     margin-bottom: 5px;
@@ -271,7 +278,7 @@ body {
 
 
 /* 자식 댓글 */
-#child-comments-wrap {
+.child-comments-wrap {
     width: 95%;
     margin-bottom: 5px;
     border: 1px solid grey;
@@ -388,4 +395,10 @@ body {
     color: black;
     border: none;
     background-color: white;
+}
+
+
+#targetComment {
+    background-color: antiquewhite; 
+    transition: background-color 1s ease; 
 }

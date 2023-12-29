@@ -232,12 +232,18 @@ router.post('/send-note', catchAsync( async(req, res) => {
 router.get('/view-note', catchAsync( async(req, res) => {
     const {noteId, type} = req.query;
     const {id, nickname} = req.user;
-
+    
     if(type === 'received') {
         const note = await Note.findOne({_id: noteId, recipient: id}).populate('sender').populate('recipient');
+        if(note.recipientDeleted) {
+            return res.status(500).json({ error: 'An error occurred.' });
+        }
+        const noti = await Notification.findOne({noteId: noteId});
         note.read = true;
         note.readAt = Date.now();
+        noti.isRead = true;
         await note.save();
+        await noti.save();
         return res.render('mypage/viewNote', {note, type});
     }
 
@@ -255,6 +261,7 @@ router.get('/view-note', catchAsync( async(req, res) => {
         }
         return res.render('mypage/viewNote', {note, type});
     }
+
 }));
 
 router.put('/save-note', catchAsync( async(req, res) => {
@@ -289,15 +296,36 @@ router.delete('/delete-note', catchAsync( async(req, res) => {
 
 router.get('/mynotification', catchAsync( async(req, res) => {
     const {id} = req.user;
-    const notis = await Notification.find({recipient:id}).sort({createdAt: -1}).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
-
+    const notis = await Notification.find({recipient:id}).sort({createdAt: -1}).limit(10).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
     res.render('mypage/myNotification', {notis});
 }));
 
-router.get('/mynoti', catchAsync( async(req, res) => {
+router.get('/mynotification-more', catchAsync( async(req, res) => {
+    const {id} = req.user;
+    const {skip} = req.query;
+    const notis = await Notification.find({recipient:id}).sort({createdAt: -1}).skip(skip).limit(10).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
+    res.json(notis);
+}));
+
+router.get('/mynotification-noread', catchAsync( async(req, res) => {
+    const {id} = req.user;
+    const notis = await Notification.findOne({recipient:id, isRead:false});
+    res.json(notis);
+}));
+
+router.get('/mynotification-check', catchAsync( async(req, res) => {
+    const {id} = req.user;
+    const notis = await Notification.find({recipient:id, isRead:false});
+    for(noti of notis) {
+        noti.isRead = true;
+        await noti.save();
+    }
+    res.status(200).json();
+}));
+
+router.get('/nav-noti', catchAsync( async(req, res) => {
     const {id} = req.user;
     const notis = await Notification.find({recipient:id, isRead: false}).sort({createdAt: -1}).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
-
     res.json(notis);
 }));
 

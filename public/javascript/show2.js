@@ -22,14 +22,12 @@ imgData.forEach((img) => {
     img.src = url;
     img.setAttribute('style', 'max-width: 100%;');
 });
-
 boardImg.remove();
 
 
 async function postLike() { // 게시물 좋아요 버튼.
 
     const postId = document.getElementById('content-like').getAttribute('data-postId');
-
     await axios.post(`/index/${postId}/postLike`)
     .then((res) => {
 
@@ -52,7 +50,6 @@ async function postLike() { // 게시물 좋아요 버튼.
 async function postReport() {   // 게시물 신고 버튼.
 
     const postId = document.getElementById('content-like').getAttribute('data-postId');
-
     await axios.post(`/index/${postId}/postReport`)
     .then((res) => {
         if(res.data === 'nk') {
