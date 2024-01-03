@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const Comment = require('./comment');
+const LikePost = require('./likePost');
+const LikeComment = require('./likeComment');
+const Notification = require('./notification');
 const ReportComment = require('./reportComment');
+const ReportPost = require('./reportPost');
 const NestedComment = require('./nestedComment');
 const Schema = mongoose.Schema;
 
@@ -41,25 +45,17 @@ const BoardSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "User"
         }
-    ],
-    isDeleted: {
-        type: Boolean,
-        default: false
-    },
-    whoDeleted: {
-        type: Schema.Types.ObjectId,
-        ref: "User"
-    },
-    deletedDate: {
-        type:Date
-    }
+    ]
 });
 
 BoardSchema.post('findOneAndDelete', async function(doc){
     if(doc){
-        await ReportComment.deleteMany({reportedComment: { $in: doc.comments }})
-        await Comment.deleteMany({_id: { $in: doc.comments }})
-        await NestedComment.deleteMany({board: doc._id})
+        // 게시물이 삭제되면: 1.댓글삭제, 2.좋아요삭제(게시물,댓글), 3.알림삭제, 4.게시물신고 삭제
+        await Comment.deleteMany({_id: { $in: doc.comments }});
+        await LikePost.deleteMany({likedPost: doc.id});
+        await LikeComment.deleteMany({relatedPost: doc.id});
+        await Notification.deleteMany({postId: doc.id});
+        await ReportPost.deleteMany({reportedPost:doc.id});
     }
 });
 

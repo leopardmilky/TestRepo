@@ -10,6 +10,10 @@ const LikeCommentSchema = new Schema({
         type: Date,
         default: Date.now
     },
+    relatedPost: {
+        type: Schema.Types.ObjectId,
+        ref: "Board"
+    },
     likedComment: {
         type: Schema.Types.ObjectId,
         ref: "Comment"

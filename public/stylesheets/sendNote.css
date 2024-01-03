@@ -53,6 +53,20 @@ body {
     outline: none;
 }
 
+#input-content::-webkit-scrollbar {
+    width: 10px;
+    height: 20px;
+}
+
+#input-content::-webkit-scrollbar-thumb {
+    background: grey;
+    border-radius: 12px 12px 12px 12px;
+}
+
+#input-content::-webkit-scrollbar-track {
+    background: #ddd;
+}
+
 #btn-group-wrap {
     width: 100%;
     display: flex;

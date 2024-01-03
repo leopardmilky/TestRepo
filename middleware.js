@@ -10,17 +10,21 @@ module.exports.isSignedIn = (req, res, next) => {
     if(!req.isAuthenticated()) {
         // 로그인이 필요하다는 알림 메세지 필요...?
         req.session.backTo = req.originalUrl
-
         return res.redirect('/signin');
     }
     next();
 };
 
-module.exports.isSignedIn2 = (req, res, next) => {
-    if(!req.isAuthenticated()) {
-        // 로그인이 필요하다는 알림 메세지 필요...?
-        req.session.backTo = req.originalUrl
+module.exports.isAdmin = (req, res, next) => {
+    if(req.user.role !== 'master' && req.user.role !== 'superman') {
+        return res.redirect('/index');
+    }
+    next();
+};
 
+module.exports.isSignedIn2 = (req, res, next) => {  // 좋아요, 신고 버튼 클릭 시 로그인 안되어 있을때.
+    if(!req.isAuthenticated()) {
+        req.session.backTo = req.originalUrl
         return res.json('nk');
     }
     next();
@@ -129,10 +133,10 @@ module.exports.validateNickname = async(req, res, next) => {
 module.exports.validatePassword = (req, res, next) => {
     const password = req.body.password;
     const confirmPwd = req.body.confirmPwd;
-    if(password.length === 0 && confirmPwd.length === 0){
+    if(password.length === 0 && confirmPwd.length === 0) {
         return next();
     }
-    if(password != confirmPwd || password.length < 6 || confirmPwd.length < 6){
+    if(password != confirmPwd || password.length < 6 || confirmPwd.length < 6) {
         return res.status(400).json('ne');
     }
     next();

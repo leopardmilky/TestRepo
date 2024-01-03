@@ -105,8 +105,8 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
     const {commentId, notiIdC, notiIdP} = req.query;
     let data = {};  // 이곳에 페이지 로딩에 필요한 데이터를 담아서 보낼 예정.
     const board = await Board.findById(id).populate('author'); // 해당 게시물이 있는지 확인        populate()가 있어야 참조함
-    if(!board){
-        return res.redirect('/index');
+    if(!board){ // 해당 게시물이 없을때.
+        return res.render('error/postPageError');
     }
     data.board = board;
     data.page = req.query.page; // 목록 버튼에 필요한 페이지넘버
@@ -118,7 +118,7 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
         data.comments = [];
 
     } else if(commentId && notiIdC) {  // 알림 기능을 통해 해당 댓글을 확인할때(쿼리스트링)
-
+        
         const noti = await Notification.findOne({_id: notiIdC, recipient: req.user.id}); // 알림ID와 알림 수신자가 일치하는지 확인.
         if(noti) {
             noti.isRead = true;
@@ -130,12 +130,12 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
         const sortComments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }) // 해당 게시물의 모든 댓글 순서에 맞춰 정렬
         let cnt = 0
         for(comment of sortComments) {  // 찾는 댓글의 순번 찾기. (뭔가 노가다식으로 찾는 느낌인데 좋은 방법이 안떠오름)
-            if(comment.id !== commentId) { cnt += 1;} else { cnt += 1; break; }
+            if(comment.id !== commentId) { cnt += 1; } else { cnt += 1; break; }
         }
 
         const targetCommentPage = Math.ceil(cnt / 10);  // 나누는 값은 바로아래 commentPaging()의 maxComment와 일치해야함.
         const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(targetCommentPage, totalComments);
-        const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');  // .skip(hidePost).limit(maxPost)
+        const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');
         data.pagination = true;
         data.comments = comments;
         data.startCommentPage = startCommentPage;
@@ -148,7 +148,7 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
         
         const commentPage = req.query.commentPage || Math.ceil(totalComments / 10);
         const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(commentPage, totalComments);
-        const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');  // .skip(hidePost).limit(maxPost)
+        const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');
         data.pagination = true;
         data.comments = comments;
         data.startCommentPage = startCommentPage;
@@ -211,8 +211,6 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
     data.maxPost = maxPost;
     data.totalPage = totalPage;
 
-    // const result = await Board.findById(id).populate('reports');
-
     res.render('board/show2', data);
 }));
 
@@ -221,9 +219,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
 
     const totalComments = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
     const commentPage = req.query.commentPage;
-
     const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(commentPage, totalComments);
-
     const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');  // .skip(hidePost).limit(maxPost)
     const resData = {};
     const commentsArr = [];
@@ -420,7 +416,6 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
         }
     }
 
-
     if(startCommentPage > maxComment) {
         const prev = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}" data-page="${ startCommentPage - 1 }">prev</button>`
         pageArr.push(prev);
@@ -549,7 +544,6 @@ router.get('/:id/edit2', isSignedIn, isAuthor, catchAsync( async(req, res) => {
 }));
 
 router.put('/:id', isSignedIn, isAuthor, upload.array('images', 5), catchAsync( async(req, res) => {
-
     const { id } = req.params;
     const board = await Board.findById(id);
 

@@ -11,7 +11,7 @@ const ReportPost = require('../models/reportPost');
 const Note = require('../models/note');
 const Notification = require('../models/notification');
 const User = require('../models/user');
-require('dotenv').config();
+// require('dotenv').config();
 const { myPagePostPaging, myPageCommentPaging } = require('../paging');
 const mongoose = require('mongoose');
 
@@ -83,10 +83,10 @@ router.get('/myreport-comment', isSignedIn, catchAsync( async(req, res) => {
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
     const comments = await ReportComment.find({user: id}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate({path: 'reportedComment', populate: {path: 'board'}}); //.populate('reportedComment') 
 
-    res.render('mypage/myReportComment', {comments, startPage, endPage, totalPage, currentPage, maxPost, role})
+    res.render('mypage/myReportComment', {comments, startPage, endPage, totalPage, currentPage, maxPost, role});
 }));
 
-router.get('/mynote-received', catchAsync( async(req, res) => {
+router.get('/mynote-received', isSignedIn, catchAsync( async(req, res) => { // 받은 쪽지 페이지
     const {id, role} = req.user;
     const { page } = req.query;
 
@@ -97,7 +97,7 @@ router.get('/mynote-received', catchAsync( async(req, res) => {
     res.render('mypage/myNoteReceived', {notes, startPage, endPage, totalPage, currentPage, maxPost, role, me:id});
 }));
 
-router.get('/mynote-sent', catchAsync( async(req, res) => {
+router.get('/mynote-sent', isSignedIn, catchAsync( async(req, res) => { // 보낸 쪽지 페이지
     const {id, role} = req.user;
     const { page } = req.query;
 
@@ -108,7 +108,7 @@ router.get('/mynote-sent', catchAsync( async(req, res) => {
     res.render('mypage/myNoteSent', {notes, startPage, endPage, totalPage, currentPage, maxPost, role, me:id});
 }));
 
-router.get('/mynote-inbox', catchAsync( async(req, res) => {
+router.get('/mynote-inbox', isSignedIn, catchAsync( async(req, res) => { // 쪽지 보관함 페이지
     const {id, nickname, role} = req.user;
     let { page } = req.query;
     if(!page) { page = 1; }
@@ -194,11 +194,11 @@ router.get('/mynote-inbox', catchAsync( async(req, res) => {
 }));
 
 
-router.get('/send-note', catchAsync( async(req, res) => {
+router.get('/send-note', isSignedIn, catchAsync( async(req, res) => {   // 쪽지 쓰기
     res.render('mypage/sendNote')
 }));
 
-router.post('/send-note', catchAsync( async(req, res) => {
+router.post('/send-note', isSignedIn, catchAsync( async(req, res) => {  // 쪽지 보내기
     const { recipient, content } = req.body;
     const { id } = req.user;
 
@@ -229,14 +229,14 @@ router.post('/send-note', catchAsync( async(req, res) => {
     res.json('ok');
 }));
  
-router.get('/view-note', catchAsync( async(req, res) => {
+router.get('/view-note', isSignedIn, catchAsync( async(req, res) => {   // 쪽지 보기
     const {noteId, type} = req.query;
     const {id, nickname} = req.user;
     
     if(type === 'received') {
         const note = await Note.findOne({_id: noteId, recipient: id}).populate('sender').populate('recipient');
         if(note.recipientDeleted) {
-            return res.status(500).json({ error: 'An error occurred.' });
+            return res.render('error/viewNoteError');
         }
         const noti = await Notification.findOne({noteId: noteId});
         note.read = true;
@@ -264,10 +264,10 @@ router.get('/view-note', catchAsync( async(req, res) => {
 
 }));
 
-router.put('/save-note', catchAsync( async(req, res) => {
+router.put('/save-note', isSignedIn, catchAsync( async(req, res) => {   // 쪽지 저장(보관함)
     
-    for(nodeId of req.body) {
-        const note = await Note.findById(nodeId).populate('sender').populate('recipient');
+    for(noteId of req.body) {
+        const note = await Note.findById(noteId).populate('sender').populate('recipient');
         if(note.recipient.nickname === req.user.nickname) {
             note.recipientSaved = true;
         }
@@ -279,14 +279,15 @@ router.put('/save-note', catchAsync( async(req, res) => {
     res.json('ok')
 }));
 
-router.delete('/delete-note', catchAsync( async(req, res) => {
+router.delete('/delete-note', isSignedIn, catchAsync( async(req, res) => {  // 쪽지 삭제.
 
-    for(nodeId of req.body) {
-        const note = await Note.findById(nodeId).populate('sender').populate('recipient');
-        if(note.recipient.nickname === req.user.nickname) {
+    for(noteId of req.body) {
+        const note = await Note.findById(noteId).populate('sender').populate('recipient');
+        if(note.recipient.nickname === req.user.nickname) { // 받은 쪽지 삭제할때
             note.recipientDeleted = true;
+            await Notification.findOneAndDelete({recipient: req.user.id, noteId: noteId});  // 받은 알림도 삭제.
         }
-        if(note.sender.nickname === req.user.nickname) {
+        if(note.sender.nickname === req.user.nickname) { // 보낸 쪽지 삭제할때
             note.senderDeleted = true;
         }
         await note.save();
@@ -294,36 +295,32 @@ router.delete('/delete-note', catchAsync( async(req, res) => {
     res.json('ok');
 }));
 
-router.get('/mynotification', catchAsync( async(req, res) => {
-    const {id} = req.user;
+router.get('/mynotification', isSignedIn, catchAsync( async(req, res) => {  // 알림 페이지
+    const {id, role} = req.user;
     const notis = await Notification.find({recipient:id}).sort({createdAt: -1}).limit(10).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
-    res.render('mypage/myNotification', {notis});
+    res.render('mypage/myNotification', {notis, role});
 }));
 
-router.get('/mynotification-more', catchAsync( async(req, res) => {
+router.get('/mynotification-more', isSignedIn, catchAsync( async(req, res) => { // 알림 페이지 무한스크롤 
     const {id} = req.user;
     const {skip} = req.query;
     const notis = await Notification.find({recipient:id}).sort({createdAt: -1}).skip(skip).limit(10).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
     res.json(notis);
 }));
 
-router.get('/mynotification-noread', catchAsync( async(req, res) => {
+router.get('/mynotification-noread', isSignedIn, catchAsync( async(req, res) => {   // 안읽은 알림이 있는지 체크
     const {id} = req.user;
     const notis = await Notification.findOne({recipient:id, isRead:false});
     res.json(notis);
 }));
 
-router.get('/mynotification-check', catchAsync( async(req, res) => {
+router.get('/mynotification-check', isSignedIn, catchAsync( async(req, res) => {   // 모든 알림 읽음 표시
     const {id} = req.user;
-    const notis = await Notification.find({recipient:id, isRead:false});
-    for(noti of notis) {
-        noti.isRead = true;
-        await noti.save();
-    }
+    await Notification.updateMany({recipient:id}, {$set:{isRead:true}});
     res.status(200).json();
 }));
 
-router.get('/nav-noti', catchAsync( async(req, res) => {
+router.get('/nav-noti', isSignedIn, catchAsync( async(req, res) => {    // navbar알림
     const {id} = req.user;
     const notis = await Notification.find({recipient:id, isRead: false}).sort({createdAt: -1}).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
     res.json(notis);

@@ -39,13 +39,6 @@ const CommentSchema = new Schema({
     isDeleted: {
         type: Boolean,
         default: false
-    },
-    whoDeleted: {
-        type: Schema.Types.ObjectId,
-        ref: "User"
-    },
-    deletedDate: {
-        type:Date
     }
 });
 

@@ -116,8 +116,15 @@ async function commentDelete(e) {   // 댓글 삭제.
     commentId = e.getAttribute('data-commentId');
     await axios.delete(`/index/${postId}/comments/${commentId}`)
     .then((res) => {
-        window.alert('댓글을 삭제 했습니다.')
-        window.location.reload();
+        if(res.data === 'ok') {
+            window.alert('댓글을 삭제 했습니다.')
+            window.location.reload();
+        }
+        if(res.data === 'nk') {
+            window.alert('삭제되거나 찾을 수 없는 댓글입니다.')
+            window.location.reload();
+        }
+
     })
 }
 
@@ -162,7 +169,7 @@ async function commentPage(e) { // 댓글 페이징
         const commentsWrap = document.createElement('div');
         commentsWrap.setAttribute('id', 'comments-wrap');
         for(data of res.data.commentsArr) {
-            commentsWrap.innerHTML += data;
+            commentsWrap.insertAdjacentHTML('beforeend', data);
         }
         const commentsContainer = document.getElementById('comments-container');
         commentsContainer.appendChild(commentsWrap);
@@ -172,7 +179,7 @@ async function commentPage(e) { // 댓글 페이징
         const pagination = document.createElement('div');
         pagination.setAttribute('id', 'pagination');
         for(data of res.data.pageArr) {
-            pagination.innerHTML += data;
+            pagination.insertAdjacentHTML('beforeend', data);
         }
         const paginationWrap = document.getElementById('pagination-wrap');
         paginationWrap.appendChild(pagination);

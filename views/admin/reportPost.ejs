@@ -1,0 +1,136 @@
+<% layout('layouts/boilerplate') %>
+    <!-- <link rel="stylesheet" href="/stylesheets/myPagePost.css"> -->
+    <!-- <link rel="stylesheet" href="/stylesheets/myNotification.css"> -->
+    <link rel="stylesheet" href="/stylesheets/reportPost.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div id="container">
+    <div id="mypage-wrap">
+        <div id="sidebar-wrap">
+            <nav id="sidebar">
+                <a id="sidebar-post" class="sidebar-menu" href="/mypage/mypost-post">내 글</a>
+                <a id="sidebar-like" class="sidebar-menu" href="/mypage/mylike-post">좋아요</a>
+                <a id="sidebar-report" class="sidebar-menu" href="/mypage/mynote-received">쪽지함</a>
+                <a id="sidebar-notification" class="sidebar-menu" href="/mypage/mynotification">알림</a>
+                <% if(role === 'master' || role === 'superman') { %>
+                    <a id="sidebar-report" class="sidebar-menu sidebar-active" href="/admin/report-post">신고관리</a>
+                <% } %>
+                <% if(role === 'superman') { %>
+                    <a id="sidebar-admin" class="sidebar-menu" href="/admin/admin-management">매니저관리</a>
+                <% } %>
+            </nav>
+        </div>
+
+        <div id="content-wrap">
+            <div id="sidebar-title-wrap">
+                <p id="sidebar-title">신고관리</p>
+            </div>
+            
+            <div id="tap-menu-wrap">
+                <button id="tap-post" class="tap-item tap-active" onclick="window.location.href = '/admin/report-post'">게시물</button>
+                <button id="tap-comment" class="tap-item" onclick="window.location.href = '#'">댓글</button>
+            </div>
+
+            <div id="search-date-wrap">
+                <form action="/admin/report-post/search-date" method="GET">
+                    <input type="datetime-local" id="start-date" name="startDate" class="control-date" value="<%= startDate %>"> ~               
+                    <input type="datetime-local" id="end-date" name="endDate" class="control-date" value="<%= endDate %>">
+                    <button type="submit" id="search-date-btn"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>
+                </form>
+            </div>
+
+            <div id="items-wrap">
+                <table id="mode1-table">
+                    <thead id="mode1-thead">
+                        <th class="thead-common select-btn"><input type="checkbox" id="check-all" onclick="checkAll(this)"></th>
+                        <th class="thead-common title">제목</th>
+                        <th class="thead-common writer">글쓴이</th>
+                        <th class="thead-common report-count">신고수</th>
+                        <th class="thead-common date">날짜</th>
+                    </thead>
+                    <tbody>
+                        <% for(post of posts) { %>
+                            <tr id="tr">
+                                <td class="tbody-common"><input type="checkbox" class="check-one-post" onclick="checkOne(this)" data-check-post-id="<%= post._id %>"></td>
+                                <td class="tbody-common-title" onclick="location.href='/index/<%= post._id %>'">
+                                    <%# 공지글 표시 %>
+                                    <% if(post.notice) { %>
+                                        <b style="color: red;">[알림]</b>
+                                    <% } %>
+                                    
+                                    <%# 이미지 아이콘 %>
+                                    <% if(Object.keys(post.images[0]).length > 0) { %>
+                                        <i class="fa-regular fa-image image"></i>
+                                    <% } %>
+
+                                    <%# 제목 %>
+                                    <%= post.title %>
+
+                                    <%# 댓글 수 표시 %>
+                                    <b style="color: crimson;">
+                                        <%= post.comments.length %>
+                                    </b>
+                                </td>
+                                <td class="tbody-common"><%= post.author.nickname %></td>
+                                <td class="tbody-common" id="content" onclick="openNote(this)" data-note-id=""><%= post.reports.length %></td>
+                                <td class="tbody-common"><%= post.createdAt.getFullYear() %>-<%= String(post.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(post.createdAt.getDate()).padStart(2,'0') %> <%= String(post.createdAt.getHours()).padStart(2,'0') %>:<%= String(post.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(post.createdAt.getSeconds()).padStart(2,'0') %></td>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="button-group-wrap">
+                <div id="delete-content-wrap">
+                    <button id="delete-content-btn" class="delete-post" onclick="deletePost(this)">삭제</button>
+                </div>
+
+                <div id="write-note-wrap">
+                    <form action="/admin/report-post/search" method="GET" onsubmit="searchPost()">
+                        <select name="selectOption" id="select-option">
+                            <option value="title" selected>제목</option>
+                            <option value="body">내용</option>
+                            <option value="author">글쓴이</option>
+                        </select>
+                        <input type="text" name="search" id="search-content" value="<%= search %>">
+                        <input type="hidden" name="startDate" id="start-date-hidden">
+                        <input type="hidden" name="endDate" id="end-date-hidden">
+                        <button type="submit" id="search-date-btn"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <% if(posts.length !== 0) { %>
+                <div id="pagination-wrap">
+                    <% if(startPage > maxPost) { %>
+                        <a class="page page-prev-active" href="/admin/report-post?page=<%= startPage-1 %>">Prev</a>
+                    <% } else { %>
+                        <a class="page page-prev" href="javascript:void(0);">Prev</a>
+                    <% } %>
+                    <% for(let i = startPage; i <= endPage; i++) { %>
+                        <% if(i === currentPage) { %>
+                            <a class="page current-page" href="/admin/report-post?page=<%= i %>"><%= i %></a>
+                        <% } else { %>
+                            <a class="page" href="/admin/report-post?page=<%= i %>"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                    <% if(endPage < totalPage) { %>
+                        <a class="page page-next-active" href="/admin/report-post?page=<%= endPage+1 %>">Next</a>
+                    <% } else { %>
+                        <a class="page page-next" href="javascript:void(0);">Next</a>
+                    <% } %>
+                </div>
+            <% } %>
+
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/javascript/myPost.js"></script>
+<!-- <script src="/javascript/myNotification.js"></script> -->
+<script src="/javascript/reportPost.js"></script>

@@ -15,6 +15,7 @@ const boardRoutes = require('./routes/boards');
 const commentRoutes = require('./routes/comments');
 const userRoutes = require('./routes/users');
 const mypageRoutes = require('./routes/mypage');
+const adminRoutes = require('./routes/admin');
 const nestedCommentRoutes = require('./routes/nestedComments');
 
 const app = express();
@@ -75,6 +76,7 @@ app.use( async (req, res, next) => {
 
 app.use('/', userRoutes);
 app.use('/mypage', mypageRoutes);
+app.use('/admin', adminRoutes);
 app.use('/index', boardRoutes);
 app.use('/index/:id/comments', commentRoutes);
 // app.use('/index/:id/comments/:commentId', nestedCommentRoutes);

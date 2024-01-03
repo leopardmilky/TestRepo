@@ -37,7 +37,7 @@
             <div id="content-bottom-btn-group">
                 <a id="index" class="p-1 me-1 btn btn-outline-secondary btn-sm" href="/index?page=<%= page %>">목록</a>
                 <% if(!(signedInUser && board.author.equals(signedInUser._id))) { %>
-                <a id="report" class="p-1 btn btn-outline-danger btn-sm" onclick="postReport()">신고</a>
+                    <a id="report" class="p-1 btn btn-outline-danger btn-sm" onclick="postReport()">신고</a>
                 <% } %>
             </div>
         </div>
@@ -69,7 +69,7 @@
                     </div>
                     <div class="comment-control-btn">
                         <% if(!(signedInUser && bestComment.author.equals(signedInUser._id))) { %>
-                        <button class="report control-btn" onclick="commentReport(this)" data-postId="<%= board._id %>" data-commentId="<%= bestComment._id %>">신고</button>
+                            <button class="report control-btn" onclick="commentReport(this)" data-postId="<%= board._id %>" data-commentId="<%= bestComment._id %>">신고</button>
                         <% } %>
                     </div>
                 </div>
@@ -121,37 +121,41 @@
                             </div>
                         </div>
                 <% } else { %>
-                    <div id="deleted-parent-comments-wrap"> 해당 댓글은 삭제되었습니다. </div>
+                    <% if(comment.hasReply) { %>
+                        <div id="deleted-parent-comments-wrap"> 해당 댓글은 삭제되었습니다. </div>
+                    <% } %>
                 <% } %>
 
             <% } else { %>    
                 <!-- 대댓글 -->
-                    <div class="child-comments-wrap">
-                        <div id="child-comments-info" class="comments-info">
-                            <div id="info-left" class="info-left">
-                                <p class="nickname"><%= comment.author.nickname %></p>
-                                <p class="user-ip">123.456.78.900</p>
+                    <% if(!comment.isDeleted) { %>
+                        <div class="child-comments-wrap">
+                            <div id="child-comments-info" class="comments-info">
+                                <div id="info-left" class="info-left">
+                                    <p class="nickname"><%= comment.author.nickname %></p>
+                                    <p class="user-ip">123.456.78.900</p>
+                                </div>
+                                <div id="info-right">
+                                    <p class="comment-date"><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></p>
+                                </div>
                             </div>
-                            <div id="info-right">
-                                <p class="comment-date"><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></p>
+                            <div id="child-comments-content" class="comments-content">
+                                <p class="main-text"><%= comment.body %></p>
+                            </div>
+                            <div id="child-comments-btn-group" class="comments-btn-group">
+                                <div class="comment-like-wrap">
+                                    <button class="comment-like reply-btn" onclick="commentLike(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
+                                </div>
+                                <div class="comment-control-btn">
+                                    <% if(signedInUser && comment.author.equals(signedInUser._id)) { %>
+                                        <button class="delete reply-btn" onclick="commentDelete(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">삭제</button>
+                                    <% } else { %>
+                                        <button class="report reply-btn" onclick="commentReport(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">신고</button>
+                                    <% } %>
+                                </div>
                             </div>
                         </div>
-                        <div id="child-comments-content" class="comments-content">
-                            <p class="main-text"><%= comment.body %></p>
-                        </div>
-                        <div id="child-comments-btn-group" class="comments-btn-group">
-                            <div class="comment-like-wrap">
-                                <button class="comment-like reply-btn" onclick="commentLike(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>"><i id="commnet-thumb" class="fa-solid fa-thumbs-up"></i><p class="count-comment-likes"><%= comment.likes.length %></p></button>
-                            </div>
-                            <div class="comment-control-btn">
-                                <% if(signedInUser && comment.author.equals(signedInUser._id)) { %>
-                                    <button class="delete reply-btn" onclick="commentDelete(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">삭제</button>
-                                <% } else { %>
-                                    <button class="report reply-btn" onclick="commentReport(this)" data-postId="<%= board._id %>" data-commentId="<%= comment._id %>">신고</button>
-                                <% } %>
-                            </div>
-                        </div>
-                    </div>
+                    <% } %>
                 <% } %>
             <% } %>
         </div>

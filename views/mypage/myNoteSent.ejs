@@ -15,10 +15,10 @@
                 <a id="sidebar-report" class="sidebar-menu sidebar-active" href="/mypage/mynote-received">쪽지함</a>
                 <a id="sidebar-notification" class="sidebar-menu" href="/mypage/mynotification">알림</a>
                 <% if(role === 'master' || role === 'superman') { %>
-                    <a id="sidebar-report" class="sidebar-menu" href="#">신고관리</a>
+                    <a id="sidebar-report" class="sidebar-menu" href="/admin/report-post">신고관리</a>
                 <% } %>
                 <% if(role === 'superman') { %>
-                    <a id="sidebar-report" class="sidebar-menu" href="#">매니저관리</a>
+                    <a id="sidebar-report" class="sidebar-menu" href="/admin/admin-management">매니저관리</a>
                 <% } %>
             </nav>
         </div>
