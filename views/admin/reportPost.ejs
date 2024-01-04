@@ -1,6 +1,4 @@
 <% layout('layouts/boilerplate') %>
-    <!-- <link rel="stylesheet" href="/stylesheets/myPagePost.css"> -->
-    <!-- <link rel="stylesheet" href="/stylesheets/myNotification.css"> -->
     <link rel="stylesheet" href="/stylesheets/reportPost.css">
     <link rel="stylesheet" href="/stylesheets/footer.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -14,7 +12,7 @@
             <nav id="sidebar">
                 <a id="sidebar-post" class="sidebar-menu" href="/mypage/mypost-post">내 글</a>
                 <a id="sidebar-like" class="sidebar-menu" href="/mypage/mylike-post">좋아요</a>
-                <a id="sidebar-report" class="sidebar-menu" href="/mypage/mynote-received">쪽지함</a>
+                <a id="sidebar-note" class="sidebar-menu" href="/mypage/mynote-received">쪽지함</a>
                 <a id="sidebar-notification" class="sidebar-menu" href="/mypage/mynotification">알림</a>
                 <% if(role === 'master' || role === 'superman') { %>
                     <a id="sidebar-report" class="sidebar-menu sidebar-active" href="/admin/report-post">신고관리</a>
@@ -29,10 +27,10 @@
             <div id="sidebar-title-wrap">
                 <p id="sidebar-title">신고관리</p>
             </div>
-            
+
             <div id="tap-menu-wrap">
                 <button id="tap-post" class="tap-item tap-active" onclick="window.location.href = '/admin/report-post'">게시물</button>
-                <button id="tap-comment" class="tap-item" onclick="window.location.href = '#'">댓글</button>
+                <button id="tap-comment" class="tap-item" onclick="window.location.href = '/admin/report-comment'">댓글</button>
             </div>
 
             <div id="search-date-wrap">
@@ -76,7 +74,7 @@
                                     </b>
                                 </td>
                                 <td class="tbody-common"><%= post.author.nickname %></td>
-                                <td class="tbody-common" id="content" onclick="openNote(this)" data-note-id=""><%= post.reports.length %></td>
+                                <td class="tbody-common" id="content"><%= post.reports.length %></td>
                                 <td class="tbody-common"><%= post.createdAt.getFullYear() %>-<%= String(post.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(post.createdAt.getDate()).padStart(2,'0') %> <%= String(post.createdAt.getHours()).padStart(2,'0') %>:<%= String(post.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(post.createdAt.getSeconds()).padStart(2,'0') %></td>
                             </tr>
                         <% } %>
@@ -86,7 +84,7 @@
 
             <div id="button-group-wrap">
                 <div id="delete-content-wrap">
-                    <button id="delete-content-btn" class="delete-post" onclick="deletePost(this)">삭제</button>
+                    <button id="delete-content-btn" class="delete-post" onclick="deletePost()">삭제</button>
                 </div>
 
                 <div id="write-note-wrap">
@@ -106,20 +104,20 @@
 
             <% if(posts.length !== 0) { %>
                 <div id="pagination-wrap">
-                    <% if(startPage > maxPost) { %>
-                        <a class="page page-prev-active" href="/admin/report-post?page=<%= startPage-1 %>">Prev</a>
+                    <% if(startPage > maxPost) { %>  
+                        <a class="page page-prev-active" data-page="<%= startPage-1 %>" onclick="goToPage(this)">Prev</a>
                     <% } else { %>
                         <a class="page page-prev" href="javascript:void(0);">Prev</a>
                     <% } %>
                     <% for(let i = startPage; i <= endPage; i++) { %>
                         <% if(i === currentPage) { %>
-                            <a class="page current-page" href="/admin/report-post?page=<%= i %>"><%= i %></a>
+                            <a class="page current-page" data-page="<%= i %>" onclick="goToPage(this)"><%= i %></a>
                         <% } else { %>
-                            <a class="page" href="/admin/report-post?page=<%= i %>"><%= i %></a>
+                            <a class="page" data-page="<%= i %>" onclick="goToPage(this)"><%= i %></a>
                         <% } %>
                     <% } %>
                     <% if(endPage < totalPage) { %>
-                        <a class="page page-next-active" href="/admin/report-post?page=<%= endPage+1 %>">Next</a>
+                        <a class="page page-next-active" data-page="<%= endPage+1 %>" onclick="goToPage(this)">Next</a>
                     <% } else { %>
                         <a class="page page-next" href="javascript:void(0);">Next</a>
                     <% } %>
@@ -131,6 +129,4 @@
 </div>
 
 <%- include('../partials/footer') %>
-<script src="/javascript/myPost.js"></script>
-<!-- <script src="/javascript/myNotification.js"></script> -->
 <script src="/javascript/reportPost.js"></script>

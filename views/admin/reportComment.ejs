@@ -1,0 +1,130 @@
+<% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/reportComment.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div id="container">
+    <div id="mypage-wrap">
+        <div id="sidebar-wrap">
+            <nav id="sidebar">
+                <a id="sidebar-post" class="sidebar-menu" href="/mypage/mypost-post">내 글</a>
+                <a id="sidebar-like" class="sidebar-menu" href="/mypage/mylike-post">좋아요</a>
+                <a id="sidebar-note" class="sidebar-menu" href="/mypage/mynote-received">쪽지함</a>
+                <a id="sidebar-notification" class="sidebar-menu" href="/mypage/mynotification">알림</a>
+                <% if(role === 'master' || role === 'superman') { %>
+                    <a id="sidebar-report" class="sidebar-menu sidebar-active" href="/admin/report-post">신고관리</a>
+                <% } %>
+                <% if(role === 'superman') { %>
+                    <a id="sidebar-admin" class="sidebar-menu" href="/admin/admin-management">매니저관리</a>
+                <% } %>
+            </nav>
+        </div>
+
+        <div id="content-wrap">
+            <div id="sidebar-title-wrap">
+                <p id="sidebar-title">신고관리</p>
+            </div>
+
+            <div id="tap-menu-wrap">
+                <button id="tap-post" class="tap-item" onclick="window.location.href = '/admin/report-post'">게시물</button>
+                <button id="tap-comment" class="tap-item tap-active" onclick="window.location.href = '/admin/report-comment'">댓글</button>
+            </div>
+
+            <div id="search-date-wrap">
+                <form action="/admin/report-comment/search-date" method="GET">
+                    <input type="datetime-local" id="start-date" name="startDate" class="control-date" value="<%= startDate %>"> ~               
+                    <input type="datetime-local" id="end-date" name="endDate" class="control-date" value="<%= endDate %>">
+                    <button type="submit" id="search-date-btn"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>
+                </form>
+            </div>
+
+            <div id="items-wrap">
+                <table id="mode1-table">
+                    <thead id="mode1-thead">
+                        <th class="thead-common select-btn"><input type="checkbox" id="check-all" onclick="checkAll(this)"></th>
+                        <th class="thead-common title">내용</th>
+                        <th class="thead-common writer">글쓴이</th>
+                        <th class="thead-common report-count">신고수</th>
+                        <th class="thead-common date">날짜</th>
+                    </thead>
+                    <tbody>
+                        <% for(comment of comments) { %>
+                            <% if(!comment.isDeleted) { %>
+                                <tr id="tr">
+                                    <td class="tbody-common"><input type="checkbox" class="check-one-post" onclick="checkOne(this)" data-check-comment-id="<%= comment._id %>"></td>
+                                    <td class="tbody-common-title" data-post-id="<%= comment.board._id %>" data-comment-id="<%= comment._id %>" onclick="goToComment(this)">
+                                        <p class="tbody-common-body">
+                                            <% if(comment._id.equals(comment.parentComment)) { %>
+                                                [댓글]
+                                            <% } else { %>
+                                                [답변]
+                                            <% } %>
+        
+                                            <%# 내용 %>
+                                            <%= comment.body %>
+                                        </p>
+                                        <p class="tbody-common-board">
+                                            제목: <%= comment.board.title %>
+                                        </p>
+                                    </td>
+                                    <td class="tbody-common"><%= comment.author.nickname %></td>
+                                    <td class="tbody-common" id="content"><%= comment.reports.length %></td>
+                                    <td class="tbody-common"><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></td>
+                                </tr>
+                            <% } %>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="button-group-wrap">
+                <div id="delete-content-wrap">
+                    <button id="delete-content-btn" class="delete-post" onclick="deleteComment()">삭제</button>
+                </div>
+
+                <div id="write-note-wrap">
+                    <form action="/admin/report-comment/search" method="GET" onsubmit="searchPost()">
+                        <select name="selectOption" id="select-option">
+                            <option value="body" selected>내용</option>
+                            <option value="author">글쓴이</option>
+                        </select>
+                        <input type="text" name="search" id="search-content" value="<%= search %>">
+                        <input type="hidden" name="startDate" id="start-date-hidden">
+                        <input type="hidden" name="endDate" id="end-date-hidden">
+                        <button type="submit" id="search-date-btn"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <% if(comments.length !== 0) { %>
+                <div id="pagination-wrap">
+                    <% if(startPage > maxPost) { %>  
+                        <a class="page page-prev-active" data-page="<%= startPage-1 %>" onclick="goToPage(this)">Prev</a>
+                    <% } else { %>
+                        <a class="page page-prev" href="javascript:void(0);">Prev</a>
+                    <% } %>
+                    <% for(let i = startPage; i <= endPage; i++) { %>
+                        <% if(i === currentPage) { %>
+                            <a class="page current-page" data-page="<%= i %>" onclick="goToPage(this)"><%= i %></a>
+                        <% } else { %>
+                            <a class="page" data-page="<%= i %>" onclick="goToPage(this)"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                    <% if(endPage < totalPage) { %>
+                        <a class="page page-next-active" data-page="<%= endPage+1 %>" onclick="goToPage(this)">Next</a>
+                    <% } else { %>
+                        <a class="page page-next" href="javascript:void(0);">Next</a>
+                    <% } %>
+                </div>
+            <% } %>
+
+            
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/javascript/reportPost.js"></script>

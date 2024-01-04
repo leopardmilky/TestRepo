@@ -15,17 +15,29 @@ window.onload = async function() {
     })
 }
 
-function goToComment(e) {
+async function goToComment(e) {
     const postId = e.getAttribute('data-post-id');
     const commentId = e.getAttribute('data-comment-id');
-    const notiId = e.getAttribute('data-noti-id')
-    window.open(`/index/${postId}?commentId=${commentId}&notiIdC=${notiId}`)
+    const notiId = e.getAttribute('data-noti-id');
+    const data = {notiId: notiId};
+    await axios.post('/mypage/mynotification-check', data)
+    .then((res) => {
+        if(res.data === 'ok'){
+            window.open(`/index/${postId}?commentId=${commentId}`);
+        }
+    })
 }
 
-function goToPost(e) {
+async function goToPost(e) {
     const postId = e.getAttribute('data-post-id');
     const notiId = e.getAttribute('data-noti-id');
-    window.open(`/index/${postId}?notiIdP=${notiId}`)
+    const data = {notiId: notiId};
+    await axios.post('/mypage/mynotification-check', data)
+    .then((res) => {
+        if(res.data === 'ok') {
+            window.open(`/index/${postId}`)
+        }
+    })
 }
 
 async function checkAllNoti() {
@@ -39,7 +51,7 @@ async function checkAllNoti() {
     checkAllBtn.removeAttribute('class');
     checkAllBtn.setAttribute('class', 'check-all-btn');
 
-    await axios.get('/mypage/mynotification-check')
+    await axios.get('/mypage/mynotification-allcheck')
     .then((res) => {
         console.log("checkAllNoti()_res.data: ", res.data);
     })

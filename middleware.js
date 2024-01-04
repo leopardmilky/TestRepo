@@ -17,7 +17,7 @@ module.exports.isSignedIn = (req, res, next) => {
 
 module.exports.isAdmin = (req, res, next) => {
     if(req.user.role !== 'master' && req.user.role !== 'superman') {
-        return res.redirect('/index');
+        return res.json('nk');
     }
     next();
 };
@@ -46,7 +46,7 @@ module.exports.isCommentAuthor = async(req, res, next) => {
     const {id, commentId} = req.params;
     const check = await Comment.findById(commentId);
     if(!check){
-        return res.redirect('/index')
+        return res.redirect('/index');
     }
     if(!check.author.equals(req.user._id)){
         return res.redirect(`/index/${id}`)

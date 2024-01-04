@@ -314,7 +314,18 @@ router.get('/mynotification-noread', isSignedIn, catchAsync( async(req, res) => 
     res.json(notis);
 }));
 
-router.get('/mynotification-check', isSignedIn, catchAsync( async(req, res) => {   // 모든 알림 읽음 표시
+router.post('/mynotification-check', isSignedIn, catchAsync( async(req, res) => {   // 알림 페이지 및 nav알림 체크
+    const {notiId} = req.body;
+    const noti = await Notification.findOne({_id: notiId, recipient: req.user.id});
+    if(noti) {
+        noti.isRead = true;
+        await noti.save();
+        return res.status(200).json('ok');
+    }
+    res.status(500).json('Server Error...0_0');
+}));
+
+router.get('/mynotification-allcheck', isSignedIn, catchAsync( async(req, res) => {   // 모든 알림 읽음 표시
     const {id} = req.user;
     await Notification.updateMany({recipient:id}, {$set:{isRead:true}});
     res.status(200).json();

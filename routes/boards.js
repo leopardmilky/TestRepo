@@ -102,7 +102,7 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
 
 router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
     const { id } = req.params;
-    const {commentId, notiIdC, notiIdP} = req.query;
+    const { commentId } = req.query;
     let data = {};  // 이곳에 페이지 로딩에 필요한 데이터를 담아서 보낼 예정.
     const board = await Board.findById(id).populate('author'); // 해당 게시물이 있는지 확인        populate()가 있어야 참조함
     if(!board){ // 해당 게시물이 없을때.
@@ -117,15 +117,7 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
         data.pagination = false;
         data.comments = [];
 
-    } else if(commentId && notiIdC) {  // 알림 기능을 통해 해당 댓글을 확인할때(쿼리스트링)
-        
-        const noti = await Notification.findOne({_id: notiIdC, recipient: req.user.id}); // 알림ID와 알림 수신자가 일치하는지 확인.
-        if(noti) {
-            noti.isRead = true;
-            await noti.save();
-        } else {
-            return res.status(500).send('SERVER ERROR...');
-        }
+    } else if(commentId) {  // 알림 기능을 통해 해당 댓글을 확인할때(쿼리스트링)
 
         const sortComments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }) // 해당 게시물의 모든 댓글 순서에 맞춰 정렬
         let cnt = 0
@@ -158,13 +150,6 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
         data.maxComment = maxComment;
     }
 
-    if(notiIdP) {   // 게시물 좋아요. 알림 확인.
-        const noti = await Notification.findOne({_id: notiIdP, recipient: req.user.id}); // 알림ID와 알림 수신자가 일치하는지 확인.
-        noti.isRead = true;
-        await noti.save();
-    }
-    
-
     // 베스트 댓글
     const boardId = new mongoose.Types.ObjectId(id);
     const searchBestComment = await Comment.aggregate([
@@ -185,7 +170,7 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
     }
 
 
-    // 게시물 이미지
+    // 게시물 이미지 불러오기
     const boardImgObject = {};
     for(let i = 0; i < Object.keys(board.images[0]).length; i++) {
         const getObjectParams = {

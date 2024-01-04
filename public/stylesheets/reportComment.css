@@ -187,6 +187,29 @@
     color: crimson;
 }
 
+.tbody-common-body {
+    margin-bottom: 3px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.tbody-common-board {
+    margin: 0;
+    font-size: x-small;
+    color: #787878;
+}
+
+
+
+
+
+
+
+
+
+
+
 .image {
     color: green;
 }

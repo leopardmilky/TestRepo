@@ -1,4 +1,16 @@
+function goToComment(e) {
+    const postId = e.getAttribute('data-post-id');
+    const commentId = e.getAttribute('data-comment-id');
+    window.location.href = `/index/${postId}?commentId=${commentId}`;
+}
 
+function goToPage(e) {
+    const page = e.getAttribute('data-page');
+    const currentURL = window.location.href;
+    const url = new URL(currentURL);
+    url.searchParams.set('page', page);
+    window.location.href = `${url.href}`;
+}
 
 function searchPost() {
     const startDate = document.getElementById('start-date').value;
@@ -34,7 +46,7 @@ function checkOne(e) {
     }
 }
 
-function deletePost(e) {
+function deletePost() {
     const checkedCnt = document.querySelectorAll('.check-one-post:checked');
     if(checkedCnt.length === 0) {
         return window.alert("삭제할 게시물을 선택해 주세요.");
@@ -49,6 +61,30 @@ function deletePost(e) {
     .then((res) => {
         if(res.data === 'ok') {
             window.alert('선택한 게시물을 삭제했습니다.');
+            window.location.reload();
+        }
+        if(res.data === 'nk') {
+            window.alert('권한이 없습니다. 관리자에게 문의하세요.');
+            window.location.reload();
+        }
+    })
+}
+
+function deleteComment() {
+    const checkedCnt = document.querySelectorAll('.check-one-post:checked');
+    if(checkedCnt.length === 0) {
+        return window.alert("삭제할 게시물을 선택해 주세요.");
+    }
+
+    const arr = [];
+    [...checkedCnt].forEach(element => {
+        arr.push(element.dataset.checkCommentId);
+    })
+
+    axios.delete('/admin/delete-comment', {data: arr})
+    .then((res) => {
+        if(res.data === 'ok') {
+            window.alert('선택한 댓글을 삭제했습니다.');
             window.location.reload();
         }
         if(res.data === 'nk') {

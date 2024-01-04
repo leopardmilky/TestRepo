@@ -13,7 +13,7 @@
             <nav id="sidebar">
                 <a id="sidebar-post" class="sidebar-menu" href="/mypage/mypost-post">내 글</a>
                 <a id="sidebar-like" class="sidebar-menu" href="/mypage/mylike-post">좋아요</a>
-                <a id="sidebar-report" class="sidebar-menu" href="/mypage/mynote-received">쪽지함</a>
+                <a id="sidebar-note" class="sidebar-menu" href="/mypage/mynote-received">쪽지함</a>
                 <a id="sidebar-notification" class="sidebar-menu sidebar-active" href="/mypage/mynotification">알림</a>
                 <% if(role === 'master' || role === 'superman') { %>
                     <a id="sidebar-report" class="sidebar-menu" href="/admin/report-post">신고관리</a>
@@ -56,7 +56,7 @@
                             <% if(noti.notificationType === 'postComment') { %>
                                 <% if(!noti.commentId.isDeleted) { %>
                                     <tr class="tr-noti">
-                                        <td class="td-noti" data-post-id="<%= noti.postId._id %>" data-comment-id="<%= noti.commentId._id %>" data-noti-id="<%= noti._id %>"  onclick="goToComment(this)">
+                                        <td class="td-noti" data-post-id="<%= noti.postId._id %>" data-comment-id="<%= noti.commentId._id %>" data-noti-id="<%= noti._id %>" onclick="goToComment(this)">
                                             <div class="content-noti-wrap">
                                                 <p class="top-text"><b><%= noti.sender.nickname %></b>님이 <b>댓글</b>을 남겼습니다.</p>
                                                 <p class="bottom-text">"<%= noti.commentId.body %>"</p>

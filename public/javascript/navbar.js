@@ -40,17 +40,31 @@ function openNote_nav(e) {
     // }
 }
 
-function goToComment_nav(e) {
+async function goToComment_nav(e) {
     const postId = e.getAttribute('data-post-id');
     const commentId = e.getAttribute('data-comment-id');
     const notiId = e.getAttribute('data-noti-id');
-    window.location.href = `/index/${postId}?commentId=${commentId}&notiIdC=${notiId}`;
+    const data = {notiId: notiId};
+    await axios.post('/mypage/mynotification-check', data)
+    .then((res) => {
+        if(res.data === 'ok'){
+            window.location.href = `/index/${postId}?commentId=${commentId}`;
+        }
+    })
+    
 }
 
-function goToPost_nav(e) {
+async function goToPost_nav(e) {
     const postId = e.getAttribute('data-post-id');
     const notiId = e.getAttribute('data-noti-id');
-    window.location.href = `/index/${postId}?notiIdP=${notiId}`;
+    const data = {notiId: notiId};
+    await axios.post('/mypage/mynotification-check', data)
+    .then((res) => {
+        if(res.data === 'ok') {
+            window.location.href = `/index/${postId}`;
+        }
+    })
+    
 }
 
 function notiDropdown(e) {
