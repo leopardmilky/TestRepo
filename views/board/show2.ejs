@@ -6,7 +6,7 @@
 </head>
 <body>
 <%- include('../partials/navbar') %>
-<div id="container">
+<div id="show-container">
     <div id="post-wrap">
         <div id="content-wrap">
             <!-- 게시물 -->
@@ -54,7 +54,7 @@
                 <div id="best-comment-info" class="comments-info">
                     <div id="info-left" class="info-left">
                         <p class="nickname"><%= bestComment.author.nickname %></p>
-                        <p class="user-ip">123.456.78.900</p>
+                        <!-- <p class="user-ip">123.456.78.900</p> -->
                     </div>
                     <div id="info-right">
                         <p class="comment-date"><%= bestComment.createdAt.getFullYear() %>-<%= String(bestComment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(bestComment.createdAt.getDate()).padStart(2,'0') %> <%= String(bestComment.createdAt.getHours()).padStart(2,'0') %>:<%= String(bestComment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(bestComment.createdAt.getSeconds()).padStart(2,'0') %></p>
@@ -80,7 +80,6 @@
         </div>
     </div>
 
-
     <!-- 댓글 부분 -->
     <div id="comments-container">
         <div id="comments-wrap">
@@ -92,7 +91,7 @@
                             <div id="parent-comments-info" class="comments-info">
                                 <div id="info-left" class="info-left">
                                     <p class="nickname"><%= comment.author.nickname %></p>
-                                    <p class="user-ip">123.456.78.900</p>
+                                    <!-- <p class="user-ip">123.456.78.900</p> -->
                                 </div>
                                 <div id="info-right" class="info-right">
                                     <p class="comment-date"><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></p>
@@ -195,8 +194,8 @@
         <div id="create-comment-wrap">
             <form id="create-comment-form" action="/index/<%= board._id %>/comments" method="POST" novalidate>
                 <label id="comment-label" for="body">Comment</label>
-                <textarea class="form-control" name="comment[body]" id="comment" cols="10" rows="5" required></textarea>
-                <button class="w-100 btn btn-success btn-sm">등록</button>
+                <textarea name="comment[body]" id="input-comment" cols="10" rows="5" required></textarea>
+                <button id="submit-btn">등 록</button>
             </form>
         </div>
     <% } %>
@@ -260,7 +259,7 @@
         </table>
 
         <div id="new-post">
-            <a class="btn btn-dark btn-sm" href="/index/new2">글쓰기</a>
+            <a id="write-btn" href="/index/new2">글쓰기</a>
         </div>
 
         <div id="pagination-wrap">

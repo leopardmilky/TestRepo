@@ -104,22 +104,6 @@ table{
     margin: 0px;
 }
 
-/* #show_title {
-    font-size: larger;
-} */
-
-/* #comments_color {
-    color: red;
-} */
-
-/* #commentBody, #nestedCommentBody {
-    font-size: smaller;
-} */
-
-/* .commentInfoWrap, .nestedCommentInfoWrap {
-    font-size: smaller;
-} */
-
 #index-table {
     border-bottom: 2px solid black;
     border-top: 2px solid black;
@@ -135,43 +119,19 @@ table{
     background-color: #dedede;
 }
 
-/* #success_progress {
-    background-color: darkgreen;
-} */
-
-/* #error_progress {
-    background-color: darkred;
-} */
-
-/* .nestedCommentInnerWrap {
-    width: 95%;
-} */
-
-/* .signupValid:focus {
-    box-shadow: 0px 0px 5px green;
-    border-color: green;
-} */
-/* .signupValid {
-    border-color: green;
-} */
-
-/* .signupInvalid:focus {
-    box-shadow: 0px 0px 5px red;
-    border-color: red;
-} */
-/* .signupInvalid {
-    border-color: red;
-} */
-
 .imgView{
     border: 1px dashed gray;
     min-height: 150px;
 }
 
-/* .inputHint{
+#write-btn {
+    border: none;
+    background-color: #212529;
+    color: white;
+    text-decoration: none;
     font-size: small;
-    color: gray;
-} */
+    padding: 5px 10px;
+}
 
 #findPwd{
     font-size: small;

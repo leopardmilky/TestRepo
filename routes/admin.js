@@ -148,8 +148,6 @@ router.get('/report-comment', isSignedIn, isAdmin, catchAsync( async(req, res) =
         { $limit: maxPost }
     ]);
 
-    console.log("ROUTER_comments: ", comments);
-
     res.render('admin/reportComment', { comments, startPage, endPage, totalPage, currentPage, maxPost, role, startDate:undefined, endDate:undefined, search:undefined });
 }));
 
@@ -286,10 +284,6 @@ router.delete('/delete-comment', isSignedIn, isAdmin, catchAsync( async(req, res
 
     res.status(200).json('ok');
 }));
-
-
-
-
 
 
 module.exports = router;

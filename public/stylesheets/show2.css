@@ -3,7 +3,7 @@ body {
     flex-direction: column;
 }
 
-#container{
+#show-container{
     min-height: 90vh;
 }
 
@@ -312,8 +312,30 @@ body {
     margin-top: 20px;
 }
 
+#comment-label {
+    border: 1px solid black;
+    border-bottom: none;
+    background-color: whitesmoke;
+    padding-left: 10px;
+    width: 100%;
+}
+
 #create-comment-form {
     width: 1000px;
+}
+
+#input-comment {
+    width: 100%;
+    padding: 10px;
+}
+
+#submit-btn {
+    width: 100%;
+    border: none;
+    background-color: #212529;
+    color: white;
+    font-size: medium;
+    font-weight: bold;
 }
 
 
@@ -401,4 +423,14 @@ body {
 #targetComment {
     background-color: antiquewhite; 
     transition: background-color 1s ease; 
+}
+
+/* index */
+#write-btn {
+    border: none;
+    background-color: #212529;
+    color: white;
+    text-decoration: none;
+    font-size: small;
+    padding: 5px 10px;
 }

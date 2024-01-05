@@ -119,6 +119,13 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
 
     } else if(commentId) {  // 알림 기능을 통해 해당 댓글을 확인할때(쿼리스트링)
 
+        const hasComments = await Comment.findById(commentId);
+        if(!hasComments){
+            const referringURL = req.headers.referer || req.headers.referrer;   // 이전 URL정보
+            return res.redirect(referringURL);
+            // return res.render('error/postPageError');
+        }
+
         const sortComments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }) // 해당 게시물의 모든 댓글 순서에 맞춰 정렬
         let cnt = 0
         for(comment of sortComments) {  // 찾는 댓글의 순번 찾기. (뭔가 노가다식으로 찾는 느낌인데 좋은 방법이 안떠오름)
@@ -201,7 +208,6 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
 
 router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 불러오기
     const { id } = req.params;
-
     const totalComments = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
     const commentPage = req.query.commentPage;
     const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(commentPage, totalComments);

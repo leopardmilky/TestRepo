@@ -142,12 +142,10 @@ router.post('/:commentId/commentLike', isSignedIn2, catchAsync( async(req, res) 
             await newLike.save();
 
             if(addLike.author.id !== req.user.id) { // 자신의 글에 좋아요는 알림 안함.
-                // const board = await Board.findById(id);
                 const newNotification = new Notification();
                 newNotification.sender = req.user.id;
                 newNotification.recipient = addLike.author.id;
                 newNotification.notificationType = 'likeComment';
-                // newNotification.postId = board.id;  // 좋아요 달린 게시물
                 newNotification.postId = id;  // 좋아요 달린 게시물
                 newNotification.commentId = addLike.id; // 타이틀 확인
                 await newNotification.save();
