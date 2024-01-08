@@ -56,7 +56,7 @@ caret.addEventListener('click', function() {
 
 async function uploadContent() { // 게시물 생성
 
-    const notice = document.getElementById('notice').checked;
+    const notice = document.getElementById('notice');
     const textData = document.getElementById('text-input');
     const titleData = document.getElementById('new2Title').value;
     const imgData = textData.querySelectorAll('img');
@@ -87,7 +87,10 @@ async function uploadContent() { // 게시물 생성
 
     formData.append('title' ,titleData);
     formData.append('mainText' ,textData.innerHTML);
-    formData.append('notice', notice);
+    if(notice.checked) {
+        formData.append('notice', notice.checked);
+    }
+    
 
     await axios.post('/index', formData)
     .then((res) => {

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { isSignedIn, isAdmin } = require('../middleware');
+const { isSignedIn, isAdmin, isRoot } = require('../middleware');
 const Board = require('../models/board');
 const Comment = require('../models/comment');
 const LikeComment = require('../models/likeComment');
@@ -12,7 +12,7 @@ const Note = require('../models/note');
 const Notification = require('../models/notification');
 const User = require('../models/user');
 // require('dotenv').config();
-const { myPagePostPaging, myPageCommentPaging } = require('../paging');
+const { myPagePostPaging, myPageCommentPaging, adminListPaging } = require('../paging');
 const mongoose = require('mongoose');
 
 
@@ -283,6 +283,70 @@ router.delete('/delete-comment', isSignedIn, isAdmin, catchAsync( async(req, res
     }
 
     res.status(200).json('ok');
+}));
+
+
+router.get('/admin-list', isSignedIn, isRoot, catchAsync( async(req, res) => {
+    const {role} = req.user;
+    let {page, selectOption, search} = req.query;
+    if(!page) { page = 1; }
+
+    const query = {role:'master'};
+    if(selectOption === 'nickname') {
+        const nickname = search.trim()
+        const regex = new RegExp(nickname, 'i');
+        query.nickname = { $regex: regex };
+    }
+    if(selectOption === 'email') {
+        const email = search.trim()
+        const regex = new RegExp(email, 'i');
+        query.email = { $regex: regex };
+    }
+    
+    const totalPost = await User.find(query).countDocuments();
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = adminListPaging(page, totalPost);
+    const users = await User.find(query).skip(hidePost).limit(maxPost);
+
+    res.render('admin/adminList', { role, users, startPage, endPage, totalPage, currentPage, maxPage });
+}));
+
+
+router.post('/admin-list/change-role', isSignedIn, isRoot, catchAsync( async(req, res) => {
+    const {userId} = req.body;
+    await User.findByIdAndUpdate(userId, {role: 'user'});
+    res.status(200).json('ok')
+}));
+
+
+router.get('/search-user', isSignedIn, isRoot, catchAsync( async(req, res) => {
+    const {role} = req.user;
+    let {page, selectOption, search} = req.query;
+    if(!page) { page = 1; }
+
+    const query = {role:{$in:['user','master']}};
+    if(selectOption === 'nickname') {
+        const nickname = search.trim();
+        const regex = new RegExp(nickname, 'i');
+        query.nickname = { $regex: regex };
+    }
+    if(selectOption === 'email') {
+        const email = search.trim();
+        const regex = new RegExp(email, 'i');
+        query.email = { $regex: regex };
+    }
+
+    const totalPost = await User.find(query).countDocuments();
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = adminListPaging(page, totalPost);
+    const users = await User.find(query).skip(hidePost).limit(maxPost);
+
+    res.render('admin/searchUser', { role, users, startPage, endPage, totalPage, currentPage, maxPage });
+}));
+
+
+router.post('/search-user/change-role', isSignedIn, isRoot, catchAsync( async(req, res) => {
+    const {userId} = req.body;
+    await User.findByIdAndUpdate(userId, {role: 'master'});
+    res.status(200).json('ok')
 }));
 
 

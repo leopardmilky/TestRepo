@@ -10,10 +10,12 @@
         <div id="new2TopWrap">
             <h3 id="new2Top">글쓰기</h3>
         </div>
-        <div>
-            <input type="checkbox" id="notice" name="notice">
-            <label for="notice">공지글</label>
-        </div>
+        <% if(role !== 'user') { %>
+            <div id="notice-post-wrap">
+                <input type="checkbox" id="notice" name="notice">
+                <label for="notice">공지글</label>
+            </div>
+        <% } %>
         <div class="inputNew2" id="new2TitleWrap">
             <textarea type="text" id="new2Title" name="board[title]" placeholder="제목을 입력해 주세요." required></textarea>
         </div>

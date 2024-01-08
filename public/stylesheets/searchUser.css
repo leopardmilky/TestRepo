@@ -120,8 +120,7 @@
 }
 
 #items-wrap {
-    /* border: 1px solid red; */
-    margin-top: 2px;
+    margin-top: 10px;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -137,9 +136,9 @@
     border-bottom: 1px solid #ddd;
 }
 
-#tr:hover {
+/* #tr:hover {
     cursor: pointer;
-}
+} */
 
 .thead-common {
     border-top: 2px solid black;
@@ -147,24 +146,24 @@
     text-align : center;
 }
 
-.select-btn {
-    width: 5%;
-}
-
-.title {
-    width: 50%;
-}
-
-.date {
+.nickname {
     width: 20%;
 }
 
-.writer {
-    width: 17%;
+.email {
+    width: 30%;
 }
 
-.report-count {
-    width: 8%;
+.role {
+    width: 10%;
+}
+
+.regDate {
+    width: 20%;
+}
+
+.permission {
+    width: 20%;
 }
 
 .tbody-common {
@@ -173,6 +172,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    padding: 5px;
 }
 
 .tbody-common-title {
@@ -192,6 +192,20 @@
     margin-right: 5px;
 }
 
+.change-role-btn {
+    border: 1px solid black;
+    background-color: black;
+    color: white;
+    font-size: small;
+}
+
+.change-role-btn:disabled {
+    border: 1px solid #999;
+    background-color: #999;
+    color: white;
+    font-size: small;
+}
+
 .image {
     color: green;
 }
@@ -199,7 +213,7 @@
 #button-group-wrap {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: end;
     align-items: center;
     margin-top: 3px;
 }
@@ -214,8 +228,6 @@
 #delete-content-btn:hover {
     border: 1px solid black;
 }
-
-
 
 #search-content {
     font-size: small;

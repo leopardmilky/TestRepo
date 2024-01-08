@@ -1,3 +1,4 @@
+
 function goToComment(e) {
     const postId = e.getAttribute('data-post-id');
     const commentId = e.getAttribute('data-comment-id');
@@ -105,3 +106,4 @@ document.addEventListener("DOMContentLoaded", function() {
         localStorage.setItem("selectedOption", selectedValue);
     });
 });
+

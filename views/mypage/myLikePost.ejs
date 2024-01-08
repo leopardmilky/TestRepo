@@ -18,7 +18,7 @@
                     <a id="sidebar-report" class="sidebar-menu" href="/admin/report-post">신고관리</a>
                 <% } %>
                 <% if(role === 'superman') { %>
-                    <a id="sidebar-report" class="sidebar-menu" href="/admin/admin-management">매니저관리</a>
+                    <a id="sidebar-report" class="sidebar-menu" href="/admin/admin-list">매니저관리</a>
                 <% } %>
             </nav>
         </div>
@@ -48,15 +48,16 @@
                             <% } %>
                                 <td class="tbody-common"><%= post.likedPost.likes.length %></td>
                                 <td class="tbody-common-title" onclick="location.href='/index/<%= post.likedPost._id %>'">
-                                    <% if(post.likedPost.notice) { %>
-                                        <b style="color: red;">[알림]</b>
-                                    <% } %>
-                                    <% if(Object.keys(post.likedPost.images[0]).length > 0) { %>
-                                        <i class="fa-regular fa-image image"></i>
-                                    <% } %>
+                                    <span class="tbody-title">
+                                        <% if(post.likedPost.notice) { %>
+                                            <b style="color: red;">[알림]</b>
+                                        <% } %>
+                                        <% if(Object.keys(post.likedPost.images[0]).length > 0) { %>
+                                            <i class="fa-regular fa-image image"></i>
+                                        <% } %>
 
-                                    <%= post.likedPost.title %>
-
+                                        <%= post.likedPost.title %>
+                                    </span>
                                     <b style="color: crimson;">
                                         <%= post.likedPost.comments.length %>
                                     </b>

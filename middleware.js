@@ -15,6 +15,14 @@ module.exports.isSignedIn = (req, res, next) => {
     next();
 };
 
+module.exports.isSignedIn2 = (req, res, next) => {  // 좋아요, 신고 버튼 클릭 시 로그인 안되어 있을때.
+    if(!req.isAuthenticated()) {
+        req.session.backTo = req.originalUrl
+        return res.json('nk');
+    }
+    next();
+};
+
 module.exports.isAdmin = (req, res, next) => {
     if(req.user.role !== 'master' && req.user.role !== 'superman') {
         return res.json('nk');
@@ -22,12 +30,11 @@ module.exports.isAdmin = (req, res, next) => {
     next();
 };
 
-module.exports.isSignedIn2 = (req, res, next) => {  // 좋아요, 신고 버튼 클릭 시 로그인 안되어 있을때.
-    if(!req.isAuthenticated()) {
-        req.session.backTo = req.originalUrl
-        return res.json('nk');
+module.exports.isRoot = (req, res, next) => {
+    if(req.user.role === 'superman') {  
+        return next();
     }
-    next();
+    res.json('nk');
 };
 
 module.exports.isAuthor = async(req, res, next) => {

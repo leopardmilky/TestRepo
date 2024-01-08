@@ -1,0 +1,111 @@
+<% layout('layouts/boilerplate') %>
+    <link rel="stylesheet" href="/stylesheets/searchUser.css">
+    <link rel="stylesheet" href="/stylesheets/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+<%- include('../partials/navbar') %>
+
+<div id="container">
+    <div id="mypage-wrap">
+        <div id="sidebar-wrap">
+            <nav id="sidebar">
+                <a id="sidebar-post" class="sidebar-menu" href="/mypage/mypost-post">내 글</a>
+                <a id="sidebar-like" class="sidebar-menu" href="/mypage/mylike-post">좋아요</a>
+                <a id="sidebar-note" class="sidebar-menu" href="/mypage/mynote-received">쪽지함</a>
+                <a id="sidebar-notification" class="sidebar-menu" href="/mypage/mynotification">알림</a>
+                <% if(role === 'master' || role === 'superman') { %>
+                    <a id="sidebar-report" class="sidebar-menu" href="/admin/report-post">신고관리</a>
+                <% } %>
+                <% if(role === 'superman') { %>
+                    <a id="sidebar-admin" class="sidebar-menu sidebar-active" href="/admin/admin-list">매니저관리</a>
+                <% } %>
+            </nav>
+        </div>
+
+        <div id="content-wrap">
+            <div id="sidebar-title-wrap">
+                <p id="sidebar-title">매니저관리</p>
+            </div>
+
+            <div id="tap-menu-wrap">
+                <button id="tap-post" class="tap-item" onclick="window.location.href = '/admin/admin-list'">매니저 목록</button>
+                <button id="tap-comment" class="tap-item tap-active" onclick="window.location.href = '/admin/search-user'">유저 검색</button>
+            </div>
+
+            <div id="items-wrap">
+                <table id="mode1-table">
+                    <thead id="mode1-thead">
+                        <th class="thead-common nickname">닉네임</th>
+                        <th class="thead-common email">이메일</th>
+                        <th class="thead-common role">등급</th>
+                        <th class="thead-common regDate">가입일</th>
+                        <th class="thead-common permission">권한설정</th>
+                    </thead>
+                    <tbody>
+                        <% for(user of users) { %>
+                            <tr id="tr">
+                                <td class="tbody-common"><%= user.nickname %></td>
+                                <td class="tbody-common"><%= user.email %></td>
+                                <% if(user.role === 'user') { %>
+                                    <td class="tbody-common">일반</td>
+                                <% } %>
+                                <% if(user.role === 'master') { %>
+                                    <td class="tbody-common">매니저</td>
+                                <% } %>
+                                <td class="tbody-common">
+                                    <%= user.createdAt.getFullYear() %>-<%= String(user.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(user.createdAt.getDate()).padStart(2,'0') %> <%= String(user.createdAt.getHours()).padStart(2,'0') %>:<%= String(user.createdAt.getMinutes()).padStart(2,'0') %>
+                                </td>
+                                <% if(user.role === 'user') { %>
+                                    <td class="tbody-common"><button class="change-role-btn" data-user-id="<%= user._id %>" onclick="changeRoleToMaster(this)">매니저 등록</button></td>
+                                <% } %>
+                                <% if(user.role === 'master') { %>
+                                    <td class="tbody-common"><button class="change-role-btn" disabled>매니저 등록</button></td>
+                                <% } %>
+                            </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="button-group-wrap">
+                <div id="write-note-wrap">
+                    <form action="/admin/search-user" method="GET">
+                        <select name="selectOption" id="select-option">
+                            <option value="nickname" selected>닉네임</option>
+                            <option value="email">이메일</option>
+                        </select>
+                        <input type="text" name="search" id="search-content">
+                        <button type="submit" id="search-date-btn"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>
+                    </form>
+                </div>
+            </div>
+
+            <% if(users.length !== 0) { %>
+                <div id="pagination-wrap">
+                    <% if(startPage > maxPage) { %>  
+                        <a class="page page-prev-active" data-page="<%= startPage-1 %>" onclick="goToPage(this)">Prev</a>
+                    <% } else { %>
+                        <a class="page page-prev" href="javascript:void(0);">Prev</a>
+                    <% } %>
+                    <% for(let i = startPage; i <= endPage; i++) { %>
+                        <% if(i === currentPage) { %>
+                            <a class="page current-page" data-page="<%= i %>" onclick="goToPage(this)"><%= i %></a>
+                        <% } else { %>
+                            <a class="page" data-page="<%= i %>" onclick="goToPage(this)"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                    <% if(endPage < totalPage) { %>
+                        <a class="page page-next-active" data-page="<%= endPage+1 %>" onclick="goToPage(this)">Next</a>
+                    <% } else { %>
+                        <a class="page page-next" href="javascript:void(0);">Next</a>
+                    <% } %>
+                </div>
+            <% } %>
+
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+<script src="/javascript/adminList.js"></script>

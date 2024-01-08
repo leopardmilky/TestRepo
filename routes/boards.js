@@ -55,7 +55,8 @@ router.get('/new', isSignedIn, (req, res) => {
 });
 
 router.get('/new2', isSignedIn, (req, res) => {
-    res.render('board/new2');
+    const {role} = req.user;
+    res.render('board/new2', {role});
 });
 
 router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, res) => {    // 게시물 등록하기

@@ -145,13 +145,18 @@
 .tbody-common-title {
     font-size: small;
     padding: 5px;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    display: flex;
 }
 
 .tbody-common-title:hover {
     color: crimson;
+}
+
+.tbody-title {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    margin-right: 5px;
 }
 
 .image {
