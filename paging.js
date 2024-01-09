@@ -17,7 +17,7 @@ module.exports.boardPaging = (page, totalPost) => {
       endPage = totalPage;
     }
   
-    return { startPage, endPage, hidePost, maxPost, totalPage, currentPage };
+    return { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage };
   };
   
 module.exports.commentPaging = (commentPage, totalComments) => {
@@ -38,7 +38,7 @@ module.exports.commentPaging = (commentPage, totalComments) => {
     endCommentPage = totalCommentPage;
   }
 
-  return { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage };
+  return { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage, maxCommentPage };
 };
 
 module.exports.myPagePostPaging = (page, totalPost) => {
@@ -59,7 +59,7 @@ module.exports.myPagePostPaging = (page, totalPost) => {
     endPage = totalPage;
   }
 
-  return { startPage, endPage, hidePost, maxPost, totalPage, currentPage };
+  return { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage };
 };
 
 module.exports.myPageCommentPaging = (page, totalPost) => {
@@ -80,7 +80,7 @@ module.exports.myPageCommentPaging = (page, totalPost) => {
     endPage = totalPage;
   }
 
-  return { startPage, endPage, hidePost, maxPost, totalPage, currentPage };
+  return { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage };
 };
 
 module.exports.adminListPaging = (page, totalPost) => {

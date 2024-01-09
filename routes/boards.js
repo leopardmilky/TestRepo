@@ -35,14 +35,14 @@ router.get('/', catchAsync( async(req, res) => {
         if (!totalPost) {
             throw Error();
         }
-        let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = boardPaging(page, totalPost);
+        let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = boardPaging(page, totalPost);
         const board = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author'); // .populate({path: 'comments', populate: {path: 'nestedComments'}})
         res.render("board/index", {
             contents: board,
             currentPage,
             startPage,
             endPage,
-            maxPost,
+            maxPage,
             totalPage,
         });
     } catch (error) {
@@ -65,18 +65,16 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
     board.mainText = req.body.mainText;
     board.author = req.user._id;
     board.notice = req.body.notice;
-    
+
     const imgIndex = JSON.parse(req.body.imgIndex);
     for(let i = 0; i < req.files.length; i++) {
-
         const maxwidth = 1920;
         const originalImage = await sharp(req.files[i].buffer);
         const { width } = await originalImage.metadata();
         let buffer = req.files[i].buffer;
-        if( width > maxwidth ) {
+        if( width > maxwidth ) { // 이미지가 너무 클 경우.
             buffer = await sharp(req.files[i].buffer).resize({ width: 1920, height: 1080, fit: 'inside' }).toBuffer();
         } 
-        
         const imageKey = `${req.user._id}/${board.id}/${randomImageName()}${Buffer.from(req.files[i].originalname, 'latin1').toString('utf8')}`
         const fileName = `${Buffer.from(req.files[i].originalname, 'latin1').toString('utf8')}`
 
@@ -112,6 +110,8 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
     data.board = board;
     data.page = req.query.page; // 목록 버튼에 필요한 페이지넘버
 
+    await Board.updateOne({_id:id}, {$inc:{views:1}}); // 조회수 1추가
+
     // 댓글
     const totalComments = await Comment.find({ board: id }).countDocuments();  // 총 댓글갯수
     if(totalComments == 0) {    // 댓글 없을 때
@@ -134,7 +134,7 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
         }
 
         const targetCommentPage = Math.ceil(cnt / 10);  // 나누는 값은 바로아래 commentPaging()의 maxComment와 일치해야함.
-        const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(targetCommentPage, totalComments);
+        const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage, maxCommentPage } = commentPaging(targetCommentPage, totalComments);
         const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');
         data.pagination = true;
         data.comments = comments;
@@ -142,12 +142,12 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
         data.endCommentPage = endCommentPage;
         data.totalCommentPage = totalCommentPage;
         data.currentCommentPage = currentCommentPage;
-        data.maxComment = maxComment;
+        data.maxCommentPage = maxCommentPage;
 
     } else {
         
         const commentPage = req.query.commentPage || Math.ceil(totalComments / 10);
-        const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(commentPage, totalComments);
+        const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage, maxCommentPage } = commentPaging(commentPage, totalComments);
         const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');
         data.pagination = true;
         data.comments = comments;
@@ -155,7 +155,7 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
         data.endCommentPage = endCommentPage;
         data.totalCommentPage = totalCommentPage;
         data.currentCommentPage = currentCommentPage;
-        data.maxComment = maxComment;
+        data.maxCommentPage = maxCommentPage;
     }
 
     // 베스트 댓글
@@ -195,13 +195,13 @@ router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
 
     // 게시물 하단 index
     const totalPost = await Board.countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = boardPaging(req.query.page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = boardPaging(req.query.page, totalPost);
     const post = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author');
     data.contents = post;
     data.currentPage = currentPage;
     data.startPage = startPage;
     data.endPage = endPage;
-    data.maxPost = maxPost;
+    data.maxPage = maxPage;
     data.totalPage = totalPage;
 
     res.render('board/show2', data);
@@ -211,7 +211,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
     const { id } = req.params;
     const totalComments = await Comment.find({ board: id }).countDocuments();  // .skip(hidePost).limit(maxPost)
     const commentPage = req.query.commentPage;
-    const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage } = commentPaging(commentPage, totalComments);
+    const { startCommentPage, endCommentPage, hideComment, maxComment, totalCommentPage, currentCommentPage, maxCommentPage } = commentPaging(commentPage, totalComments);
     const comments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }).skip(hideComment).limit(maxComment).populate('author');  // .skip(hidePost).limit(maxPost)
     const resData = {};
     const commentsArr = [];
@@ -225,7 +225,6 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                                 <div id="parent-comments-info" class="comments-info">
                                     <div id="info-left" class="info-left">
                                         <p class="nickname">${comment.author.nickname}</p>
-                                        <p class="user-ip">123.456.78.900</p>
                                     </div>
                                     <div id="info-right" class="info-right">
                                         <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
@@ -251,7 +250,6 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                             <div id="parent-comments-info" class="comments-info">
                                 <div id="info-left" class="info-left">
                                     <p class="nickname">${comment.author.nickname}</p>
-                                    <p class="user-ip">123.456.78.900</p>
                                 </div>
                                 <div id="info-right" class="info-right">
                                     <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
@@ -277,7 +275,6 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                             <div id="parent-comments-info" class="comments-info">
                                 <div id="info-left" class="info-left">
                                     <p class="nickname">${comment.author.nickname}</p>
-                                    <p class="user-ip">123.456.78.900</p>
                                 </div>
                                 <div id="info-right" class="info-right">
                                     <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
@@ -303,7 +300,6 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                                             <div id="parent-comments-info" class="comments-info">
                                                 <div id="info-left" class="info-left">
                                                     <p class="nickname">${comment.author.nickname}</p>
-                                                    <p class="user-ip">123.456.78.900</p>
                                                 </div>
                                                 <div id="info-right" class="info-right">
                                                     <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
@@ -335,7 +331,6 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                 <div id="child-comments-info" class="comments-info">
                     <div id="info-left" class="info-left">
                         <p class="nickname">${comment.author.nickname}</p>
-                        <p class="user-ip">123.456.78.900</p>
                     </div>
                     <div id="info-right">
                         <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
@@ -360,7 +355,6 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                                         <div id="child-comments-info" class="comments-info">
                                             <div id="info-left" class="info-left">
                                                 <p class="nickname">${comment.author.nickname}</p>
-                                                <p class="user-ip">123.456.78.900</p>
                                             </div>
                                             <div id="info-right">
                                                 <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
@@ -384,7 +378,6 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
                 <div id="child-comments-info" class="comments-info">
                     <div id="info-left" class="info-left">
                         <p class="nickname">${comment.author.nickname}</p>
-                        <p class="user-ip">123.456.78.900</p>
                     </div>
                     <div id="info-right">
                         <p class="comment-date">${comment.createdAt.getFullYear()}-${String(comment.createdAt.getMonth()+1).padStart(2,'0')}-${String(comment.createdAt.getDate()).padStart(2,'0')} ${String(comment.createdAt.getHours()).padStart(2,'0')}:${String(comment.createdAt.getMinutes()).padStart(2,'0')}:${String(comment.createdAt.getSeconds()).padStart(2,'0')}</p>
@@ -408,7 +401,7 @@ router.post('/:id', catchAsync( async(req, res) => {    // 페이징된 댓글 �
         }
     }
 
-    if(startCommentPage > maxComment) {
+    if(startCommentPage > maxCommentPage) {
         const prev = `<button class="commentPage" onclick="commentPage(this)" data-postId="${id}" data-page="${ startCommentPage - 1 }">prev</button>`
         pageArr.push(prev);
     } else {

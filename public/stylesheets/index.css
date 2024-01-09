@@ -21,7 +21,6 @@ table{
 }
 
 #tr:hover {
-    /* background-color: blanchedalmond; */
     cursor: pointer;
 }
 
@@ -34,6 +33,26 @@ table{
     white-space: nowrap;
     text-overflow: ellipsis;
     vertical-align: middle;
+}
+
+.recommand {
+    width: 10%;
+}
+
+.title {
+    width: 50%;
+}
+
+.author {
+    width: 10%;
+}
+
+.date {
+    width: 20%;
+}
+
+.views {
+    width: 10%;
 }
 
 #thead {
@@ -107,6 +126,7 @@ table{
 #index-table {
     border-bottom: 2px solid black;
     border-top: 2px solid black;
+    width: 100%;
 }
 
 #table-wrap {

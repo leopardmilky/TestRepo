@@ -132,7 +132,7 @@
                             <div id="child-comments-info" class="comments-info">
                                 <div id="info-left" class="info-left">
                                     <p class="nickname"><%= comment.author.nickname %></p>
-                                    <p class="user-ip">123.456.78.900</p>
+                                    <!-- <p class="user-ip">123.456.78.900</p> -->
                                 </div>
                                 <div id="info-right">
                                     <p class="comment-date"><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></p>
@@ -163,7 +163,7 @@
     <% if(pagination) { %>
     <div id="pagination-wrap">
         <div id="pagination">
-            <% if(startCommentPage > maxComment) { %>
+            <% if(startCommentPage > maxCommentPage) { %>
                 <button class="commentPage" onclick="commentPage(this)" data-postId="<%= board._id %>" data-page="<%= startCommentPage - 1 %>">prev</button>
             <% } else { %>
                 <button class="commentPage" style="color: grey;">prev</button>
@@ -264,7 +264,7 @@
 
         <div id="pagination-wrap">
             <div id="pagination">
-                <% if(startPage > maxPost) { %>
+                <% if(startPage > maxPage) { %>
                     <a class="page page-prev-active" href="/index?page=<%= startPage-1 %>">Prev</a>
                 <% } else { %>
                     <a class="page page-prev" href="javascript:void(0);">Prev</a>

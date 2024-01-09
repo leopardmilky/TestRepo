@@ -2,5 +2,6 @@ node_modules
 uploads
 .env
 config
+postSeed/image
 dist/*
 *.loggi

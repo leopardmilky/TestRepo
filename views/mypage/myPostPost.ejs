@@ -65,7 +65,7 @@
                                 <td class="tbody-common">
                                     <%= post.createdAt.getFullYear() %>-<%= String(post.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(post.createdAt.getDate()).padStart(2,'0') %> <%= String(post.createdAt.getHours()).padStart(2,'0') %>:<%= String(post.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(post.createdAt.getSeconds()).padStart(2,'0') %>
                                 </td>
-                                <td class="tbody-common">999999999999999999999999</td>
+                                <td class="tbody-common"><%= post.views %></td>
                             </tr>
                         <% } %>
                     </tbody>

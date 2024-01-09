@@ -71,27 +71,25 @@
                 </div>
             </div>
 
-            <% if(users.length !== 0) { %>
-                <div id="pagination-wrap">
-                    <% if(startPage > maxPage) { %>  
-                        <a class="page page-prev-active" data-page="<%= startPage-1 %>" onclick="goToPage(this)">Prev</a>
+            <div id="pagination-wrap">
+                <% if(startPage > maxPage) { %>  
+                    <a class="page page-prev-active" data-page="<%= startPage-1 %>" onclick="goToPage(this)">Prev</a>
+                <% } else { %>
+                    <a class="page page-prev" href="javascript:void(0);">Prev</a>
+                <% } %>
+                <% for(let i = startPage; i <= endPage; i++) { %>
+                    <% if(i === currentPage) { %>
+                        <a class="page current-page" data-page="<%= i %>" onclick="goToPage(this)"><%= i %></a>
                     <% } else { %>
-                        <a class="page page-prev" href="javascript:void(0);">Prev</a>
+                        <a class="page" data-page="<%= i %>" onclick="goToPage(this)"><%= i %></a>
                     <% } %>
-                    <% for(let i = startPage; i <= endPage; i++) { %>
-                        <% if(i === currentPage) { %>
-                            <a class="page current-page" data-page="<%= i %>" onclick="goToPage(this)"><%= i %></a>
-                        <% } else { %>
-                            <a class="page" data-page="<%= i %>" onclick="goToPage(this)"><%= i %></a>
-                        <% } %>
-                    <% } %>
-                    <% if(endPage < totalPage) { %>
-                        <a class="page page-next-active" data-page="<%= endPage+1 %>" onclick="goToPage(this)">Next</a>
-                    <% } else { %>
-                        <a class="page page-next" href="javascript:void(0);">Next</a>
-                    <% } %>
-                </div>
-            <% } %>
+                <% } %>
+                <% if(endPage < totalPage) { %>
+                    <a class="page page-next-active" data-page="<%= endPage+1 %>" onclick="goToPage(this)">Next</a>
+                <% } else { %>
+                    <a class="page page-next" href="javascript:void(0);">Next</a>
+                <% } %>
+            </div>
 
         </div>
     </div>

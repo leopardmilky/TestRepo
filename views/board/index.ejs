@@ -9,11 +9,11 @@
     <div id="table-wrap">
         <table id="index-table">
             <thead id="thead">
-                <th class="th col-1 head wordoverflow">추천</th>
-                <th class="th col-5 head wordoverflow">제목</th>
-                <th class="th col-1 head wordoverflow">글쓴이</th>
-                <th class="th col-2 head wordoverflow">날짜</th>
-                <th class="th col-1 head wordoverflow">조회</th>
+                <th class="th wordoverflow recommand">추천</th>
+                <th class="th wordoverflow title">제목</th>
+                <th class="th wordoverflow author">글쓴이</th>
+                <th class="th wordoverflow date">날짜</th>
+                <th class="th wordoverflow views">조회</th>
             </thead>
             <tbody>
 
@@ -50,7 +50,7 @@
                     <td class="body wordoverflow text-control">
                         <%= content.createdAt.getFullYear() %>-<%= String(content.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(content.createdAt.getDate()).padStart(2,'0') %> <%= String(content.createdAt.getHours()).padStart(2,'0') %>:<%= String(content.createdAt.getMinutes()).padStart(2,'0') %>
                     </td>
-                    <td class="body wordoverflow text-control">999999999999</td>
+                    <td class="body wordoverflow text-control"><%= content.views %></td>
                 </tr>
                 <% } %>
             </tbody>
@@ -64,7 +64,7 @@
 
         <div id="pagination-wrap">
             <div id="pagination">
-                <% if(startPage > maxPost) { %>
+                <% if(startPage > maxPage) { %>
                     <a class="page page-prev-active" href="/index?page=<%= startPage-1 %>">Prev</a>
                 <% } else { %>
                     <a class="page page-prev" href="javascript:void(0);">Prev</a>

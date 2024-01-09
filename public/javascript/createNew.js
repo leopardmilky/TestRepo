@@ -87,14 +87,14 @@ async function uploadContent() { // 게시물 생성
 
     formData.append('title' ,titleData);
     formData.append('mainText' ,textData.innerHTML);
-    if(notice.checked) {
+    if(notice !== null) {
         formData.append('notice', notice.checked);
     }
     
 
     await axios.post('/index', formData)
     .then((res) => {
-        window.location.href =` http://localhost:3000/index/${res.data}`
+        window.location.href = `http://localhost:3000/index/${res.data}`
     })
 };
 
