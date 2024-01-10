@@ -35,7 +35,7 @@ const seedDB = async () => {
     }
 
     const files = fs.readdirSync('./image'); // 이미지 파일 목록
-    for(let i = 1; i <= 100; i++ ) {  // 만들 게시물 수.
+    for(let i = 1; i <= 150; i++ ) {  // 만들 게시물 수.
         const randomUserNumber = Math.floor(Math.random() * (userIdArr.length));
         const randomSentenceNumber = Math.floor(Math.random() * (sentences.length));
         const board = new Board();
@@ -134,7 +134,7 @@ const seedDB = async () => {
                     reply.board = board3.id;
                     reply.parentComment = comment2.id;
                     comment2.hasReply = true;
-                    board.comments.push(reply);
+                    board3.comments.push(reply);
                     await reply.save();
                     await comment2.save();
                     await board3.save();
