@@ -19,11 +19,13 @@ emailBtn.addEventListener('click', async() => {
                 emailMsg.innerHTML = '';
                 await axios.post('/forgotpwd/temppwd', data)
                 .then((res) => {
+                    console.log("????????????????")
                     window.alert("해당 이메일로 임시 비밀번호를 전송하였습니다.");
                     window.location.href =` http://localhost:3000/signin`
                 });
             }
-            if(emailResult.data == 'notok') {
+            
+            if(emailResult.data === 'notok') {
                 emailMsg.innerHTML = '잘못된 이메일 형식 또는 확인되지 않는 이메일입니다.';
                 emailMsg.removeAttribute('class');
                 emailMsg.setAttribute('class', 'invalidEmailMsg');

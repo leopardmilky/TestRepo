@@ -10,7 +10,7 @@
         <div id="new2TopWrap">
             <h3 id="new2Top">글쓰기</h3>
         </div>
-        <% if(role !== 'user') { %>
+        <% if(role === 'master' || role === 'superman') { %>
             <div id="notice-post-wrap">
                 <input type="checkbox" id="notice" name="notice">
                 <label for="notice">공지글</label>
@@ -77,9 +77,9 @@
             </div>
             <div id="text-input" contenteditable="true" placeholder="내용을 입력해주세요."></div>
         </div>
-        <div>
-            <button class="bottomBtn" id="submitBtn" onclick="uploadContent()">등록</button> <!--  onclick="submitContent()"-->
-            <a type="button" class="bottomBtn" id="cancelBtn" href="/index">취소</a>
+        <div class="bottom-btn-group">
+            <a type="button" class="bottom-btn" id="cancel-btn" href="/index">취소</a>
+            <button class="bottom-btn" id="submit-btn" onclick="uploadContent()">등록</button>
         </div>
     </div>
 </div>

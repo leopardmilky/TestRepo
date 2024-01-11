@@ -43,7 +43,7 @@
                             <% if(!comment.likedComment.isDeleted) { %>
                             <tr id="tr">
                                 <td class="tbody-common"><%= comment.likedComment.likes.length %></td>
-                                <td class="tbody-common-title" onclick="location.href='/index/<%= comment.likedComment.board._id %>'">
+                                <td class="tbody-common-title" data-post-id="<%= comment.relatedPost._id %>" data-comment-id="<%= comment.likedComment._id %>" onclick="goToComment(this)">
                                     <p class="tbody-common-body"><%= comment.likedComment.body %></p>
                                     <p class="tbody-common-board">제목: 
                                         <% if(comment.likedComment.board.notice) { %>
@@ -64,7 +64,7 @@
             
             <% if(comments.length !== 0) { %>
                 <div id="pagination-wrap">
-                    <% if(startPage > maxPost) { %>
+                    <% if(startPage > maxPage) { %>
                         <a class="page page-prev-active" href="/mypage/mylike-comment?page=<%= startPage-1 %>">Prev</a>
                     <% } else { %>
                         <a class="page page-prev" href="javascript:void(0);">Prev</a>

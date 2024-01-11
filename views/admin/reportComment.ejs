@@ -34,7 +34,7 @@
             </div>
 
             <div id="search-date-wrap">
-                <form action="/admin/report-comment/search-date" method="GET">
+                <form action="/admin/report-comment" method="GET">
                     <input type="datetime-local" id="start-date" name="startDate" class="control-date" value="<%= startDate %>"> ~               
                     <input type="datetime-local" id="end-date" name="endDate" class="control-date" value="<%= endDate %>">
                     <button type="submit" id="search-date-btn"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>
@@ -86,10 +86,10 @@
                 </div>
 
                 <div id="write-note-wrap">
-                    <form action="/admin/report-comment/search" method="GET" onsubmit="searchPost()">
+                    <form action="/admin/report-comment" method="GET" onsubmit="searchPost()">
                         <select name="selectOption" id="select-option">
-                            <option value="body" selected>내용</option>
-                            <option value="author">글쓴이</option>
+                            <option value="body" <%= selectOption === 'body' ? 'selected' : '' %>>내용</option>
+                            <option value="author" <%= selectOption === 'author' ? 'selected' : '' %>>글쓴이</option>
                         </select>
                         <input type="text" name="search" id="search-content" value="<%= search %>">
                         <input type="hidden" name="startDate" id="start-date-hidden">
@@ -100,7 +100,7 @@
             </div>
 
             <div id="pagination-wrap">
-                <% if(startPage > maxPost) { %>  
+                <% if(startPage > maxPage) { %>  
                     <a class="page page-prev-active" data-page="<%= startPage-1 %>" onclick="goToPage(this)">Prev</a>
                 <% } else { %>
                     <a class="page page-prev" href="javascript:void(0);">Prev</a>

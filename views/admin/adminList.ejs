@@ -62,10 +62,10 @@
                 <div id="write-note-wrap">
                     <form action="/admin/admin-list" method="GET">
                         <select name="selectOption" id="select-option">
-                            <option value="nickname" selected>닉네임</option>
-                            <option value="email">이메일</option>
+                            <option value="nickname" <%= selectOption === 'nickname' ? 'selected' : '' %>>닉네임</option>
+                            <option value="email" <%= selectOption === 'email' ? 'selected' : '' %>>이메일</option>
                         </select>
-                        <input type="text" name="search" id="search-content">
+                        <input type="text" name="search" id="search-content" value="<%= search %>">
                         <button type="submit" id="search-date-btn"><i class="fa-solid fa-magnifying-glass search-icon"></i></button>
                     </form>
                 </div>
@@ -96,5 +96,4 @@
 </div>
 
 <%- include('../partials/footer') %>
-<!-- <script src="/javascript/reportPost.js"></script> -->
 <script src="/javascript/adminList.js"></script>

@@ -4,31 +4,16 @@ body {
     height: 100vh;
 }
 
-/* #userInfoWrap {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    border: 5px solid red;
-}
-
-#userInfoInnerWrap {
-    border: 5px solid blue;
-} */
-
 #pwdWrap {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    /* border: 1px solid black; */
     height: 100%;
 }
 
 #pwdInnerWrap {
     border: 1px solid black;
-    border-radius: 10px;
     width: 500px;
     padding: 50px;
 }
@@ -57,7 +42,6 @@ body {
     width: 100%;
     height: 40px;
     padding: 10px;
-    border-radius: 10px;
 }
 
 #pwdBtnWrap, #pwdBtn {
@@ -65,5 +49,8 @@ body {
 }
 
 #pwdBtn{
+    border: 1px solid black;
+    background-color: black;
+    color: white;
     height: 40px;
 }

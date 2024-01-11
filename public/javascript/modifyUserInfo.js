@@ -7,7 +7,7 @@ window.onpageshow = function(event){
     }
 }
 
-const cancel = document.getElementById('cancel');
+const cancel = document.getElementById('modify-user-cancel');
 cancel.addEventListener('click', ()=>{
     window.location.href = 'http://localhost:3000/index';
 })
@@ -16,8 +16,9 @@ async function modifyUserInfo(){
     const nickname = document.getElementById('nickname').value;
     const password = document.getElementById('password').value;
     const confirmPwd = document.getElementById('confirmPwd').value;
+    const oldPassword = document.getElementById('old-password').value;
 
-    const data = {nickname: nickname, password: password, confirmPwd: confirmPwd};
+    const data = {nickname: nickname, password: password, confirmPwd: confirmPwd, oldPassword: oldPassword};
     await axios.put('/saveUserInfo', data)
     .then((res) => {
         window.alert('수정이 완료되었습니다.');
@@ -37,7 +38,7 @@ async function modifyUserInfo(){
             location.reload();
         }
         if(err.response.data == 'ne'){
-            window.alert('비밀번호가 일치하지 않거나 6자리 미만입니다.');
+            window.alert('비밀번호 입력이 잘 못되었습니다. 다시 확인해 주세요.');
             location.reload();
         }
 
@@ -50,12 +51,12 @@ withdrawBtn.onclick = function() {
     modalWrap.style.display = 'block';
 }
 
-const closeModal = document.getElementById('closeModal');
+const closeModal = document.getElementById('closeModal-btn');
 closeModal.onclick = function() {
     modalWrap.style.display = 'none';
 }
 
-const withdraw = document.getElementById('withdraw');
+const withdraw = document.getElementById('withdraw-btn');
 withdraw.onclick = function() {
     window.location.href = '/withdraw'
 }

@@ -29,6 +29,13 @@ function myNoteTapMenu(e) {
     }
 }
 
+
+function goToComment(e) {
+    const postId = e.getAttribute('data-post-id');
+    const commentId = e.getAttribute('data-comment-id');
+    window.location.href = `/index/${postId}?commentId=${commentId}`;
+}
+
 function sendNotePopUp() {
     window.open("/mypage/send-note","_blank","width=550, height=350, top=100px, left=100px")
 }

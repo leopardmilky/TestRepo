@@ -18,17 +18,21 @@
             <label class="inputLabel" for="nickname">닉네임</label>
             <input type="text" class="control-input" id="nickname" name="nickname" autocomplete="off" value="<%= nickname %>">
         </div>
+        <div id="old-password-wrap" class="inputWrap">
+            <label class="inputLabel" for="old-password">현재 비밀번호</label>
+            <input type="password" class="control-input" id="old-password" name="old-password" autocomplete="off" placeholder="변경 시 입력">
+        </div>
         <div id="passwordWrap" class="inputWrap">
-            <label class="inputLabel" for="password">비밀번호</label>
+            <label class="inputLabel" for="password">새 비밀번호</label>
             <input type="password" class="control-input" id="password" name="password" autocomplete="off" placeholder="변경 시 입력 (최소 6자리 이상)">
         </div>
         <div id="confirmPwdWrap" class="inputWrap">
-            <label class="inputLabel" for="confirmPwd">비밀번호 확인</label>
+            <label class="inputLabel" for="confirmPwd">새 비밀번호 확인</label>
             <input type="password" class="control-input" id="confirmPwd" name="confirmPwd" autocomplete="off" placeholder="변경 시 입력 (최소 6자리 이상)">
         </div>
         <div id="buttonWrap">
-            <button class="btn btn-success" type="submit" id="submit" onclick="modifyUserInfo()">수정완료</button>
-            <button class="btn btn-dark" type="button" id="cancel">취소</button>
+            <button type="button" id="modify-user-cancel">취소</button>
+            <button type="submit" id="modify-user-submit" onclick="modifyUserInfo()">수정완료</button>
         </div>
     </div>
     <div id="withdrawWrap">
@@ -44,8 +48,8 @@
                 <p>정말로 <b>탈퇴</b> 하시겠습니까?</p>
             </div>
             <div id="modalBtn">
-                <button id="withdraw">예</button>
-                <button id="closeModal">아니오</button>
+                <button id="closeModal-btn">아니오</button>
+                <button id="withdraw-btn">예</button>
             </div>
         </div>
     </div>

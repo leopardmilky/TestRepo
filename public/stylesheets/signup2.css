@@ -15,7 +15,6 @@ body {
 
 #emailInnerWrap {
     border: 1px solid black;
-    border-radius: 10px;
     width: 500px;
     padding: 50px;
 }
@@ -39,7 +38,6 @@ body {
     width: 100%;
     height: 40px;
     padding: 10px;
-    border-radius: 10px;
 }
 
 #emailBtnWrap, #emailBtn {
@@ -47,6 +45,9 @@ body {
 }
 
 #emailBtn{
+    border: 1px solid black;
+    background-color: black;
+    color: whitesmoke;
     height: 40px;
 }
 
@@ -56,13 +57,11 @@ body {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    border: 1px solid black;
     height: 100%;
 }
 
 #verifyInnerWrap{
     border: 1px solid black;
-    border-radius: 10px;
     width: 500px;
     padding: 50px;
 }
@@ -78,7 +77,6 @@ body {
 }
 
 #inputEmailCode{
-    border-radius: 10px;
     width: 100%;
     height: 40px;
     padding: 10px;
@@ -95,6 +93,13 @@ body {
 
 #emailCodeBtnWrap, #emailCode {
     width: 100%;
+}
+
+#emailCode {
+    border: 1px solid black;
+    background-color: black;
+    color: white;
+    height: 40px;
 }
 
 #emailCodeMsg {
@@ -114,13 +119,11 @@ body {
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    border: 1px solid black;
     height: 100%;
 }
 
 #userInfoInnerWrap{
     border: 1px solid black;
-    border-radius: 10px;
     width: 500px;
     padding: 50px;
 }
@@ -133,7 +136,6 @@ body {
 }
 
 #nickname {
-    border-radius: 10px;
     width: 100%;
     height: 40px;
     padding: 10px;
@@ -152,7 +154,6 @@ body {
 }
 
 #password{
-    border-radius: 10px;
     width: 100%;
     height: 40px;
     padding: 10px;
@@ -196,7 +197,6 @@ body {
 }
 
 #confirmPassword {
-    border-radius: 10px;
     width: 100%;
     height: 40px;
     padding: 10px;
@@ -208,4 +208,8 @@ body {
 }
 #registerBtn {
     width: 100%;
+    height: 40px;
+    border: 1px solid black;
+    background-color: black;
+    color: white;
 }

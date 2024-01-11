@@ -14,7 +14,7 @@ body {
 
 #input-form {
     border: 1px solid black;
-    border-radius: 10px;
+    /* border-radius: 10px; */
     padding: 30px;
     width: 500px;
 }
@@ -29,14 +29,28 @@ body {
     width: 100%;
 }
 
+#email, #password {
+    padding-left: 10px;
+}
+
+.input-form {
+    border: 1px solid #999;
+    width: 100%;
+    height: 40px;
+}
+
 #input-pwd-wrap {
     margin-top: 10px;
     width: 100%;
 }
 
 #submit-btn {
+    border: 1px solid black;
+    background-color: black;
+    color: whitesmoke;
     margin-top: 10px;
     width: 100%;
+    height: 40px;
 }
 
 #fotgot-pwd-wrap {

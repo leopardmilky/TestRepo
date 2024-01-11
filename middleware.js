@@ -105,8 +105,8 @@ module.exports.validateNestedComment = (req, res, next) => {
 
 module.exports.verifyUser = async(req, res, next) => {
     const { password, error } = req.body;
-    const user = await User.findById(req.user._id);
-    const auth = await user.authenticate(password);
+    // const user = await User.findById(req.user._id);
+    const auth = await req.user.authenticate(password);
     if(auth.user.email == req.user.email){
         next();
     } else {
@@ -119,7 +119,7 @@ module.exports.validateNickname = async(req, res, next) => {
     const afterNick = req.body.nickname;
     const beforeNick = req.user.nickname;
     // const {error} = userNickname.validate({nickname:afterNick});
-    if(afterNick.length == 0 || afterNick.length > 20) {
+    if(afterNick.length === 0 || afterNick.length > 20) {
         return res.status(400).json('length');
     }
 
@@ -128,7 +128,7 @@ module.exports.validateNickname = async(req, res, next) => {
     if(!result){    // 닉네임 허용 패턴에 부합하지 않는 경우.
         return res.status(400).json('pattern');
     }
-    if(afterNick != beforeNick){ // 기존 닉네임 변경 감지
+    if(afterNick !== beforeNick){ // 기존 닉네임 변경 감지
         const reslt = await User.find({nickname:afterNick});    // 중복확인
         if(reslt.length > 0){
             return res.status(400).json('nk');
@@ -137,10 +137,10 @@ module.exports.validateNickname = async(req, res, next) => {
     next();
 }
 
-module.exports.validatePassword = (req, res, next) => {
-    const password = req.body.password;
-    const confirmPwd = req.body.confirmPwd;
-    if(password.length === 0 && confirmPwd.length === 0) {
+module.exports.validatePassword = async (req, res, next) => {
+    const {password, confirmPwd} = req.body;
+    
+    if(!password && !confirmPwd) {
         return next();
     }
     if(password != confirmPwd || password.length < 6 || confirmPwd.length < 6) {

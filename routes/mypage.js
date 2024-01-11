@@ -25,10 +25,10 @@ router.get('/mypost-post', isSignedIn, catchAsync( async(req, res) => {
     const { page } = req.query;
 
     const totalPost = await Board.find({author:id}).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPagePostPaging(page, totalPost);
     const posts = await Board.find({author:id}).sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author');
 
-    res.render('mypage/myPostPost', {posts, startPage, endPage, totalPage, currentPage, maxPost, role});
+    res.render('mypage/myPostPost', {posts, startPage, endPage, totalPage, currentPage, maxPage, role});
 }));
 
 router.get('/mypost-comment', isSignedIn, catchAsync( async(req, res) => {
@@ -36,10 +36,10 @@ router.get('/mypost-comment', isSignedIn, catchAsync( async(req, res) => {
     const { page } = req.query;
 
     const totalPost = await Comment.find({author:id}).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPageCommentPaging(page, totalPost);
     const comments = await Comment.find({author:id, isDeleted: false}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author').populate('board');
 
-    res.render('mypage/myPostComment', {comments, startPage, endPage, totalPage, currentPage, maxPost, role});
+    res.render('mypage/myPostComment', {comments, startPage, endPage, totalPage, currentPage, maxPage, role});
 }));
 
 router.get('/mylike-post', isSignedIn, catchAsync( async(req, res) => {
@@ -47,10 +47,10 @@ router.get('/mylike-post', isSignedIn, catchAsync( async(req, res) => {
     const { page } = req.query;
 
     const totalPost = await LikePost.find({user: id}).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPagePostPaging(page, totalPost);
     const posts = await LikePost.find({user: id}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('likedPost'); //.populate('reportedComment') 
 
-    res.render('mypage/myLikePost', {posts, startPage, endPage, totalPage, currentPage, maxPost, role})
+    res.render('mypage/myLikePost', {posts, startPage, endPage, totalPage, currentPage, maxPage, role})
 }));
 
 router.get('/mylike-comment', isSignedIn, catchAsync( async(req, res) => {
@@ -58,10 +58,10 @@ router.get('/mylike-comment', isSignedIn, catchAsync( async(req, res) => {
     const { page } = req.query;
 
     const totalPost = await LikeComment.find({user: id}).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPageCommentPaging(page, totalPost);
     const comments = await LikeComment.find({user: id}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate({path: 'likedComment', populate: {path: 'board'}});
 
-    res.render('mypage/myLikeComment', {comments, startPage, endPage, totalPage, currentPage, maxPost, role});
+    res.render('mypage/myLikeComment', {comments, startPage, endPage, totalPage, currentPage, maxPage, role});
 }));
 
 router.get('/myreport-post', isSignedIn, catchAsync( async(req, res) => {
@@ -69,10 +69,10 @@ router.get('/myreport-post', isSignedIn, catchAsync( async(req, res) => {
     const { page } = req.query;
 
     const totalPost = await ReportPost.find({user: id}).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPagePostPaging(page, totalPost);
     const posts = await ReportPost.find({user: id}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate('reportedPost'); //.populate('reportedComment') 
 
-    res.render('mypage/myReportPost', {posts, startPage, endPage, totalPage, currentPage, maxPost, role});
+    res.render('mypage/myReportPost', {posts, startPage, endPage, totalPage, currentPage, maxPage, role});
 }));
 
 router.get('/myreport-comment', isSignedIn, catchAsync( async(req, res) => {
@@ -80,10 +80,10 @@ router.get('/myreport-comment', isSignedIn, catchAsync( async(req, res) => {
     const { page } = req.query;
 
     const totalPost = await ReportComment.find({user: id}).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPageCommentPaging(page, totalPost);
     const comments = await ReportComment.find({user: id}).sort({ createdAt: -1 }).skip(hidePost).limit(maxPost).populate({path: 'reportedComment', populate: {path: 'board'}}); //.populate('reportedComment') 
 
-    res.render('mypage/myReportComment', {comments, startPage, endPage, totalPage, currentPage, maxPost, role});
+    res.render('mypage/myReportComment', {comments, startPage, endPage, totalPage, currentPage, maxPage, role});
 }));
 
 router.get('/mynote-received', isSignedIn, catchAsync( async(req, res) => { // 받은 쪽지 페이지
@@ -91,10 +91,10 @@ router.get('/mynote-received', isSignedIn, catchAsync( async(req, res) => { // �
     const { page } = req.query;
 
     const totalPost = await Note.find({recipient: id, recipientSaved: false, recipientDeleted: false}).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPageCommentPaging(page, totalPost);
     const notes = await Note.find({recipient: id, recipientSaved: false, recipientDeleted: false}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('sender'); //.populate('reportedComment') 
 
-    res.render('mypage/myNoteReceived', {notes, startPage, endPage, totalPage, currentPage, maxPost, role, me:id});
+    res.render('mypage/myNoteReceived', {notes, startPage, endPage, totalPage, currentPage, maxPage, role, me:id});
 }));
 
 router.get('/mynote-sent', isSignedIn, catchAsync( async(req, res) => { // 보낸 쪽지 페이지
@@ -102,10 +102,10 @@ router.get('/mynote-sent', isSignedIn, catchAsync( async(req, res) => { // 보�
     const { page } = req.query;
 
     const totalPost = await Note.find({sender: id, senderSaved: false, senderDeleted: false}).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPageCommentPaging(page, totalPost);
     const notes = await Note.find({sender: id, senderSaved: false, senderDeleted: false}).sort({ sentAt: -1 }).skip(hidePost).limit(maxPost).populate('recipient'); //.populate('reportedComment') 
 
-    res.render('mypage/myNoteSent', {notes, startPage, endPage, totalPage, currentPage, maxPost, role, me:id});
+    res.render('mypage/myNoteSent', {notes, startPage, endPage, totalPage, currentPage, maxPage, role, me:id});
 }));
 
 router.get('/mynote-inbox', isSignedIn, catchAsync( async(req, res) => { // 쪽지 보관함 페이지
@@ -132,7 +132,7 @@ router.get('/mynote-inbox', isSignedIn, catchAsync( async(req, res) => { // 쪽�
         { $replaceRoot: { newRoot: '$note' } }, 
     ]);
 
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost.length);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPageCommentPaging(page, totalPost.length);
 
     const notes = await Note.aggregate([
         {
@@ -190,7 +190,7 @@ router.get('/mynote-inbox', isSignedIn, catchAsync( async(req, res) => { // 쪽�
     ]);
 
 
-    res.render('mypage/myNoteInbox', {notes, startPage, endPage, totalPage, currentPage, maxPost, role, me:nickname})
+    res.render('mypage/myNoteInbox', {notes, startPage, endPage, totalPage, currentPage, maxPage, role, me:nickname})
 }));
 
 

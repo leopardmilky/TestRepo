@@ -5,15 +5,9 @@ const { isSignedIn, isAdmin, isRoot } = require('../middleware');
 const Board = require('../models/board');
 const Comment = require('../models/comment');
 const LikeComment = require('../models/likeComment');
-const LikePost = require('../models/likePost');
-const ReportComment = require('../models/reportComment');
-const ReportPost = require('../models/reportPost');
-const Note = require('../models/note');
 const Notification = require('../models/notification');
 const User = require('../models/user');
-// require('dotenv').config();
 const { myPagePostPaging, myPageCommentPaging, adminListPaging } = require('../paging');
-const mongoose = require('mongoose');
 
 
 
@@ -22,61 +16,6 @@ router.get('/', isSignedIn, isAdmin, (req, res) => { // 미들웨어로 로그�
 });
 
 router.get('/report-post', isSignedIn, isAdmin, catchAsync( async(req, res) => {
-    const { role } = req.user;
-    let { page } = req.query;
-    if(!page) { page = 1; }
-
-    const totalPost = await Board.find().countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
-    const posts = await Board.aggregate([   // 신고수대로 정렬하기 위해 aggregate사용.
-        {$lookup:{from:'users', localField:'author', foreignField:'_id', as:'authorData'}},
-        {$addFields:{author:{$arrayElemAt:['$authorData', 0]},reportsCount:{$size:'$reports'}}},
-        {$project:{_id:1, title:1 ,notice:1, createdAt:1, author:{_id:1, nickname:1}, comments:1, images:1, reports:1, reportsCount:1}},
-        {$sort:{reportsCount:-1, createdAt:1}},
-        { $skip: hidePost }, 
-        { $limit: maxPost } 
-    ]);
-    
-    res.render('admin/reportPost', { posts, startPage, endPage, totalPage, currentPage, maxPost, role, startDate:undefined, endDate:undefined, search:undefined });
-}));
-
-router.get('/report-post/search-date', isSignedIn, isAdmin, catchAsync( async(req, res) => {
-    let {startDate, endDate, page} = req.query;
-    const { role } = req.user;
-    if(!page) { page = 1; }
-
-    const query = {};
-    if(startDate && endDate) {
-        const startDateObj = new Date(startDate);
-        const endDateObj = new Date(endDate);
-        query.createdAt = { $gte: startDateObj, $lte: endDateObj };
-    }
-    if(startDate && !endDate) {
-        const startDateObj = new Date(startDate);
-        query.createdAt = { $gte: startDateObj };
-    }
-    if(!startDate && endDate) {
-        const endDateObj = new Date(endDate);
-        query.createdAt = { $lte: endDateObj };
-    }
-
-    const totalPost = await Board.find(query).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
-    const posts = await Board.aggregate([
-        {$match: query},
-        {$lookup:{from:'users', localField:'author', foreignField:'_id', as:'authorData'}},
-        {$addFields:{author:{$arrayElemAt:['$authorData', 0]},reportsCount:{$size:'$reports'}}},
-        {$project:{_id:1, title:1 ,notice:1, createdAt:1, author:{_id:1, nickname:1}, comments:1, images:1, reports:1, reportsCount:1}},
-        {$sort:{reportsCount:-1, createdAt:1}},
-        {$skip: hidePost}, 
-        {$limit: maxPost} 
-    ]);
-
-    return res.render('admin/reportPost', { posts, startPage, endPage, totalPage, currentPage, maxPost, role, startDate, endDate, search:undefined });
-}));
-
-
-router.get('/report-post/search', isSignedIn, isAdmin, catchAsync( async(req, res) => {
     let {selectOption, search, startDate, endDate, page} = req.query;
     const { role } = req.user;
     if(!page) { page = 1; }
@@ -115,7 +54,7 @@ router.get('/report-post/search', isSignedIn, isAdmin, catchAsync( async(req, re
     }
 
     const totalPost = await Board.find(query).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPagePostPaging(page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPagePostPaging(page, totalPost);
     const posts = await Board.aggregate([
         {$match: query},
         {$lookup:{from:'users', localField:'author', foreignField:'_id', as:'authorData'}},
@@ -126,69 +65,11 @@ router.get('/report-post/search', isSignedIn, isAdmin, catchAsync( async(req, re
         {$limit: maxPost} 
     ]);
 
-    return res.render('admin/reportPost', { posts, startPage, endPage, totalPage, currentPage, maxPost, role, startDate, endDate, search });
+    return res.render('admin/reportPost', { posts, startPage, endPage, totalPage, currentPage, maxPage, role, startDate, endDate, search, selectOption });
 }));
-
 
 
 router.get('/report-comment', isSignedIn, isAdmin, catchAsync( async(req, res) => {
-    const { role } = req.user;
-    let { page } = req.query;
-    if(!page) { page = 1; }
-
-    const totalPost = await Comment.find().countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
-    const comments = await Comment.aggregate([   // 신고수대로 정렬하기 위해 aggregate사용.
-        {$lookup:{from:'users', localField:'author', foreignField:'_id', as:'authorData'}},
-        {$lookup:{from:'boards', localField:'board', foreignField:'_id', as:'boardData'}},
-        {$addFields:{author:{$arrayElemAt:['$authorData', 0]},reportsCount:{$size:'$reports'},board:{$arrayElemAt:['$boardData', 0]}}},
-        {$project:{_id:1, body:1, createdAt:1, author:{_id:1, nickname:1}, board:{_id:1, title:1}, parentComment:1, reports:1, reportsCount:1, isDeleted:1}},
-        {$sort:{reportsCount:-1, createdAt:1}},
-        { $skip: hidePost },
-        { $limit: maxPost }
-    ]);
-
-    res.render('admin/reportComment', { comments, startPage, endPage, totalPage, currentPage, maxPost, role, startDate:undefined, endDate:undefined, search:undefined });
-}));
-
-router.get('/report-comment/search-date', isSignedIn, isAdmin, catchAsync( async(req, res) => {
-    let {startDate, endDate, page} = req.query;
-    const { role } = req.user;
-    if(!page) { page = 1; }
-
-    const query = {};
-    if(startDate && endDate) {
-        const startDateObj = new Date(startDate);
-        const endDateObj = new Date(endDate);
-        query.createdAt = { $gte: startDateObj, $lte: endDateObj };
-    }
-    if(startDate && !endDate) {
-        const startDateObj = new Date(startDate);
-        query.createdAt = { $gte: startDateObj };
-    }
-    if(!startDate && endDate) {
-        const endDateObj = new Date(endDate);
-        query.createdAt = { $lte: endDateObj };
-    }
-
-    const totalPost = await Comment.find(query).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
-    const comments = await Comment.aggregate([
-        {$match: query},
-        {$lookup:{from:'users', localField:'author', foreignField:'_id', as:'authorData'}},
-        {$lookup:{from:'boards', localField:'board', foreignField:'_id', as:'boardData'}},
-        {$addFields:{author:{$arrayElemAt:['$authorData', 0]},reportsCount:{$size:'$reports'},board:{$arrayElemAt:['$boardData', 0]}}},
-        {$project:{_id:1, body:1, createdAt:1, author:{_id:1, nickname:1}, board:{_id:1, title:1}, parentComment:1, reports:1, reportsCount:1, isDeleted:1}},
-        {$sort:{reportsCount:-1, createdAt:1}},
-        {$skip: hidePost}, 
-        {$limit: maxPost} 
-    ]);
-
-    return res.render('admin/reportComment', { comments, startPage, endPage, totalPage, currentPage, maxPost, role, startDate, endDate, search:undefined });
-}));
-
-
-router.get('/report-comment/search', isSignedIn, isAdmin, catchAsync( async(req, res) => {
     let {selectOption, search, startDate, endDate, page} = req.query;
     const { role } = req.user;
     if(!page) { page = 1; }
@@ -222,7 +103,7 @@ router.get('/report-comment/search', isSignedIn, isAdmin, catchAsync( async(req,
         query.createdAt = { $lte: endDateObj };
     }
     const totalPost = await Comment.find(query).countDocuments({});
-    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage } = myPageCommentPaging(page, totalPost);
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = myPageCommentPaging(page, totalPost);
     const comments = await Comment.aggregate([
         {$match: query},
         {$lookup:{from:'users', localField:'author', foreignField:'_id', as:'authorData'}},
@@ -233,7 +114,8 @@ router.get('/report-comment/search', isSignedIn, isAdmin, catchAsync( async(req,
         {$skip: hidePost}, 
         {$limit: maxPost} 
     ]);
-    return res.render('admin/reportComment', { comments, startPage, endPage, totalPage, currentPage, maxPost, role, startDate, endDate, search });
+    return res.render('admin/reportComment', { comments, startPage, endPage, totalPage, currentPage, maxPage, role, startDate, endDate, search, selectOption });
+
 }));
 
 router.delete('/delete-post', isSignedIn, isAdmin, catchAsync( async(req, res) => {
@@ -279,7 +161,6 @@ router.delete('/delete-comment', isSignedIn, isAdmin, catchAsync( async(req, res
             await Board.findByIdAndUpdate(comment.board._id, { $pull:{ comments: comment._id } });
             await Comment.findByIdAndDelete(comment._id);
         }
-
     }
 
     res.status(200).json('ok');
@@ -307,7 +188,7 @@ router.get('/admin-list', isSignedIn, isRoot, catchAsync( async(req, res) => {
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = adminListPaging(page, totalPost);
     const users = await User.find(query).skip(hidePost).limit(maxPost);
 
-    res.render('admin/adminList', { role, users, startPage, endPage, totalPage, currentPage, maxPage });
+    res.render('admin/adminList', { role, users, startPage, endPage, totalPage, currentPage, maxPage, selectOption, search });
 }));
 
 
@@ -321,6 +202,7 @@ router.post('/admin-list/change-role', isSignedIn, isRoot, catchAsync( async(req
 router.get('/search-user', isSignedIn, isRoot, catchAsync( async(req, res) => {
     const {role} = req.user;
     let {page, selectOption, search} = req.query;
+    console.log("page: ", page)
     if(!page) { page = 1; }
 
     const query = {role:{$in:['user','master']}};
@@ -339,7 +221,7 @@ router.get('/search-user', isSignedIn, isRoot, catchAsync( async(req, res) => {
     let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = adminListPaging(page, totalPost);
     const users = await User.find(query).skip(hidePost).limit(maxPost);
 
-    res.render('admin/searchUser', { role, users, startPage, endPage, totalPage, currentPage, maxPage });
+    res.render('admin/searchUser', { role, users, startPage, endPage, totalPage, currentPage, maxPage, selectOption, search });
 }));
 
 

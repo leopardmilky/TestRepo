@@ -90,47 +90,39 @@ const seedDB = async () => {
         } else {
             randomCommentCount = Math.floor(Math.random() * 10) + 1;
         }
-        console.log("randomCommentCount: ", randomCommentCount);
         for(let i = 0; i < randomCommentCount; i++) {  // 부모댓글
             const randomUserNumber = Math.floor(Math.random() * (userIdArr.length));
-            console.log("randomUserNumber: ", randomUserNumber)
             const randomSentenceNumber = Math.floor(Math.random() * (sentences.length));
             const board2 = await Board.findById(board.id).populate('author');
             const comment = new Comment();
             comment.body = sentences[randomSentenceNumber];
             comment.author = userIdArr[randomUserNumber];
-            console.log("userIdArr[randomUserNumber]: ", userIdArr[randomUserNumber])
             comment.board = board2.id;
             comment.parentComment = comment.id;
             board2.comments.push(comment);
             await comment.save();
             await board2.save();
-            if(board2.author.id !== userIdArr[randomUserNumber]) { // 나 자신에게 쓴건 알림 안함.
+            if(board2.author.id !== userIdArr[randomUserNumber]) {
                 const newNotification = new Notification();
                 newNotification.sender = userIdArr[randomUserNumber];
                 newNotification.recipient = board2.author.id;
                 newNotification.notificationType = 'postComment';
-                newNotification.commentId = comment.id; // 부모댓글 (연관 댓글이 뭔지 확인하려고)
-                newNotification.postId = board2.id; // 게시물(무슨 글썻지 확인하려고)
+                newNotification.commentId = comment.id;
+                newNotification.postId = board2.id;
                 await newNotification.save();
             }
 
             const probab = Math.random();
             if(probab > 0.9) {    // 대댓글
                 let randomReplyCount = Math.floor(Math.random() * 10) + 1;
-                console.log("=============================================================");
-                console.log("randomReplyCount: ", randomReplyCount);
                 for(let i = 0; i < randomReplyCount; i++) { 
                     const randomUserNumber = Math.floor(Math.random() * (userIdArr.length));
-                    console.log("randomUserNumber: ", randomUserNumber);
                     const randomSentenceNumber = Math.floor(Math.random() * (sentences.length));
-
                     const board3 = await Board.findById(board.id).populate('author');
                     const comment2 = await Comment.findById(comment.id).populate('author');
                     const reply = new Comment();
                     reply.body = sentences[randomSentenceNumber];
                     reply.author = userIdArr[randomUserNumber];
-                    console.log("userIdArr[randomUserNumber]: ", userIdArr[randomUserNumber]);
                     reply.board = board3.id;
                     reply.parentComment = comment2.id;
                     comment2.hasReply = true;
@@ -139,17 +131,16 @@ const seedDB = async () => {
                     await comment2.save();
                     await board3.save();
 
-                    if(userIdArr[randomUserNumber] !== comment2.author.id) { // 나 자신에게 쓴건 알림 안함.
+                    if(userIdArr[randomUserNumber] !== comment2.author.id) {
                         const newNotification = new Notification();
                         newNotification.sender = userIdArr[randomUserNumber];
                         newNotification.recipient = comment2.author.id;
                         newNotification.notificationType = 'commentReply';
-                        newNotification.postId = board3.id;  // 댓글이 달린 게시물
-                        newNotification.commentId = comment2.id; // 부모댓글 (연관 댓글이 뭔지 확인하려고)
-                        newNotification.replyId = reply.id; // 대댓글 (무슨 글썻지 확인하려고)
+                        newNotification.postId = board3.id;
+                        newNotification.commentId = comment2.id;
+                        newNotification.replyId = reply.id;
                         await newNotification.save();
                     }
-
                 }
             }
         }

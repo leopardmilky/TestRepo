@@ -83,7 +83,7 @@
 
             <% if(notes.length !== 0) { %>
                 <div id="pagination-wrap">
-                    <% if(startPage > maxPost) { %>
+                    <% if(startPage > maxPage) { %>
                         <a class="page page-prev-active" href="/mypage/mynote-inbox?page=<%= startPage-1 %>">Prev</a>
                     <% } else { %>
                         <a class="page page-prev" href="javascript:void(0);">Prev</a>

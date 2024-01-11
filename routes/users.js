@@ -168,8 +168,7 @@ router.get('/withdraw/verifycode/deleteUser', isSignedIn, deleteUserPermission, 
 }));
 
 router.put('/saveUserInfo', isSignedIn, validateNickname, validatePassword, catchAsync( async(req, res) => {
-    const password = req.body.password;
-    const confirmPwd = req.body.confirmPwd;
+    const {password, confirmPwd, oldPassword} = req.body;
     const afterNick = req.body.nickname;
     const beforeNick = req.user.nickname;
 
@@ -178,25 +177,39 @@ router.put('/saveUserInfo', isSignedIn, validateNickname, validatePassword, catc
         await User.findByIdAndUpdate(req.user.id, userNick);
 
         if(password === confirmPwd && password.length >= 6 && confirmPwd.length >= 6){  // 패스워드 조건 만족
-            const user = await User.find({nickname:afterNick});
-            await user[0].setPassword(confirmPwd);
-            await user[0].save();
-            return res.status(200).json({ok: true});
+            const auth = await req.user.authenticate(oldPassword); // 현재 비밀번호 확인
+            if(auth.user.email == req.user.email) {
+                const user = await User.findOne({nickname:afterNick});
+                await user.setPassword(confirmPwd);
+                await user.save();
+                return res.status(200).json({ok: true});
+            } else {
+                return res.status(400).json('ne');
+            }
         }
-        if(password.length === 0 && confirmPwd.length === 0){   // 패스워드 변경 없음
+        if(!password && !confirmPwd && !oldPassword){   // 패스워드 변경 없음
             return res.status(200).json({ok: true});
+        } else {
+            return res.status(400).json('ne');
         }
     }
 
     if(afterNick === beforeNick) {  // 닉네임 변경 없음
         if(password === confirmPwd && password.length >= 6 && confirmPwd.length >= 6){  // 패스워드 조건 만족
-            const user = await User.find({nickname:beforeNick});
-            await user[0].setPassword(confirmPwd);
-            await user[0].save();
-            return res.status(200).json({ok: true});
+            const auth = await req.user.authenticate(oldPassword);  
+            if(auth.user.email == req.user.email) {
+                const user = await User.findOne({nickname:beforeNick});
+                await user.setPassword(confirmPwd);
+                await user.save();
+                return res.status(200).json({ok: true});
+            } else {
+                return res.status(400).json('ne');
+            }
         }
-        if(password.length === 0 && confirmPwd.length === 0){   // 패스워드 변경 없음
+        if(!password && !confirmPwd && !oldPassword){   // 패스워드 변경 없음
             return res.status(200).json({ok: true});
+        } else {
+            return res.status(400).json('ne');
         }
     }
 
@@ -204,11 +217,10 @@ router.put('/saveUserInfo', isSignedIn, validateNickname, validatePassword, catc
 
 router.post('/forgotpwd/temppwd', catchAsync( async(req, res) => {
     const { email } = req.body;
-    const user = await User.find({email:email});
+    const user = await User.findOne({email:email});
     const randomString = Math.random().toString(36).slice(2);
-
-    await user[0].setPassword(randomString);
-    await user[0].save();   // 이건 내가 뭘 참고해서 쓴거지..? 필요한거 맞나? https://www.npmjs.com/package/passport-local-mongoose 이거인듯....
+    await user.setPassword(randomString);
+    await user.save();   // 이건 내가 뭘 참고해서 쓴거지..? 필요한거 맞나? https://www.npmjs.com/package/passport-local-mongoose 이거인듯....
 
     const smtpTransport = nodemailer.createTransport({
         service: 'gmail', // 사용할 메일 서비스
@@ -219,37 +231,36 @@ router.post('/forgotpwd/temppwd', catchAsync( async(req, res) => {
         tls: {
           rejectUnauthorized: false,
         },
-      });
+    });
 
-      const mailOptions = {
+    const mailOptions = {
         from: process.env.NODE_MAILER_ID,
         to: email,
         subject: "임시 비밀번호",
         text: "nodemailer 테스트 메일입니다.",
         html: `<p>임시 비밀번호는 ${randomString} 입니다. 로그인 후 반드시 비밀번호를 변경해 주세요.</p>`
-      };
+    };
 
-      await smtpTransport.sendMail(mailOptions, (error, responses) => {
+    await smtpTransport.sendMail(mailOptions, (error, responses) => {
         if (error) {
-          res.status(400).json({ ok: false });
+            res.status(400).json({ ok: false });
         } else {
-          res.status(200).json({ ok: true });
+            res.status(200).json({ ok: true });
         }
         smtpTransport.close();
-      });
+    });
 
-      res.status(200).json({ ok: true });
+    res.status(200).json({ ok: true });
 }));
 
 router.post('/forgotpwd/check', catchAsync( async(req, res) => {
     const {email} = req.body;
 
     if(email) {
-        const user = await User.find({email:email});
-        if(user.length > 0){
+        const user = await User.findOne({email:email});
+        if(user){
             return res.send('ok');
-        }
-        if(user.length == 0) {
+        } else {
             return res.send('notok');
         }
     }
@@ -259,14 +270,14 @@ router.post('/forgotpwd/check', catchAsync( async(req, res) => {
 router.get('/signup/check', catchAsync( async(req, res) => { 
     const {email, nickname} = req.query;
     if(email){
-        const user = await User.find({email: email}); // user가 []인데 Boolean이 왜 true가 나오지?, query객체의 키값을(Object.keys()) 사용해서 한 줄로 하려고 했지만 변수를 인식하지 못함.
-        if(user.length == 0){
+        const user = await User.findOne({email: email}); // user가 []인데 Boolean이 왜 true가 나오지?, query객체의 키값을(Object.keys()) 사용해서 한 줄로 하려고 했지만 변수를 인식하지 못함.
+        if(!user){
             return res.send("ok");
         }
     }
     if(nickname){
-        const user = await User.find({nickname: nickname}); 
-        if(user.length == 0){
+        const user = await User.findOne({nickname: nickname}); 
+        if(!user){
             return res.send("ok");
         }
     }

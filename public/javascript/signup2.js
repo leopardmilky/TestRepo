@@ -48,8 +48,6 @@ function createVerifyCodePage(email) {
     const timer_sec = document.createElement('p');
     const emailCodeMsgWrap = document.createElement('div');
     const emailCodeMsg = document.createElement('p');
-    const problemWrap = document.createElement('div');
-    const problem = document.createElement('p');
     const emailCodeBtnWrap = document.createElement('div');
     const emailCode = document.createElement('button');
 
@@ -72,12 +70,8 @@ function createVerifyCodePage(email) {
 
     emailCodeMsgWrap.setAttribute('id', 'emailCodeMsgWrap');
     emailCodeMsg.setAttribute('id', 'emailCodeMsg');
-    problemWrap.setAttribute('id' ,'problemWrap');
-    problem.setAttribute('id', 'problem');
-    problem.innerHTML = '인증번호를 받지 못하셨나요?';
     emailCodeBtnWrap.setAttribute('id', 'emailCodeBtnWrap');
     emailCode.setAttribute('id', 'emailCode');
-    emailCode.setAttribute('class', 'btn btn-success');
     emailCode.innerHTML = '인증완료';
 
     const emailWrap = document.getElementById('emailWrap');
@@ -92,8 +86,6 @@ function createVerifyCodePage(email) {
     inputEmailCodeWrap.appendChild(timer_sec);
     verifyInnerWrap.appendChild(emailCodeMsgWrap);
     emailCodeMsgWrap.appendChild(emailCodeMsg);
-    verifyInnerWrap.appendChild(problemWrap);
-    problemWrap.appendChild(problem);
     verifyInnerWrap.appendChild(emailCodeBtnWrap);
     emailCodeBtnWrap.appendChild(emailCode);
 
@@ -118,9 +110,7 @@ function inputVerifyCode(email) {
         }
     }, 1000);
 
-    // 인증하기 버튼 클릭 시
-    const emailCode = document.getElementById('emailCode');
-    emailCode.addEventListener('click', async () => {
+    const checkEmailCode = async () => {
         const inputEmailCode = document.getElementById('inputEmailCode');
         const data = {userCode: inputEmailCode.value, email: email};
         await axios.post(`/signup/verifycode`, data)
@@ -139,7 +129,16 @@ function inputVerifyCode(email) {
                 emailCodeMsg.innerHTML = '인증시간 만료. 다시 인증해주세요.';
             }
         })
+    }
+
+    // 인증하기 버튼 클릭 시
+    const emailCode = document.getElementById('emailCode');
+    emailCode.addEventListener('click', checkEmailCode)
+    const inputEmailCode = document.getElementById('inputEmailCode');
+    inputEmailCode.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter') {emailCode.click()}
     })
+
 }
 
 // 닉네임, 비밀번호 설정
@@ -205,7 +204,6 @@ function createNickPwdPage(email) {
     confirmPwdMsg.setAttribute('id', 'confirmPwdMsg');
     registerBtnWrap.setAttribute('id', 'registerBtnWrap');
     registerBtn.setAttribute('id', 'registerBtn');
-    registerBtn.setAttribute('class', 'btn btn-success');
     registerBtn.innerHTML = '등록완료';
     
     const verifyEmailWrap = document.getElementById('verifyEmailWrap');
@@ -292,7 +290,7 @@ function inputNickPwd(email) {
         }
     })
 
-    // 비밀번호 토글....-_-;
+    // 비밀번호 토글..
     const eye1 = document.getElementById('eye1');
     const eye2 = document.getElementById('eye2');
     const password = document.getElementById('password');
