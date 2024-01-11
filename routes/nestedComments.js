@@ -8,34 +8,34 @@ const Comment = require('../models/comment');
 const NestedComment = require('../models/nestedComment');
 
 
-router.get('/', catchAsync( async(req, res) => { // 대댓글 작성 후 다시 불러오는 라우트
-    const comment = await Board.findById(req.params.id).populate({path:'comments', populate:{path: 'author'}});
-    res.json(comment);
-}));
+// router.get('/', catchAsync( async(req, res) => { // 대댓글 작성 후 다시 불러오는 라우트
+//     const comment = await Board.findById(req.params.id).populate({path:'comments', populate:{path: 'author'}});
+//     res.json(comment);
+// }));
 
-router.post('/', isSignedIn, catchAsync( async(req, res) => {
-    const board = await Board.findById(req.params.id);
-    const comment = await Comment.findById(req.params.commentId);
-    const reply = new Comment(req.body);
+// router.post('/', isSignedIn, catchAsync( async(req, res) => {
+//     const board = await Board.findById(req.params.id);
+//     const comment = await Comment.findById(req.params.commentId);
+//     const reply = new Comment(req.body);
 
-    reply.author = req.user._id;
-    reply.board = req.params.id;
-    reply.parentComment = req.params.commentId;
-    comment.hasReply = true;
+//     reply.author = req.user._id;
+//     reply.board = req.params.id;
+//     reply.parentComment = req.params.commentId;
+//     comment.hasReply = true;
 
-    board.comments.push(reply);
-    await reply.save();
-    await comment.save();
-    await board.save();
+//     board.comments.push(reply);
+//     await reply.save();
+//     await comment.save();
+//     await board.save();
 
-    res.json();
-}));
+//     res.json();
+// }));
 
-router.delete('/:nestedCommentId', isSignedIn, isNestedCommentAuthor, catchAsync( async(req, res) => {
-    const {id, commentId, nestedCommentId} = req.params;
-    await Comment.findByIdAndUpdate(commentId, {$pull: {nestedComments: nestedCommentId}});
-    await NestedComment.findByIdAndDelete(nestedCommentId);
-    res.redirect(`/index/${id}`);
-}));
+// router.delete('/:nestedCommentId', isSignedIn, isNestedCommentAuthor, catchAsync( async(req, res) => {
+//     const {id, commentId, nestedCommentId} = req.params;
+//     await Comment.findByIdAndUpdate(commentId, {$pull: {nestedComments: nestedCommentId}});
+//     await NestedComment.findByIdAndDelete(nestedCommentId);
+//     res.redirect(`/index/${id}`);
+// }));
 
 module.exports = router;

@@ -8,7 +8,6 @@ const Comment = require('../models/comment');
 const ReportComment = require('../models/reportComment');
 const LikeComment = require('../models/likeComment');
 const Notification = require('../models/notification');
-const { commentPaging } = require('../paging');
 
 
 router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {  // 부모댓글

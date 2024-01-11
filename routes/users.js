@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { isSignedIn, verifyUser, validateNickname, validatePassword, withdrawPermission, withdrawVerifycodePermission, deleteUserPermission } = require('../middleware');
+const { isSignedIn, notSignedIn, verifyUser, validateNickname, validatePassword, withdrawPermission, withdrawVerifycodePermission, deleteUserPermission } = require('../middleware');
 const nodemailer = require('nodemailer');
 const User = require('../models/user');
 const Board = require('../models/board');
 const Comment = require('../models/comment');
-const NestedComment = require('../models/nestedComment');
 const passport = require('passport');
 const { S3Client, DeleteObjectsCommand, ListObjectsV2Command } = require( '@aws-sdk/client-s3' );
 const redis = require('redis');
@@ -41,11 +40,11 @@ router.get('/signup', (req, res) => {
     res.render('users/signup');
 });
 
-router.get('/signup2', async(req, res) => {
+router.get('/signup2', notSignedIn, async(req, res) => {
     res.render('users/signup2');
 });
 
-router.get('/forgotpwd', (req, res) => {
+router.get('/forgotpwd', notSignedIn, (req, res) => {
     res.render('users/forgotPwd');
 });
 
@@ -146,12 +145,12 @@ router.get('/withdraw/verifycode/deleteUser', isSignedIn, deleteUserPermission, 
     }
 
     // 대댓글 삭제
-    await NestedComment.deleteMany({author:req.user.id});
+    // await NestedComment.deleteMany({author:req.user.id});
 
     // 댓글 삭제(+연관 대댓글)
     const comments = await Comment.find({author:req.user.id});
     for(let comment of comments){
-        await NestedComment.deleteMany({ _id: { $in: comment.nestedComments } });
+        // await NestedComment.deleteMany({ _id: { $in: comment.nestedComments } });
     }
     await Comment.deleteMany({author:req.user.id});
 

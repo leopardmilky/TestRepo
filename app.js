@@ -10,13 +10,12 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local');
 const User = require('./models/user');
 const Notification = require('./models/notification');
-
 const boardRoutes = require('./routes/boards');
 const commentRoutes = require('./routes/comments');
 const userRoutes = require('./routes/users');
 const mypageRoutes = require('./routes/mypage');
 const adminRoutes = require('./routes/admin');
-const nestedCommentRoutes = require('./routes/nestedComments');
+
 
 const app = express();
 
@@ -43,8 +42,8 @@ const sessionConfig = {
     saveUninitialized: true,
     cookie: {
         httpOnly: true,
-        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-        maxAge: 1000 * 60 * 60 * 24 * 7
+        // expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+        maxAge: 1000 * 60 * 60
     }
 }
 
@@ -63,7 +62,6 @@ app.use( async (req, res, next) => {
     // res.locals.success = req.flash('success');
     // res.locals.error = req.flash('error');
     res.locals.signedInUser = req.user;
-    // console.log("req.user@@@@@@@@@@@@@@@@@@@@@@@@@@: ", req.user);
     if(req.user) {
         const {id} = req.user;
         const notis = await Notification.find({recipient:id, isRead: false}).sort({createdAt: -1}).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
@@ -79,7 +77,6 @@ app.use('/mypage', mypageRoutes);
 app.use('/admin', adminRoutes);
 app.use('/index', boardRoutes);
 app.use('/index/:id/comments', commentRoutes);
-// app.use('/index/:id/comments/:commentId', nestedCommentRoutes);
 
 app.get('/', (req, res) => {
     res.redirect('/index');

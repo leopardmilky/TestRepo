@@ -3,13 +3,13 @@ const ExpressError = require('./utils/ExpressError');
 const Board = require('./models/board');
 const Comment = require('./models/comment');
 const User = require('./models/user');
-const NestedComment = require('./models/nestedComment');
 
 
 module.exports.isSignedIn = (req, res, next) => {
     if(!req.isAuthenticated()) {
         // 로그인이 필요하다는 알림 메세지 필요...?
         req.session.backTo = req.originalUrl
+        console.log("req.originalUrl: ", req.originalUrl)
         return res.redirect('/signin');
     }
     next();
@@ -22,6 +22,13 @@ module.exports.isSignedIn2 = (req, res, next) => {  // 좋아요, 신고 버튼 
     }
     next();
 };
+
+module.exports.notSignedIn = (req, res, next) => {
+    if(req.isAuthenticated()) {
+        return res.redirect('/index');
+    }
+    next();
+}
 
 module.exports.isAdmin = (req, res, next) => {
     if(req.user.role !== 'master' && req.user.role !== 'superman') {
@@ -60,18 +67,6 @@ module.exports.isCommentAuthor = async(req, res, next) => {
     }
     next();
 };
-
-module.exports.isNestedCommentAuthor = async(req, res, next) => {
-    const {id, nestedCommentId} = req.params;
-    const check = await NestedComment.findById(nestedCommentId);
-    if(!check){
-        return res.redirect('/index')
-    }
-    if(!check.author.equals(req.user._id)){
-        return res.redirect(`/index/${id}`)
-    }
-    next();
-}
 
 module.exports.validateBoard = (req, res, next) => {
     const {error} = boardSchema.validate(req.body);

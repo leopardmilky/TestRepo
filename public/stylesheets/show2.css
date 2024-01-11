@@ -305,6 +305,10 @@ body {
     width: 1000px;
 }
 
+.signInBtn {
+    cursor: pointer;
+}
+
 #create-comment-wrap {
     display: flex;
     flex-direction: row;

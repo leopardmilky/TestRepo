@@ -4,13 +4,15 @@ document.addEventListener('click', function(event){  // navbar의 signin, signou
     const signInBtn = event.target.classList.contains('signInBtn');
 
     if(signOutBtn){ // navbar signout버튼
-        const targetUrl = event.target.attributes.class.ownerDocument.location.pathname; // 현재 페이지URL정보 가져옴
-        window.location.href = `/signout?redirectUrl=${targetUrl}`
+        const pathname = event.target.attributes.class.ownerDocument.location.pathname;// 현재 페이지URL정보 가져옴
+        const search = event.target.attributes.class.ownerDocument.location.search;
+        window.location.href = `/signout?redirectUrl=${pathname}${search}`
     }
 
     if(signInBtn){ // navbar signin버튼
-        const targetUrl = event.target.attributes.class.ownerDocument.location.pathname;
-        window.location.href = `/signin?redirectUrl=${targetUrl}`
+        const pathname = event.target.attributes.class.ownerDocument.location.pathname;
+        const search = event.target.attributes.class.ownerDocument.location.search;
+        window.location.href = `/signin?redirectUrl=${pathname}${search}`
     }
 });
 
@@ -29,15 +31,6 @@ document.addEventListener('click', (e) => {  // 알림 드롭다운 영역 밖�
 function openNote_nav(e) {
     const noteId = e.getAttribute('data-note-id');
     window.open(`/mypage/view-note?noteId=${noteId}&type=received`,"_blank","width=550, height=370, top=100px, left=100px");
-    // if(e.classList.contains('received')) {
-    //     return window.open(`/mypage/view-note?noteId=${noteId}&type=received`,"_blank","width=550, height=370, top=100px, left=100px");
-    // }
-    // if(e.classList.contains('sent')) {
-    //     return window.open(`/mypage/view-note?noteId=${noteId}&type=sent`,"_blank","width=550, height=370, top=100px, left=100px");
-    // }
-    // if(e.classList.contains('inbox')) {
-    //     return window.open(`/mypage/view-note?noteId=${noteId}&type=inbox`,"_blank","width=550, height=370, top=100px, left=100px");
-    // }
 }
 
 async function goToComment_nav(e) {

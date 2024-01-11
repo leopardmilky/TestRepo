@@ -187,7 +187,7 @@
     <% if(!signedInUser) { %>
         <div id="login-required-wrap">
             <div id="login-required">
-                <span>댓글 작성은 <a class="signInBtn" href="/signin?redirectUrl=/index/<%= board.id %>">로그인</a>이 필요합니다.</span>
+                <span>댓글 작성은 <a class="signInBtn">로그인</a>이 필요합니다.</span>
             </div>
         </div>
     <% } else { %>
@@ -249,7 +249,7 @@
                     <td class="body wordoverflow text-control">
                         <%= content.createdAt.getFullYear() %>-<%= String(content.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(content.createdAt.getDate()).padStart(2,'0') %> <%= String(content.createdAt.getHours()).padStart(2,'0') %>:<%= String(content.createdAt.getMinutes()).padStart(2,'0') %>
                     </td>
-                    <td class="body wordoverflow text-control">999999999999</td>
+                    <td class="body wordoverflow text-control"><%= content.views %></td>
                 </tr>
                 <% } %>
             </tbody>

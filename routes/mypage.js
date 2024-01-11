@@ -11,7 +11,6 @@ const ReportPost = require('../models/reportPost');
 const Note = require('../models/note');
 const Notification = require('../models/notification');
 const User = require('../models/user');
-// require('dotenv').config();
 const { myPagePostPaging, myPageCommentPaging } = require('../paging');
 const mongoose = require('mongoose');
 
