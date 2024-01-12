@@ -202,7 +202,6 @@ router.post('/admin-list/change-role', isSignedIn, isRoot, catchAsync( async(req
 router.get('/search-user', isSignedIn, isRoot, catchAsync( async(req, res) => {
     const {role} = req.user;
     let {page, selectOption, search} = req.query;
-    console.log("page: ", page)
     if(!page) { page = 1; }
 
     const query = {role:{$in:['user','master']}};

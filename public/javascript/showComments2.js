@@ -90,7 +90,8 @@ async function submitReply(e) { // 답변 제출.
     await axios.post(`/index/${postId}/comments/${commentId}`, data)
     .then((res) => {
         removeInputBox();
-        window.location.reload();
+        // window.location.reload();
+        window.location.href = `/index/${postId}?commentId=${res.data.replyId}`;
     })
 }
 
@@ -104,13 +105,13 @@ async function submitEditedComment(e) { // 수정하기 제출.
     const data = {body: text}
     await axios.put(`/index/${postId}/comments/${commentId}`, data)
     .then((res) => {
-        if(res.data == 'nk'){
+        if(res.data == 'nk') {
             window.alert('해당 댓글에 답변이 있어서 수정할 수 없습니다.')
             removeInputBox();
             return window.location.reload();
         }
         removeInputBox();
-        window.location.reload();
+        window.location.href = `/index/${postId}?commentId=${commentId}`;
     })
 }
 

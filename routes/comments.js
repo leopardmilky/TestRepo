@@ -11,6 +11,7 @@ const Notification = require('../models/notification');
 
 
 router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {  // 부모댓글
+    const {page} = req.query;
     const board = await Board.findById(req.params.id).populate('author');
     const comment = new Comment(req.body.comment);
 
@@ -32,7 +33,7 @@ router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {  
         await newNotification.save();
     }
 
-    res.redirect(`/index/${board._id}`);
+    res.redirect(`/index/${board._id}?page=${page}`);
 }));
 
 
@@ -62,7 +63,7 @@ router.post('/:commentId', isSignedIn, catchAsync( async(req, res) => { // 대�
         await newNotification.save();
     }
 
-    res.json();
+    res.json({replyId:reply.id});
 }));
 
 

@@ -28,18 +28,3 @@ function goToPage(e) {
     url.searchParams.set('page', page);
     window.location.href = `${url.href}`;
 }
-
-
-
-
-// select option 검색 후에도 초기화되지 않게 저장.
-document.addEventListener("DOMContentLoaded", function() {
-    const selectedOption = localStorage.getItem("selectedOption");
-    if (selectedOption) {
-        document.getElementById("select-option").value = selectedOption;
-    }
-    document.getElementById("select-option").addEventListener("change", function() {
-        const selectedValue = this.value;
-        localStorage.setItem("selectedOption", selectedValue);
-    });
-});

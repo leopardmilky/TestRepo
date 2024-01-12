@@ -192,7 +192,7 @@
         </div>
     <% } else { %>
         <div id="create-comment-wrap">
-            <form id="create-comment-form" action="/index/<%= board._id %>/comments" method="POST" novalidate>
+            <form id="create-comment-form" action="/index/<%= board._id %>/comments?page=<%= currentPage %>" method="POST" novalidate>
                 <label id="comment-label" for="body">Comment</label>
                 <textarea name="comment[body]" id="input-comment" cols="10" rows="5" required></textarea>
                 <button id="submit-btn">등 록</button>

@@ -29,7 +29,8 @@ const upload = multer({storage: storage});
 const randomImageName = (bytes = 16) => crypto.randomBytes(bytes).toString('hex');
 
 router.get('/', catchAsync( async(req, res) => {
-    const { page } = req.query;
+    let { page } = req.query;
+    if(!page) { page = 1; }
     try {
         const totalPost = await Board.countDocuments({});
         if (!totalPost) {
@@ -37,14 +38,7 @@ router.get('/', catchAsync( async(req, res) => {
         }
         let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = boardPaging(page, totalPost);
         const board = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author'); // .populate({path: 'comments', populate: {path: 'nestedComments'}})
-        res.render("board/index", {
-            contents: board,
-            currentPage,
-            startPage,
-            endPage,
-            maxPage,
-            totalPage,
-        });
+        res.render("board/index", { contents: board, currentPage, startPage, endPage, maxPage, totalPage });
     } catch (error) {
         res.render("board/index", { contents: board });
     }
