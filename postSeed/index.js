@@ -9,7 +9,7 @@ const crypto = require('crypto');
 const sharp = require('sharp');
 const mongoose = require('mongoose');
 require('dotenv').config();
-const {sentences} = require('./text')
+const {sentences} = require('./data')
 
 mongoose.connect('mongodb://127.0.0.1:27017/proj1');
 const db = mongoose.connection;
