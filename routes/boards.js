@@ -500,6 +500,7 @@ router.get('/:id/edit', isSignedIn, isAuthor, catchAsync( async(req, res) => {
 // edit 페이지 v2
 router.get('/:id/edit2', isSignedIn, isAuthor, catchAsync( async(req, res) => {
     const {id} = req.params;
+    const {page} = req.query;
     const board = await Board.findById(id);
 
     const boardImgObject = {}
@@ -519,7 +520,7 @@ router.get('/:id/edit2', isSignedIn, isAuthor, catchAsync( async(req, res) => {
         return res.redirect('/index')
     }
     
-    res.render('board/edit2', {content: board, boardImg});
+    res.render('board/edit2', {content: board, boardImg, page});
 }));
 
 router.put('/:id', isSignedIn, isAuthor, upload.array('images', 5), catchAsync( async(req, res) => {

@@ -1,13 +1,15 @@
 body {
     display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100%;
 }
 
 .n2Container {
     display: flex;
     flex-direction: row;
     justify-content: center;
+    min-height: calc(100vh - 140px);
+    padding-bottom: 20px;
 }
 
 .new2Wrap {
@@ -130,6 +132,20 @@ body {
     white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
+}
+
+#text-input::-webkit-scrollbar {
+    width: 10px;
+    height: 20px;
+}
+
+#text-input::-webkit-scrollbar-thumb {
+    background: grey;
+    border-radius: 12px 12px 12px 12px;
+}
+
+#text-input::-webkit-scrollbar-track {
+    background: #ddd;
 }
 
 #new2Placeholder {

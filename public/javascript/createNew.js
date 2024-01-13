@@ -104,7 +104,7 @@ window.onbeforeunload = function(event) {
     if (shouldShowWarning) { return ""; }
 };
 // 특정 동작이 발생했을 때 허용
-document.getElementById("submitBtn").addEventListener("click", function() {
+document.getElementById("submit-btn").addEventListener("click", function() {
     shouldShowWarning = false;
 });
 // 뒤로가기 버튼 동작 시 초기화

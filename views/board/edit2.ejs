@@ -1,7 +1,6 @@
 <% layout('layouts/boilerplate') %>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="/stylesheets/new2.css">
-    <link rel="stylesheet" href="/stylesheets/footer.css">
 </head>
 <body>
 <%- include('../partials/navbar') %>
@@ -73,9 +72,9 @@
             <textarea id="mainText" cols="30" rows="10" style="display: none;" data-page-id="<%= content.id %>"><%= content.mainText %></textarea>
             <textarea id="imgUrl" cols="30" rows="10" style="display: none;"><%= boardImg %></textarea>
         </div>
-        <div>
-            <button class="bottomBtn" id="submitBtn" onclick="updateContent()">등록</button> <!--  onclick="submitContent()"-->
-            <button type="button" class="bottomBtn" id="cancelBtn">취소</button>
+        <div class="bottom-btn-group">
+            <a type="button" class="bottom-btn" id="cancel-btn" href="/index/<%= content.id %>?page=<%= page %>">취소</a>
+            <button class="bottom-btn" id="submit-btn" onclick="updateContent()">수정완료</button> <!--  onclick="submitContent()"-->
         </div>
     </div>
 </div>

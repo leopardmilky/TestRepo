@@ -4,7 +4,8 @@ body {
 }
 
 #show-container{
-    min-height: 90vh;
+    /* min-height: 90vh; */
+    height: auto;
 }
 
 #post-wrap {
