@@ -11,7 +11,6 @@ const Notification = require('../models/notification');
 
 
 router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {  // 부모댓글
-    const {page} = req.query;
     const board = await Board.findById(req.params.id).populate('author');
     const comment = new Comment(req.body.comment);
 
@@ -32,15 +31,14 @@ router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {  
         newNotification.postId = board.id; // 게시물(무슨 글썻지 확인하려고)
         await newNotification.save();
     }
-
-    res.redirect(`/index/${board._id}?page=${page}`);
+    res.json();
 }));
 
 
-router.post('/:commentId', isSignedIn, catchAsync( async(req, res) => { // 대댓글
+router.post('/:commentId', isSignedIn, validateComment, catchAsync( async(req, res) => { // 대댓글
     const board = await Board.findById(req.params.id);
     const comment = await Comment.findById(req.params.commentId).populate('author');
-    const reply = new Comment(req.body);
+    const reply = new Comment(req.body.comment);
 
     reply.author = req.user._id;
     reply.board = req.params.id;
@@ -67,13 +65,13 @@ router.post('/:commentId', isSignedIn, catchAsync( async(req, res) => { // 대�
 }));
 
 
-router.put('/:commentId', isSignedIn, isCommentAuthor, catchAsync( async(req, res) => { // 댓글 수정
+router.put('/:commentId', isSignedIn, isCommentAuthor, validateComment, catchAsync( async(req, res) => { // 댓글 수정
     const {commentId} = req.params;
     const countComment = await Comment.find({parentComment: commentId}).countDocuments();
     if(countComment > 1) {  // 해당 댓글에 이미 답변이 달렸을때.
-        return res.json('nk');
+        return res.json('re');
     }
-    await Comment.findByIdAndUpdate(commentId, req.body);
+    await Comment.findByIdAndUpdate(commentId, req.body.comment);
     res.send();
 }));
 

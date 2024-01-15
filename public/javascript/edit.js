@@ -76,10 +76,7 @@ caret.addEventListener('click', function() {
 
 const pageId = document.getElementById("mainText").getAttribute('data-page-id');
 async function updateContent() { // 게시물 수정
-
-    const currentURL = window.location.href;
-    const url = new URL(currentURL);
-    const page = url.searchParams.get('page');
+    
     const textData = document.getElementById('text-input');
     const titleData = document.getElementById('new2Title').value;
     const imgData = textData.querySelectorAll('img');
@@ -113,6 +110,6 @@ async function updateContent() { // 게시물 수정
 
     await axios.put(`/index/${pageId}`, formData)
     .then((res) => {
-        window.location.href =` http://localhost:3000/index/${res.data}?page=${page}`
+        window.location.href = `/index/${res.data}`
     })
 }

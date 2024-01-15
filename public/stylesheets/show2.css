@@ -152,7 +152,7 @@ body {
     flex-direction: row;
 }
 
-.nickname, .user-ip, .comment-date {
+.nickname, .comment-date {
     margin: 0;
 }
 

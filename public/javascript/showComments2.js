@@ -2,7 +2,6 @@
 let postId
 let commentId
 
-
 // 알림에서 댓글 찾아가는 자동 스크롤 및 색상 표시
 window.onload = () => { // 이미지가 로드되기 전에 움직여 정확한 위치가 가지 않아서 사용함.
     const queryString = window.location.search;
@@ -18,7 +17,6 @@ window.onload = () => { // 이미지가 로드되기 전에 움직여 정확한 
         }, 2000);
     }
 }
-
 
 function createReplyInputBox(e) {   // 답변하기 박스 생성.
     const hasReplyInputBox = document.getElementById('input-reply-text-wrap');
@@ -82,15 +80,17 @@ function createEditCommentInputBox(e) { // 수정하기 박스 생성.
 async function submitReply(e) { // 답변 제출.
     const text = document.getElementById('input-reply-text-box').value;
 
-    if(text == '' || text.trim() == ''){
+    if(text.trim() === ''){
         return window.alert('내용을 입력해 주세요.')
     }
 
-    const data = {body: text}
+    const data = {comment:{body: text}}
     await axios.post(`/index/${postId}/comments/${commentId}`, data)
     .then((res) => {
+        if(res.data === 'nk') {
+            return window.alert('최대 3000자까지 입력할 수 있습니다.')
+        }
         removeInputBox();
-        // window.location.reload();
         window.location.href = `/index/${postId}?commentId=${res.data.replyId}`;
     })
 }
@@ -98,20 +98,42 @@ async function submitReply(e) { // 답변 제출.
 async function submitEditedComment(e) { // 수정하기 제출.
     const text = document.getElementById('input-edit-text-box').value;
 
-    if(text == '' || text.trim() == ''){
+    if(text.trim() === ''){
         return window.alert('내용을 입력해 주세요.')
     }
 
-    const data = {body: text}
+    const data = {comment:{body: text}}
     await axios.put(`/index/${postId}/comments/${commentId}`, data)
     .then((res) => {
-        if(res.data == 'nk') {
+        if(res.data === 'nk') {     
+            return window.alert('최대 3000자까지 입력할 수 있습니다.')
+        }
+        if(res.data === 're') {
             window.alert('해당 댓글에 답변이 있어서 수정할 수 없습니다.')
             removeInputBox();
             return window.location.reload();
         }
         removeInputBox();
         window.location.href = `/index/${postId}?commentId=${commentId}`;
+    })
+}
+
+async function submitComment(e) {   // 댓글 제출
+    const text = document.getElementById('input-comment').value;
+    const postId = e.getAttribute('data-postId');
+    const page = e.getAttribute('data-page');
+
+    if(text.trim() === ''){
+        return window.alert('내용을 입력해 주세요.')
+    }
+
+    const data = {comment:{body: text}}
+    await axios.post(`/index/${postId}/comments`, data)
+    .then((res) => {
+        if(res.data === 'nk') {     
+            return window.alert('최대 3000자까지 입력할 수 있습니다.')
+        }
+        window.location.href = `/index/${postId}?page=${page}`;
     })
 }
 
@@ -122,13 +144,12 @@ async function commentDelete(e) {   // 댓글 삭제.
     .then((res) => {
         if(res.data === 'ok') {
             window.alert('댓글을 삭제 했습니다.')
-            window.location.reload();
+            window.location.href = `/index/${postId}`;
         }
         if(res.data === 'nk') {
             window.alert('삭제되거나 찾을 수 없는 댓글입니다.')
             window.location.reload();
         }
-
     })
 }
 

@@ -90,6 +90,7 @@ app.use((err, req, res, next) => {
     const { statusCode = 500 } = err;
     if(!err.message) err.message = 'Oh, Something Went Wrong!!';
     res.status(statusCode).render('error', {err});
+    // res.render('error/postPageError')
 });
 
 app.listen(3000, () => console.log('PORT 3000....!!'));

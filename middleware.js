@@ -1,4 +1,4 @@
-const { boardSchema, commentSchema, nestedCommentSchema, userNickname} =require('./schemas');
+const { boardSchema, commentSchema, userNickname} =require('./schemas');
 const ExpressError = require('./utils/ExpressError');
 const Board = require('./models/board');
 const Comment = require('./models/comment');
@@ -9,7 +9,6 @@ module.exports.isSignedIn = (req, res, next) => {
     if(!req.isAuthenticated()) {
         // 로그인이 필요하다는 알림 메세지 필요...?
         req.session.backTo = req.originalUrl
-        console.log("req.originalUrl: ", req.originalUrl)
         return res.redirect('/signin');
     }
     next();
@@ -32,7 +31,7 @@ module.exports.notSignedIn = (req, res, next) => {
 
 module.exports.isAdmin = (req, res, next) => {
     if(req.user.role !== 'master' && req.user.role !== 'superman') {
-        return res.json('nk');
+        return res.redirect('/index');
     }
     next();
 };
@@ -41,7 +40,7 @@ module.exports.isRoot = (req, res, next) => {
     if(req.user.role === 'superman') {  
         return next();
     }
-    res.json('nk');
+    res.redirect('/index');
 };
 
 module.exports.isAuthor = async(req, res, next) => {
@@ -69,6 +68,9 @@ module.exports.isCommentAuthor = async(req, res, next) => {
 };
 
 module.exports.validateBoard = (req, res, next) => {
+    console.log("req.body@@@@@@@@: ", req.body);
+    console.log("req.body.title@@@@@@@@: ", req.body.title);
+    console.log("req.body.mainText@@@@@@@@: ", req.body.mainText);
     const {error} = boardSchema.validate(req.body);
     if (error) {
         const msg = error.details.map(el => el.message).join(',')
@@ -81,18 +83,7 @@ module.exports.validateBoard = (req, res, next) => {
 module.exports.validateComment = (req, res, next) => {
     const {error} = commentSchema.validate(req.body);
     if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400)
-    } else {
-        next();
-    }
-};
-
-module.exports.validateNestedComment = (req, res, next) => {
-    const {error} = nestedCommentSchema.validate(req.body);
-    if (error) {
-        const msg = error.details.map(el => el.message).join(',');
-        throw new ExpressError(msg, 400)
+        return res.json('nk')
     } else {
         next();
     }
@@ -110,7 +101,6 @@ module.exports.verifyUser = async(req, res, next) => {
 };
 
 module.exports.validateNickname = async(req, res, next) => {
-    
     const afterNick = req.body.nickname;
     const beforeNick = req.user.nickname;
     // const {error} = userNickname.validate({nickname:afterNick});

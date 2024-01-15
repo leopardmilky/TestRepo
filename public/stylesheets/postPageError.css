@@ -1,0 +1,35 @@
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+.container {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.error-page-wrap {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    width: 1000px;
+}
+
+.message-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.exclamation-wrap {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+}
+
+.fa-circle-exclamation {
+    font-size: 1000%;
+}

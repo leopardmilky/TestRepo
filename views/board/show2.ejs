@@ -53,7 +53,6 @@
                 <div id="best-comment-info" class="comments-info">
                     <div id="info-left" class="info-left">
                         <p class="nickname"><%= bestComment.author.nickname %></p>
-                        <!-- <p class="user-ip">123.456.78.900</p> -->
                     </div>
                     <div id="info-right">
                         <p class="comment-date"><%= bestComment.createdAt.getFullYear() %>-<%= String(bestComment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(bestComment.createdAt.getDate()).padStart(2,'0') %> <%= String(bestComment.createdAt.getHours()).padStart(2,'0') %>:<%= String(bestComment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(bestComment.createdAt.getSeconds()).padStart(2,'0') %></p>
@@ -86,11 +85,10 @@
             <% for(comment of comments) { %>
                 <% if(comment._id.equals(comment.parentComment)) { %>
                     <% if(!comment.isDeleted) { %>
-                        <div class="parent-comments-wrap">
+                        <div id="<%= comment.id %>" class="parent-comments-wrap">
                             <div id="parent-comments-info" class="comments-info">
                                 <div id="info-left" class="info-left">
                                     <p class="nickname"><%= comment.author.nickname %></p>
-                                    <!-- <p class="user-ip">123.456.78.900</p> -->
                                 </div>
                                 <div id="info-right" class="info-right">
                                     <p class="comment-date"><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></p>
@@ -131,7 +129,6 @@
                             <div id="child-comments-info" class="comments-info">
                                 <div id="info-left" class="info-left">
                                     <p class="nickname"><%= comment.author.nickname %></p>
-                                    <!-- <p class="user-ip">123.456.78.900</p> -->
                                 </div>
                                 <div id="info-right">
                                     <p class="comment-date"><%= comment.createdAt.getFullYear() %>-<%= String(comment.createdAt.getMonth()+1).padStart(2,'0') %>-<%= String(comment.createdAt.getDate()).padStart(2,'0') %> <%= String(comment.createdAt.getHours()).padStart(2,'0') %>:<%= String(comment.createdAt.getMinutes()).padStart(2,'0') %>:<%= String(comment.createdAt.getSeconds()).padStart(2,'0') %></p>
@@ -191,17 +188,17 @@
         </div>
     <% } else { %>
         <div id="create-comment-wrap">
-            <form id="create-comment-form" action="/index/<%= board._id %>/comments?page=<%= currentPage %>" method="POST" novalidate>
+            <!-- <form id="create-comment-form" action="/index/<%= board._id %>/comments?page=<%= currentPage %>" method="POST" onsubmit="return testFunc()" novalidate> -->
+            <div id="create-comment-form">
                 <label id="comment-label" for="body">Comment</label>
                 <textarea name="comment[body]" id="input-comment" cols="10" rows="5" required></textarea>
-                <button id="submit-btn">등 록</button>
-            </form>
+                <button id="submit-btn" data-postId="<%= board._id %>" data-page="<%= currentPage %>" onclick="submitComment(this)">등 록</button>
+            </div>
+            <!-- </form> -->
         </div>
     <% } %>
 
 </div>
-
-
 
 
 <div id="container">
@@ -287,6 +284,5 @@
 
 
 <%- include('../partials/footer') %>
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="/javascript/show2.js"></script>
 <script src="/javascript/showComments2.js"></script>
