@@ -110,6 +110,9 @@ async function updateContent() { // 게시물 수정
 
     await axios.put(`/index/${pageId}`, formData)
     .then((res) => {
+        if(res.data === 'nk') {
+            return window.alert('제목과 내용은 필수 항목입니다.\n제목은 300자, 본문은 5000자까지 작성할 수 있습니다.')
+        }
         window.location.href = `/index/${res.data}`
     })
 }

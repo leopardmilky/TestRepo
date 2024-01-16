@@ -1,5 +1,4 @@
-const { boardSchema, commentSchema, userNickname} =require('./schemas');
-const ExpressError = require('./utils/ExpressError');
+const { boardSchema, commentSchema } =require('./schemas');
 const Board = require('./models/board');
 const Comment = require('./models/comment');
 const User = require('./models/user');
@@ -68,13 +67,10 @@ module.exports.isCommentAuthor = async(req, res, next) => {
 };
 
 module.exports.validateBoard = (req, res, next) => {
-    console.log("req.body@@@@@@@@: ", req.body);
-    console.log("req.body.title@@@@@@@@: ", req.body.title);
-    console.log("req.body.mainText@@@@@@@@: ", req.body.mainText);
-    const {error} = boardSchema.validate(req.body);
+    const board = {board: {title: req.body.title, mainText: req.body.mainText}};
+    const {error} = boardSchema.validate(board);
     if (error) {
-        const msg = error.details.map(el => el.message).join(',')
-        throw new ExpressError(msg, 400)
+        return res.json('nk')
     } else {
         next();
     }
@@ -90,8 +86,7 @@ module.exports.validateComment = (req, res, next) => {
 };
 
 module.exports.verifyUser = async(req, res, next) => {
-    const { password, error } = req.body;
-    // const user = await User.findById(req.user._id);
+    const { password } = req.body;
     const auth = await req.user.authenticate(password);
     if(auth.user.email == req.user.email){
         next();
@@ -103,7 +98,6 @@ module.exports.verifyUser = async(req, res, next) => {
 module.exports.validateNickname = async(req, res, next) => {
     const afterNick = req.body.nickname;
     const beforeNick = req.user.nickname;
-    // const {error} = userNickname.validate({nickname:afterNick});
     if(afterNick.length === 0 || afterNick.length > 20) {
         return res.status(400).json('length');
     }

@@ -33,9 +33,6 @@ router.get('/', catchAsync( async(req, res) => {
     if(!page) { page = 1; }
     try {
         const totalPost = await Board.countDocuments({});
-        // if (!totalPost) {
-        //     throw Error();
-        // }
         let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = boardPaging(page, totalPost);
         const board = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author'); // .populate({path: 'comments', populate: {path: 'nestedComments'}})
 
@@ -54,19 +51,12 @@ router.get('/new2', isSignedIn, (req, res) => {
     res.render('board/new2', {role});
 });
 
-router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, res) => {    // 게시물 등록하기
-
-    console.log("req.body@@@@@@@@: ", req.body);
-    console.log("req.body.title@@@@@@@@: ", req.body.title);
-    console.log("req.body.mainText@@@@@@@@: ", req.body.mainText);
-
+router.post('/', isSignedIn, upload.array('images', 5), validateBoard, catchAsync( async(req, res) => {    // 게시물 등록하기
     const board = new Board();
     board.title = req.body.title;
     board.mainText = req.body.mainText;
     board.author = req.user._id;
     board.notice = req.body.notice;
-
-
 
     const imgIndex = JSON.parse(req.body.imgIndex);
     for(let i = 0; i < req.files.length; i++) {
@@ -103,7 +93,8 @@ router.post('/', isSignedIn, upload.array('images', 5), catchAsync( async(req, r
 
 router.get('/:id', catchAsync( async(req, res) => { // 게시물 불러오기
     const { id } = req.params;
-    const { commentId, page } = req.query;
+    let { commentId, page } = req.query;
+    if(!page) { page = 1; }
     let data = {};  // 이곳에 페이지 로딩에 필요한 데이터를 담아서 보낼 예정.
     const board = await Board.findById(id).populate('author'); // 해당 게시물이 있는지 확인        populate()가 있어야 참조함
     data.board = board;
@@ -528,7 +519,7 @@ router.get('/:id/edit2', isSignedIn, isAuthor, catchAsync( async(req, res) => { 
     res.render('board/edit2', {content: board, boardImg, page});
 }));
 
-router.put('/:id', isSignedIn, isAuthor, validateBoard, upload.array('images', 5), catchAsync( async(req, res) => {  // 게시물 수정하기
+router.put('/:id', isSignedIn, isAuthor, upload.array('images', 5), validateBoard, catchAsync( async(req, res) => {  // 게시물 수정하기
     const { id } = req.params;
     const board = await Board.findById(id);
 
@@ -577,7 +568,6 @@ router.put('/:id', isSignedIn, isAuthor, validateBoard, upload.array('images', 5
         }
     }
     board.images[0] = uploadImages;
-    console.log("게시물 수정하기: ", board);
     await board.save();
 
     // s3 이미지 삭제
