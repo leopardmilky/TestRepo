@@ -159,7 +159,8 @@ router.get('/withdraw/verifycode/deleteUser', isSignedIn, deleteUserPermission, 
     // 유저정보 삭제2
     await User.updateOne({_id: req.user.id}, {$set: {isWithdrawn: true, nickname: "Deleted_User", withdrawnDate: Date.now()}});
 
-    res.render('users/byebye')
+    // res.render('users/byebye')
+    res.redirect('/signout')
 }));
 
 router.put('/saveUserInfo', isSignedIn, validateNickname, validatePassword, catchAsync( async(req, res) => {
