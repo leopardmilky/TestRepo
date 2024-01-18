@@ -255,7 +255,11 @@ router.post('/forgotpwd/check', catchAsync( async(req, res) => {
     if(email) {
         const user = await User.findOne({email:email});
         if(user){
-            return res.send('ok');
+            if(!user.isWithdrawn) {
+                return res.send('ok');
+            } else {
+                return res.send('notok');
+            }
         } else {
             return res.send('notok');
         }

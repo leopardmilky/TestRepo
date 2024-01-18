@@ -19,7 +19,6 @@ emailBtn.addEventListener('click', async() => {
                 emailMsg.innerHTML = '';
                 await axios.post('/forgotpwd/temppwd', data)
                 .then((res) => {
-                    console.log("????????????????")
                     window.alert("해당 이메일로 임시 비밀번호를 전송하였습니다.");
                     window.location.href =` http://localhost:3000/signin`
                 });
