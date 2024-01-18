@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const catchAsync = require('../utils/catchAsync');
-const { isSignedIn, notSignedIn, verifyUser, validateNickname, validatePassword, withdrawPermission, withdrawVerifycodePermission, deleteUserPermission } = require('../middleware');
+const { isSignedIn, notSignedIn, verifyUser, validateNickname, validatePassword, withdrawPermission, withdrawVerifycodePermission, deleteUserPermission, isWithdrawn } = require('../middleware');
 const nodemailer = require('nodemailer');
 const User = require('../models/user');
 const Board = require('../models/board');
@@ -127,41 +127,37 @@ router.get('/withdraw/verifycode/deleteUser', isSignedIn, deleteUserPermission, 
 
     // s3삭제
     // 폴더 내 객체들을 나열
-    const listParams = {
-        Bucket: process.env.AWS_S3_BUCKET,
-        Prefix: req.user.id,
-    };
-    const listCommand = new ListObjectsV2Command(listParams);
-    const S3data = await s3.send(listCommand);
+    // const listParams = {
+    //     Bucket: process.env.AWS_S3_BUCKET,
+    //     Prefix: req.user.id,
+    // };
+    // const listCommand = new ListObjectsV2Command(listParams);
+    // const S3data = await s3.send(listCommand);
 
     // 폴더 내의 객체들을 삭제
-    if(S3data.Contents){
-        const deleteParams = {
-            Bucket: process.env.AWS_S3_BUCKET,
-            Delete: { Objects: S3data.Contents.map(item => ({ Key: item.Key })) },
-        };
-        const deleteCommand = new DeleteObjectsCommand(deleteParams);
-        await s3.send(deleteCommand);
-    }
-
-    // 대댓글 삭제
-    // await NestedComment.deleteMany({author:req.user.id});
+    // if(S3data.Contents){
+    //     const deleteParams = {
+    //         Bucket: process.env.AWS_S3_BUCKET,
+    //         Delete: { Objects: S3data.Contents.map(item => ({ Key: item.Key })) },
+    //     };
+    //     const deleteCommand = new DeleteObjectsCommand(deleteParams);
+    //     await s3.send(deleteCommand);
+    // }
 
     // 댓글 삭제(+연관 대댓글)
-    const comments = await Comment.find({author:req.user.id});
-    for(let comment of comments){
-        // await NestedComment.deleteMany({ _id: { $in: comment.nestedComments } });
-    }
-    await Comment.deleteMany({author:req.user.id});
+    // await Comment.deleteMany({author:req.user.id});  // 댓글삭제 라우터 참고해야함.
 
     // 게시물 삭제(+연관 댓글,대댓글)
-    const boards = await Board.find({author:req.user.id});
-    for(let board of boards) {
-        await Board.findByIdAndDelete(board.id);
-    }
+    // const boards = await Board.find({author:req.user.id});
+    // for(let board of boards) {
+    //     await Board.findByIdAndDelete(board.id);
+    // }
 
-    // 유저정보 삭제
-    await User.deleteOne({_id: req.user.id});
+    // 유저정보 삭제1
+    // await User.deleteOne({_id: req.user.id});
+
+    // 유저정보 삭제2
+    await User.updateOne({_id: req.user.id}, {$set: {isWithdrawn: true, nickname: "Deleted_User", withdrawnDate: Date.now()}});
 
     res.render('users/byebye')
 }));
@@ -358,7 +354,7 @@ router.get('/signin', (req, res) => {
     res.render('users/signin', {redirectUrl});
 });
 
-router.post('/signin', passport.authenticate('local', { failureFlash: true, failureRedirect: '/signin', keepSessionInfo: true }), (req, res) => {
+router.post('/signin', isWithdrawn, passport.authenticate('local', { failureFlash: true, failureRedirect: '/signin', keepSessionInfo: true }), (req, res) => {
     const redirectUrl = req.session.backTo || `/index`;
     delete req.session.backTo;
     res.redirect(redirectUrl);

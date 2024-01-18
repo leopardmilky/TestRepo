@@ -31,15 +31,11 @@ const randomImageName = (bytes = 16) => crypto.randomBytes(bytes).toString('hex'
 router.get('/', catchAsync( async(req, res) => {
     let { page } = req.query;
     if(!page) { page = 1; }
-    try {
-        const totalPost = await Board.countDocuments({});
-        let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = boardPaging(page, totalPost);
-        const board = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author'); // .populate({path: 'comments', populate: {path: 'nestedComments'}})
+    const totalPost = await Board.countDocuments({});
+    let { startPage, endPage, hidePost, maxPost, totalPage, currentPage, maxPage } = boardPaging(page, totalPost);
+    const board = await Board.find().sort({ notice: -1, createdAt: -1 }).skip(hidePost).limit(maxPost).populate('author'); // .populate({path: 'comments', populate: {path: 'nestedComments'}})
 
-        res.render("board/index", { contents: board, currentPage, startPage, endPage, maxPage, totalPage });
-    } catch (error) {
-        res.render("board/index", { contents: board });
-    }
+    res.render("board/index", { contents: board, currentPage, startPage, endPage, maxPage, totalPage });
 }));
 
 router.get('/new', isSignedIn, (req, res) => {
@@ -440,7 +436,7 @@ router.post('/:id/postLike', isSignedIn2, catchAsync( async(req, res) => {  // �
             await addLike.save();
             await newLike.save();
 
-            if(addLike.author.id !== req.user.id) { // 자신의 글에 좋아요는 알림 안함.
+            if(!addLike.author.isWithdrawn && addLike.author.id !== req.user.id) { // 자신의 글에 좋아요는 알림 안함.
                 const newNotification = new Notification();
                 newNotification.sender = req.user.id;
                 newNotification.recipient = addLike.author.id;

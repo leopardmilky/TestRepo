@@ -20,6 +20,9 @@ const UserSchema = new Schema({
     isWithdrawn: {
         type: Boolean,
         default: false
+    },
+    withdrawnDate: {
+        type: Date
     }
 });
 

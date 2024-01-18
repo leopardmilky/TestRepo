@@ -22,7 +22,7 @@ router.post('/', isSignedIn, validateComment, catchAsync( async(req, res) => {  
     await comment.save();
     await board.save();
 
-    if(board.author.id !== req.user.id) { // 나 자신에게 쓴건 알림 안함.
+    if(!board.author.isWithdrawn && board.author.id !== req.user.id) { // 나 자신에게 쓴건 알림 안함.
         const newNotification = new Notification();
         newNotification.sender = req.user.id;
         newNotification.recipient = board.author.id;
@@ -50,7 +50,7 @@ router.post('/:commentId', isSignedIn, validateComment, catchAsync( async(req, r
     await comment.save();
     await board.save();
 
-    if(req.user.id !== comment.author.id) { // 나 자신에게 쓴건 알림 안함.
+    if(!comment.author.isWithdrawn && req.user.id !== comment.author.id) { // 나 자신에게 쓴건 알림 안함.
         const newNotification = new Notification();
         newNotification.sender = req.user.id;
         newNotification.recipient = comment.author.id;
@@ -139,7 +139,7 @@ router.post('/:commentId/commentLike', isSignedIn2, catchAsync( async(req, res) 
             await addLike.save();
             await newLike.save();
 
-            if(addLike.author.id !== req.user.id) { // 자신의 글에 좋아요는 알림 안함.
+            if(!addLike.author.isWithdrawn && addLike.author.id !== req.user.id) { // 자신의 글에 좋아요는 알림 안함.
                 const newNotification = new Notification();
                 newNotification.sender = req.user.id;
                 newNotification.recipient = addLike.author.id;

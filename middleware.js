@@ -151,3 +151,17 @@ module.exports.deleteUserPermission = (req, res, next) => {
         return res.redirect(`/index`)
     }
 }
+
+module.exports.isWithdrawn = async(req, res, next) => {
+    const user = await User.findOne({email: req.body.email});
+    if(!user) {
+        delete req.session.backTo;
+        return res.redirect('/signin');
+    }
+    if(user.isWithdrawn) {
+        const redirectUrl = req.session.backTo || `/index`;
+        delete req.session.backTo;
+        return res.redirect(redirectUrl);
+    }
+    next();
+}
