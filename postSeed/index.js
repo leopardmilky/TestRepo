@@ -35,7 +35,7 @@ const seedDB = async () => {
     }
 
     const files = fs.readdirSync('./image'); // 이미지 파일 목록
-    for(let i = 1; i <= 150; i++ ) {  // 만들 게시물 수.
+    for(let i = 1; i <= 140; i++ ) {  // 만들 게시물 수.
         const randomUserNumber = Math.floor(Math.random() * (userIdArr.length));
         const randomSentenceNumber = Math.floor(Math.random() * (sentences.length));
         const board = new Board();
@@ -44,10 +44,11 @@ const seedDB = async () => {
 
         let imgIndex = {};
         let mainText = '';
-        const randomImageNumber = Math.floor(Math.random() * 3) + 1;
-        for(let i = 0; i < randomImageNumber; i++) {  // 게시물 당 이미지 수
-            const imageBuffer = fs.readFileSync(`./image/${files[i]}`);  // 각 이미지 파일 버퍼
-            const basename = path.basename(`./image/${files[i]}`);   // 파일 이름
+        const randomImageCount = Math.floor(Math.random() * 4) + 1;
+        for(let i = 0; i < randomImageCount; i++) {  // 게시물 당 이미지 수
+            const randomImgNumber = Math.floor(Math.random() * (files.length));
+            const imageBuffer = fs.readFileSync(`./image/${files[randomImgNumber]}`);  // 각 이미지 파일 버퍼
+            const basename = path.basename(`./image/${files[randomImgNumber]}`);   // 파일 이름
             imgIndex[`${i}`] = basename;
             mainText += `<div><img class="imgSize" alt="${basename}" data-img-num="${i}"></div><br>`
 
