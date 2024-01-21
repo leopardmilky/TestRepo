@@ -31,6 +31,7 @@ app.use(express.urlencoded({ extended: true})); // POST 파싱.
 app.use(methodOverride('_method')); // 반드시 '_method'로 쓸 필요없음.
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json())
+app.disable('x-powered-by');
 
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');

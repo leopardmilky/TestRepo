@@ -2,7 +2,7 @@
 
 // 모두 읽음 버튼 활성화 여부
 window.onload = async function() {
-    await axios.get('/mypage/mynotification-noread')
+    await axios.post('/mypage/mynotification-noread')
     .then((res) => {
         if(res.data) {
             const checkAllBtn = document.getElementById('check-all-btn');
@@ -51,10 +51,7 @@ async function checkAllNoti() {
     checkAllBtn.removeAttribute('class');
     checkAllBtn.setAttribute('class', 'check-all-btn');
 
-    await axios.get('/mypage/mynotification-allcheck')
-    .then((res) => {
-        console.log("checkAllNoti()_res.data: ", res.data);
-    })
+    await axios.post('/mypage/mynotification-allcheck')
 }
 
 
@@ -66,9 +63,9 @@ const infinite = async () => {
     if (scrollPosition + container.clientHeight + 1 >= containerHeight) {
         const notiTbody = document.getElementById('noti-tbody');
         const notis = document.getElementsByClassName('tr-noti');
-        const skip = notis.length;
+        const data = {skip: notis.length};
 
-        await axios.get('/mypage/mynotification-more', {params:{skip}})
+        await axios.post('/mypage/mynotification-more', data)
         .then((res) => {
             for( noti of res.data) {
                 if(noti.notificationType === 'note') {

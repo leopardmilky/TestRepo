@@ -66,7 +66,7 @@ function notiDropdown(e) {
     notiDropdownWrap.style.display = isDisplayed ? 'block' : 'none';
 
     if(isDisplayed) {
-        axios.get('/mypage/nav-noti')
+        axios.post('/mypage/nav-noti')
         .then((res) => {
 
             if(res.data.length === 0) {

@@ -300,14 +300,14 @@ router.get('/mynotification', isSignedIn, catchAsync( async(req, res) => {  // �
     res.render('mypage/myNotification', {notis, role});
 }));
 
-router.get('/mynotification-more', isSignedIn, catchAsync( async(req, res) => { // 알림 페이지 무한스크롤 
+router.post('/mynotification-more', isSignedIn, catchAsync( async(req, res) => { // 알림 페이지 무한스크롤 
     const {id} = req.user;
-    const {skip} = req.query;
+    const {skip} = req.body;
     const notis = await Notification.find({recipient:id}).sort({createdAt: -1}).skip(skip).limit(10).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
     res.json(notis);
 }));
 
-router.get('/mynotification-noread', isSignedIn, catchAsync( async(req, res) => {   // 안읽은 알림이 있는지 체크
+router.post('/mynotification-noread', isSignedIn, catchAsync( async(req, res) => {   // 안읽은 알림이 있는지 체크
     const {id} = req.user;
     const notis = await Notification.findOne({recipient:id, isRead:false});
     res.json(notis);
@@ -324,13 +324,13 @@ router.post('/mynotification-check', isSignedIn, catchAsync( async(req, res) => 
     res.status(500).json('Server Error...0_0');
 }));
 
-router.get('/mynotification-allcheck', isSignedIn, catchAsync( async(req, res) => {   // 모든 알림 읽음 표시
+router.post('/mynotification-allcheck', isSignedIn, catchAsync( async(req, res) => {   // 모든 알림 읽음 표시
     const {id} = req.user;
     await Notification.updateMany({recipient:id}, {$set:{isRead:true}});
     res.status(200).json();
 }));
 
-router.get('/nav-noti', isSignedIn, catchAsync( async(req, res) => {    // navbar알림
+router.post('/nav-noti', isSignedIn, catchAsync( async(req, res) => {    // navbar알림
     const {id} = req.user;
     const notis = await Notification.find({recipient:id, isRead: false}).sort({createdAt: -1}).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
     res.json(notis);
