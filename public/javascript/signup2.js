@@ -282,7 +282,7 @@ function inputNickPwd(email) {
                         const data = {email: email, nickname: nickname, password: password}
                         await axios.post('/signup', data)
                         .then(() => {
-                            window.location.href ='http://localhost:3000/index'
+                            window.location.href ='/index'
                         })
                     }
                 }

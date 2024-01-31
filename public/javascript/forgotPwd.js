@@ -20,7 +20,7 @@ emailBtn.addEventListener('click', async() => {
                 await axios.post('/forgotpwd/temppwd', data)
                 .then((res) => {
                     window.alert("해당 이메일로 임시 비밀번호를 전송하였습니다.");
-                    window.location.href =` http://localhost:3000/signin`
+                    window.location.href ='/signin'
                 });
             }
             
