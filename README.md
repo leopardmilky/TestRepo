@@ -40,5 +40,8 @@ node.js를 공부하면서 개인 프로젝트로 만들어본 게시판 페이�
 - mongoDB 6.0.13
 - ODM(Mongoose) 7.4.3
 
+<br>
 
+## 📝프로젝트 아키텍처
+![커뮤게시판](https://github.com/leopardmilky/Proj1/assets/83879695/71eea1b8-0d95-41ef-bf0a-7c7e5b0480f3)
 
