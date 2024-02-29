@@ -39,7 +39,7 @@ function countCharacters() {
   const text = inputContent.value;
   const length = text.length;
   if(length > 1000) {
-    window.alert('쪽지는 최대 1000글자까지 입력하실 수 있습니다.')
+    window.alert('쪽지는 최대 1000글자까지 입력하실 수 있습니다. ')
   } else {
     characterLimit.textContent = `${length}/1000`;
   }
