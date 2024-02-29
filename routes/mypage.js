@@ -208,7 +208,7 @@ router.post('/send-note', isSignedIn, catchAsync( async(req, res) => {  // ьк╜ьз
     const recipientId = await User.findOne({nickname: recipient});
     if(!recipientId || recipientId.isWithdrawn) {
         return res.json('nk2');
-    }
+    } 
 
     const newNote = new Note();
     newNote.recipient = recipientId.id;
