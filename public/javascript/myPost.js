@@ -92,6 +92,7 @@ function deleteNote(e) {
 
     axios.delete('/mypage/delete-note', {data: arr})
     .then((res) => {
+        console.log("res.data: ", res.data);
         if(res.data === 'ok') {
             window.alert('선택한 쪽지를 삭제했습니다.');
             window.location.reload();

@@ -284,12 +284,20 @@ router.delete('/delete-note', isSignedIn, catchAsync( async(req, res) => {  // �
         const note = await Note.findById(noteId).populate('sender').populate('recipient');
         if(note.recipient.nickname === req.user.nickname) { // 받은 쪽지 삭제할때
             note.recipientDeleted = true;
+            await note.save();
             await Notification.findOneAndDelete({recipient: req.user.id, noteId: noteId});  // 받은 알림도 삭제.
+            if(note.senderDeleted) {
+                await Note.findOneAndDelete({_id: noteId});
+            }
         }
         if(note.sender.nickname === req.user.nickname) { // 보낸 쪽지 삭제할때
             note.senderDeleted = true;
+            await note.save();
+            if(note.recipientDeleted) {
+                await Note.findOneAndDelete({_id: noteId});
+            }
         }
-        await note.save();
+        
     }
     res.json('ok');
 }));
