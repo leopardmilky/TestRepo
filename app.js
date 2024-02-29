@@ -17,6 +17,7 @@ const userRoutes = require('./routes/users');
 const mypageRoutes = require('./routes/mypage');
 const adminRoutes = require('./routes/admin');
 const cron = require('node-cron');
+const nocache = require("nocache");
 
 
 
@@ -31,6 +32,7 @@ db.once("open", () => {
     console.log("Database connected @ @");
 });
 
+app.use(nocache());
 app.use(express.urlencoded({ extended: true})); // POST 파싱.
 app.use(methodOverride('_method')); // 반드시 '_method'로 쓸 필요없음.
 app.use(express.static(path.join(__dirname, 'public')));
