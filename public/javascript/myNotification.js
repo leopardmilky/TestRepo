@@ -2,7 +2,7 @@
 
 // 모두 읽음 버튼 활성화 여부
 window.onload = async function() {
-    await axios.post('/mypage/mynotification-noread')
+    await axios.post('/mypage/mynotification-unread')
     .then((res) => {
         if(res.data) {
             const checkAllBtn = document.getElementById('check-all-btn');

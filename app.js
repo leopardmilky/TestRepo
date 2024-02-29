@@ -68,8 +68,6 @@ app.use( async (req, res, next) => {
         const notis = await Notification.find({recipient:id, isRead: false}).sort({createdAt: -1}).populate('commentId').populate('noteId').populate('sender').populate('replyId').populate('postId');
         res.locals.notiAlarm = notis.length;
     }
-
-
     next();
 });
 
@@ -84,7 +82,7 @@ app.get('/', (req, res) => {
 });
 
 app.all('*', (req, res, next) => {
-    next(new ExpressError('Page Not Found', 404));
+    next(new ExpressError('Page Not Found!@!@', 404));
 });
 
 app.use((err, req, res, next) => {
@@ -94,13 +92,11 @@ app.use((err, req, res, next) => {
 });
 
 
-
-
 cron.schedule('0 0 * * *', async() => { // 쪽지 삭제 크론탭
 
     const oneDayAgo = new Date();
     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
-    
+
     await Notification.deleteMany({
         $and:
         [
