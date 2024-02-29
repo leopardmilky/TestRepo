@@ -15,6 +15,8 @@ const commentRoutes = require('./routes/comments');
 const userRoutes = require('./routes/users');
 const mypageRoutes = require('./routes/mypage');
 const adminRoutes = require('./routes/admin');
+const cron = require('node-cron');
+const Note = require('./models/note');
 
 
 const app = express();
@@ -92,6 +94,62 @@ app.use((err, req, res, next) => {
     if(!err.message) err.message = 'Oh, Something Went Wrong!!';
     res.status(statusCode).render('error', {err});
     // res.render('error/postPageError')
+});
+
+cron.schedule('0 0 * * *', async() => { // 쪽지 삭제 크론탭
+
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const operations = 
+    [
+        {
+            updateMany: 
+            {
+                filter: 
+                {
+                    $and: 
+                        [
+                            {read:true},    // 수신한 쪽지를 읽었는데
+                            {recipientSaved: false},    // 저장을 안했으면
+                            {readAt: {$lt: sevenDaysAgo}}   // 1분이 지나면 
+                        ]
+                },
+                update: {$set: {recipientDeleted: true}},  // 수신자 삭제 상태가 됨.
+            }
+        },
+        {
+            updateMany:
+            {
+                filter:
+                {
+                    $and:
+                    [
+                        {senderSaved: false},   // 발신한 쪽지를 저장을 안했고
+                        {sentAt: {$lt: sevenDaysAgo}}   // 1분이 지나면
+                    ]
+                },
+                update:{$set: {senderDeleted: true}} // 발신 메세지 삭제 상태가 됨.
+            }
+        },
+        {
+            deleteMany:
+            {
+                filter:
+                {
+                    $and:
+                    [
+                        {senderDeleted: true},
+                        {recipientDeleted: true}
+                    ]
+                }
+            }
+        }
+
+    ];
+
+    await Note.bulkWrite(operations);
+
 });
 
 app.listen(3000, () => console.log('PORT 3000....!!'));
