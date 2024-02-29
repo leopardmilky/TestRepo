@@ -1,5 +1,4 @@
 <% layout('layouts/boilerplate') %>
-    <!-- <link rel="stylesheet" href="/stylesheets/myPagePost.css"> -->
     <link rel="stylesheet" href="/stylesheets/myNotification.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 </head>
@@ -25,7 +24,10 @@
 
         <div id="content-wrap">
             <div id="sidebar-title-wrap">
-                <p id="sidebar-title">알림</p>
+                <div id="sidebar-title-text">
+                    <p id="sidebar-title">알림</p>
+                    <p id="sidebar-subtitle">확인된 알림은 1일 뒤 자동 삭제됩니다.</p>
+                </div>
                 <button type="button" id="check-all-btn" class="check-all-btn-active" onclick="checkAllNoti()">모두 읽음</button>
             </div>
 

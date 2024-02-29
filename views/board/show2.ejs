@@ -188,13 +188,11 @@
         </div>
     <% } else { %>
         <div id="create-comment-wrap">
-            <!-- <form id="create-comment-form" action="/index/<%= board._id %>/comments?page=<%= currentPage %>" method="POST" onsubmit="return testFunc()" novalidate> -->
             <div id="create-comment-form">
                 <label id="comment-label" for="body">Comment</label>
                 <textarea name="comment[body]" id="input-comment" cols="10" rows="5" required></textarea>
                 <button id="submit-btn" data-postId="<%= board._id %>" data-page="<%= currentPage %>" onclick="submitComment(this)">등 록</button>
             </div>
-            <!-- </form> -->
         </div>
     <% } %>
 

@@ -52,6 +52,11 @@
     box-sizing: border-box;
 }
 
+#sidebar-title-text {
+    display: flex;
+    align-items: center;
+}
+
 #sidebar-title-wrap {
     border-bottom: 2px solid grey;
     display: flex;
@@ -71,9 +76,11 @@
     font-weight: bold;
 }
 
-#sidebar-title-sub {
-    font-size: x-small;
-    color: grey;
+#sidebar-subtitle {
+    margin: 0;
+    margin-left: 10px;
+    font-size: 0.8em;
+    color: #999;
 }
 
 #tap-menu-wrap {

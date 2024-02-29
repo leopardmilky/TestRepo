@@ -241,6 +241,7 @@ router.get('/view-note', isSignedIn, catchAsync( async(req, res) => {   // ьк╜ьз
         note.read = true;
         note.readAt = Date.now();
         noti.isRead = true;
+        noti.readAt = Date.now();
         await note.save();
         await noti.save();
         return res.render('mypage/viewNote', {note, type});
@@ -254,9 +255,13 @@ router.get('/view-note', isSignedIn, catchAsync( async(req, res) => {   // ьк╜ьз
     if(type === 'inbox') {
         const note = await Note.findOne({_id: noteId}).populate('sender').populate('recipient');
         if(note.recipient.nickname === nickname){
+            const noti = await Notification.findOne({noteId: noteId});
             note.read = true;
             note.readAt = Date.now();
+            noti.isRead = true;
+            noti.readAt = Date.now();
             await note.save();
+            await noti.save();
         }
         return res.render('mypage/viewNote', {note, type});
     }
