@@ -92,12 +92,12 @@ app.use((err, req, res, next) => {
     res.status(statusCode).render('error/postPageError', {err});
 });
 
-cron.schedule('0 0 * * *', async() => { // 쪽지 삭제 크론탭
+cron.schedule('0 0 * * *', async() => { // 읽은 쪽지 및 알림 삭제 크론탭 - 매일 정각에 실행.
 
     const oneDayAgo = new Date();
     oneDayAgo.setDate(oneDayAgo.getDate() - 1);
 
-    await Notification.deleteMany({
+    await Notification.deleteMany({ // 하루 지난 읽은알림 삭제
         $and:
         [
             {isRead: true},
@@ -109,18 +109,18 @@ cron.schedule('0 0 * * *', async() => { // 쪽지 삭제 크론탭
     const threeDaysAgo = new Date();
     threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
 
-    await Note.find(
+    const deleteSoonNote = await Note.find(
         {
             $and: 
                 [
                     {read:true},    // 수신한 쪽지를 읽었는데
                     {recipientSaved: false},    // 저장을 안했고
                     {recipientDeleted: false},  // 삭제도 안했고
-                    {readAt: {$lt: threeDaysAgo}}   // 3일이 지났으면
+                    {readAt: {$lt: threeDaysAgo}}   // 3일이 지난 쪽지의
                 ]
         }
     );
-    await Notification.deleteMany({noteId: {$in: findResult}});
+    await Notification.deleteMany({noteId: {$in: deleteSoonNote}});  // 알림을 삭제.
 
     const operations = 
     [

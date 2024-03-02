@@ -25,7 +25,6 @@ router.post('/signin', isWithdrawn, passport.authenticate('local', { failureFlas
 router.get('/signout', users.signOut);
 
 router.get('/modifyUserInfo', (req, res) => {
-    //페이지를 잘못 찾았을 때 표시할 페이지도 만들어야 할듯함.
     res.redirect('/index');
 });
 

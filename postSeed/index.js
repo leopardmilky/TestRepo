@@ -34,6 +34,7 @@ const seedDB = async () => {
         userIdArr.push(userId.id);
     }
 
+    let countPost = 0;
     const files = fs.readdirSync('./image'); // 이미지 파일 목록
     for(let i = 1; i <= 140; i++ ) {  // 만들 게시물 수.
         const randomUserNumber = Math.floor(Math.random() * (userIdArr.length));
@@ -145,6 +146,8 @@ const seedDB = async () => {
                 }
             }
         }
+        countPost++
+        console.log(countPost);
     }
 }
 
