@@ -78,13 +78,18 @@ module.exports.createPost = async(req, res) => {    // 게시물 등록하기
 };
 
 module.exports.showBoard = async(req, res) => { // 게시물 불러오기
+    // try{
+
     const { id } = req.params;
-    console.log("/index/:id: ", id);
     let { commentId, page } = req.query;
     if(!page) { page = 1; }
     let data = {};  // 이곳에 페이지 로딩에 필요한 데이터를 담아서 보낼 예정.
     const board = await Board.findById(id).populate('author'); // 해당 게시물이 있는지 확인        populate()가 있어야 참조함
     //여기에 에러 페이지 이동 추가.
+    console.log("#####board: ", board);
+    if(!board) {
+        return res.status(404).json({msg: "존재하지 않는 페이지@@@"})
+    }
 
     data.board = board;
     data.page = page; // 목록 버튼에 필요한 페이지넘버
@@ -103,7 +108,6 @@ module.exports.showBoard = async(req, res) => { // 게시물 불러오기
         if(!hasComments){
             const referringURL = req.headers.referer || req.headers.referrer;   // 이전 URL정보
             return res.redirect(referringURL);
-            // return res.render('error/postPageError');
         }
 
         const sortComments = await Comment.find({ board: id }).sort({ parentComment: 1, createdAt: 1 }) // 해당 게시물의 모든 댓글 순서에 맞춰 정렬
@@ -184,6 +188,11 @@ module.exports.showBoard = async(req, res) => { // 게시물 불러오기
     data.totalPage = totalPage;
 
     res.render('board/show2', data);
+
+    // } catch (err) {
+    //     console.log("##########err: ", err);
+    //     res.status(500).json({msg: "존재하지 않는 페이지.#########"})
+    // }
 };
 
 module.exports.loadComments = async(req, res) => {    // 페이징된 댓글 불러오기

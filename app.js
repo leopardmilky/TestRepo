@@ -64,6 +64,9 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use( async (req, res, next) => {
+
+    console.log("app.use(): notis");
+    
     res.locals.signedInUser = req.user;
     if(req.user) {
         const {id} = req.user;
@@ -84,15 +87,24 @@ app.get('/', (req, res) => {
 });
 
 app.all('*', (req, res, next) => {
+
+    console.log("app.all('*')");
+
     next(new ExpressError('Page Not Found!@!@', 404));
 });
 
 app.use((err, req, res, next) => {
-    const { statusCode = 500 } = err;
+
+    console.log("app.use(): ERR");
+
+    // const { statusCode = 500 } = err;
+    const { statusCode } = err;
+    // console.log("statusCode: ", statusCode);
+    console.log("err***: ", err);
+
     if(!err.message) err.message = 'Oh, Something Went Wrong!!';
     res.status(statusCode).render('error', {err});
 });
-
 
 cron.schedule('0 0 * * *', async() => { // 쪽지 삭제 크론탭
 
