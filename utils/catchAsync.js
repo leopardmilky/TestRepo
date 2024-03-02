@@ -1,11 +1,3 @@
-// module.exports = func => {
-//     return (req, res, next) => {
-//         console.log("catchAsync!!!!");
-//         console.log("func: ", func);
-//         func(req, res, next).catch(next);
-//     }
-// }
-
 const ExpressError = require('./ExpressError');
 
 function catchAsync(asyncController) {

@@ -32,7 +32,7 @@ db.once("open", () => {
     console.log("Database connected @ @");
 });
 
-app.use(nocache(  ));
+app.use(nocache());
 app.use(express.urlencoded({ extended: true})); // POST 파싱.
 app.use(methodOverride('_method')); // 반드시 '_method'로 쓸 필요없음.
 app.use(express.static(path.join(__dirname, 'public')));

@@ -83,11 +83,6 @@ module.exports.showBoard = async(req, res) => { // 게시물 불러오기
     if(!page) { page = 1; }
     let data = {};  // 이곳에 페이지 로딩에 필요한 데이터를 담아서 보낼 예정.
     const board = await Board.findById(id).populate('author'); // 해당 게시물이 있는지 확인        populate()가 있어야 참조함
-    // console.log("#####board: ", board);
-    // if(!board) {
-    //     return res.status(404).json({msg: "존재하지 않는 페이지@@@"})
-    // }
-
     data.board = board;
     data.page = page; // 목록 버튼에 필요한 페이지넘버
 
