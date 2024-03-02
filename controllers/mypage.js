@@ -244,11 +244,20 @@ module.exports.viewNote = async(req, res) => {   // 쪽지 보기
 
     if(type === 'sent') {
         const note = await Note.findOne({_id: noteId, sender: id}).populate('sender').populate('recipient');
+        if(note.senderDeleted) {
+            return res.render('error/viewNoteError');
+        }
         return res.render('mypage/viewNote', {note, type});
     }
 
     if(type === 'inbox') {
         const note = await Note.findOne({_id: noteId}).populate('sender').populate('recipient');
+        if(note.recipient.nickname === nickname && note.recipientDeleted) {
+            return res.render('error/viewNoteError');
+        }
+        if(note.sender.nickname === nickname && note.senderDeleted) {
+            return res.render('error/viewNoteError');
+        }
         if(note.recipient.nickname === nickname){
             const noti = await Notification.findOne({noteId: noteId});
             note.read = true;
@@ -260,7 +269,7 @@ module.exports.viewNote = async(req, res) => {   // 쪽지 보기
         }
         return res.render('mypage/viewNote', {note, type});
     }
-
+    return res.render('error/viewNoteError');
 };
 
 module.exports.saveNote = async(req, res) => {   // 쪽지 저장(보관함)

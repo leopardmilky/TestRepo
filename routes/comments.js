@@ -15,14 +15,14 @@ router.post('/:commentId/commentLike', isSignedIn2, catchAsync(comments.likeComm
 router.post('/:commentId/commentReport', isSignedIn2, catchAsync(comments.reportComment));
 
 
-router.get('/:commentId/commentLike', isSignedIn, catchAsync( async(req, res) => {
+router.get('/:commentId/commentLike', (req, res) => {
     const { id } = req.params;
     res.redirect(`/index/${id}`);
-}));
+});
 
-router.get('/:commentId/commentReport', isSignedIn, catchAsync( async(req, res) => {
+router.get('/:commentId/commentReport', (req, res) => {
     const { id } = req.params;
     res.redirect(`/index/${id}`);
-}));
+});
 
 module.exports = router;

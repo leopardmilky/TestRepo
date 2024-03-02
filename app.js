@@ -32,11 +32,11 @@ db.once("open", () => {
     console.log("Database connected @ @");
 });
 
-app.use(nocache());
+app.use(nocache(  ));
 app.use(express.urlencoded({ extended: true})); // POST 파싱.
 app.use(methodOverride('_method')); // 반드시 '_method'로 쓸 필요없음.
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.json())
+app.use(express.json());
 app.disable('x-powered-by');
 
 app.engine('ejs', ejsMate);
@@ -64,9 +64,6 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 app.use( async (req, res, next) => {
-
-    console.log("app.use(): notis");
-    
     res.locals.signedInUser = req.user;
     if(req.user) {
         const {id} = req.user;
@@ -87,23 +84,12 @@ app.get('/', (req, res) => {
 });
 
 app.all('*', (req, res, next) => {
-
-    console.log("app.all('*')");
-
     next(new ExpressError('Page Not Found!@!@', 404));
 });
 
 app.use((err, req, res, next) => {
-
-    console.log("app.use(): ERR");
-
-    // const { statusCode = 500 } = err;
     const { statusCode } = err;
-    // console.log("statusCode: ", statusCode);
-    console.log("err***: ", err);
-
-    if(!err.message) err.message = 'Oh, Something Went Wrong!!';
-    res.status(statusCode).render('error', {err});
+    res.status(statusCode).render('error/postPageError', {err});
 });
 
 cron.schedule('0 0 * * *', async() => { // 쪽지 삭제 크론탭
