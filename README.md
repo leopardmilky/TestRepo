@@ -35,9 +35,9 @@ node.js를 공부하면서 개인 프로젝트로 만들어본 게시판 페이�
 <br>
 
 ## :warning: 버전정보
-- node.js 18.19.0
+- node.js 20.11.1
 - express 4.18.2
-- mongoDB 6.0.13
+- mongoDB 6.0.14
 - ODM(Mongoose) 7.4.3
 
 <br>
