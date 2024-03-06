@@ -1,7 +1,7 @@
 # :star:게시판 사이트 프로젝트
 
 #### 기간: 2023.08.20 ~ 2024.01.22
-#### 링크: http://43.201.10.244/
+#### 링크: http://15.164.217.206/
 
 <br>
 
@@ -35,13 +35,17 @@ node.js를 공부하면서 개인 프로젝트로 만들어본 게시판 페이�
 <br>
 
 ## :warning: 버전정보
-- node.js 18.19.0
+- node.js 20.11.1
 - express 4.18.2
-- mongoDB 6.0.13
+- mongoDB 6.0.14
 - ODM(Mongoose) 7.4.3
 
 <br>
 
 ## 📝프로젝트 아키텍처
 ![커뮤게시판](https://github.com/leopardmilky/Proj1/assets/83879695/71eea1b8-0d95-41ef-bf0a-7c7e5b0480f3)
+
+## 📝ERD
+링크: https://dbdiagram.io/d/community-forum-ERD-65e8627b7570557c713330bc
+![erd](https://github.com/leopardmilky/community_forum/assets/83879695/26fb516f-ed2d-4d97-8684-da234eddd1a4)
 
