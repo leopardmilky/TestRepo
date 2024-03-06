@@ -45,3 +45,7 @@ node.js를 공부하면서 개인 프로젝트로 만들어본 게시판 페이�
 ## 📝프로젝트 아키텍처
 ![커뮤게시판](https://github.com/leopardmilky/Proj1/assets/83879695/71eea1b8-0d95-41ef-bf0a-7c7e5b0480f3)
 
+## 📝ERD
+링크: https://dbdiagram.io/d/community-forum-ERD-65e8627b7570557c713330bc
+![erd](https://github.com/leopardmilky/community_forum/assets/83879695/26fb516f-ed2d-4d97-8684-da234eddd1a4)
+
