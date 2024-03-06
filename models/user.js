@@ -11,11 +11,13 @@ const UserSchema = new Schema({
     role: {
         type: String,
         enum: ['user', 'master', 'superman'],
-        default: 'user'
+        default: 'user',
+        required: true
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        required: true
     },
     isWithdrawn: {
         type: Boolean,

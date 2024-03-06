@@ -3,18 +3,24 @@ const Schema = mongoose.Schema;
 
 
 const CommentSchema = new Schema({
-    body: String,
+    body: {
+        type: String,
+        required: true
+    },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        required: true
     },
     author: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     board: {
         type: Schema.Types.ObjectId,
-        ref: 'Board'
+        ref: 'Board',
+        required: true
     },
     likes: [
         {
@@ -30,7 +36,8 @@ const CommentSchema = new Schema({
     ],
     parentComment: {
         type: Schema.Types.ObjectId,
-        ref: "Comment"
+        ref: "Comment",
+        required: true
     },
     hasReply: {
         type: Boolean,

@@ -8,7 +8,10 @@ const ReportPost = require('./reportPost');
 const Schema = mongoose.Schema;
 
 const BoardSchema = new Schema({
-    title: String,
+    title: {
+        type: String,
+        required: true
+    },
     notice: {
         type: Boolean,
         default: false
@@ -20,7 +23,8 @@ const BoardSchema = new Schema({
     mainText: String,
     author: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     comments: [
         {

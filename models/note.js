@@ -5,11 +5,13 @@ const Schema = mongoose.Schema;
 const NoteSchema = new Schema({
     sender: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     recipient: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     content: {
         type: String,
@@ -17,7 +19,8 @@ const NoteSchema = new Schema({
     },
     sentAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        required: true
     },
     read: { 
         type: Boolean,

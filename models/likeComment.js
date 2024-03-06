@@ -4,19 +4,23 @@ const Schema = mongoose.Schema;
 const LikeCommentSchema = new Schema({
     user: {
         type: Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     createdAt: {
         type: Date,
-        default: Date.now
+        default: Date.now,
+        required: true
     },
     relatedPost: {
         type: Schema.Types.ObjectId,
-        ref: "Board"
+        ref: "Board",
+        required: true
     },
     likedComment: {
         type: Schema.Types.ObjectId,
-        ref: "Comment"
+        ref: "Comment",
+        required: true
     }
 });
 
